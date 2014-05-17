@@ -17,21 +17,27 @@
     <string name="hdmi">HDMI</string>
     <string name="dvi">DVI</string>
     <string name="resolution">Resoultion</string>
-    <string name="r1360x768">1360 x 768 (LCD)</string>
+    <string name="r1280x800">1280 x 800 (LCD)</string>
     <string name="r1920x1080">1920 x 1080</string>
     <string name="r1280x720">1280 x 720</string>
     <string name="apply_reboot">Apply and Reboot</string>
-    <string name="p1080p">1080P</string>
-    <string name="p720p">720P</string>
+    
+    
     <string name="hdmi_phy">HDMI phy</string>
     <string name="fake_fb">LCD Mode ( for ODROID-X/X2 LCD Kit)</string>
-    <string name="fb_true">False</string>
-    <string name="fb_false">True</string>
+    <string name="fb_true">True</string>
+    <string name="fb_false">False</string>
     <string name="portrait">HDMI Portrait</string>
     <string name="landscape">HDMI Landscape</string>
-    <string name="uvc_camera">UVC Camera</string>
-    <string name="mipi_camera">MIPI Camera</string>
-    <string name="dmic">Digital Mic(ODROID-U2)</string>
-    <string name="amic">Analog Mic(ODROID-U3)</string>
-
+    <string name="lcd">LCD</string>
+    <string name="p720p50">720P 50Hz</string>
+    <string name="p720p60">720P 60hz</string>
+    <string name="p1080i60">1080I 60Hz</string>
+    <string name="p1080p30">1080P 30Hz</string>
+    <string name="p1080i50">1080I 50Hz</string>
+    <string name="p1080p50">1080P 50Hz</string>
+    <string name="p1080p60">1080P 60Hz</string>
+    <string name="r1080x1920">1080 x 1920</string>
+    <string name="r720x1080">720 x 1280</string>
+    
 </resources>

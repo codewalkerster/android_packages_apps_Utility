@@ -38,34 +38,7 @@
                 android:layout_height="match_parent" >
 
                 <LinearLayout
-                    android:id="@+id/tab6"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical" >
-
-                    <RadioGroup
-                        android:id="@+id/radioGroup4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" >
-
-                        <RadioButton
-                            android:id="@+id/radio_analog_mic"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:checked="true"
-                            android:text="@string/amic" />
-
-                        <RadioButton
-                            android:id="@+id/radio_digital_mic"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/dmic" />
-                    </RadioGroup>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/tab5"
+                    android:id="@+id/tab4"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical" >
@@ -73,45 +46,10 @@
                     <RadioGroup
                         android:id="@+id/radioGroup2"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="20dp"
-                        android:layout_marginTop="20dp" >
-
-                        <RadioButton
-                            android:id="@+id/radio_mipi"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:checked="true"
-                            android:text="@string/mipi_camera" />
-
-                        <RadioButton
-                            android:id="@+id/radio_uvc"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/uvc_camera" />
-                    </RadioGroup>
-
-                    <Button
-                        android:id="@+id/button_camera_apply"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:text="@string/apply_reboot" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/tab4"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical" >
-
-                    <RadioGroup
-                        android:id="@+id/radioGroup3"
-                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content" >
 
                         <RadioButton
-                            android:id="@+id/radio_potrait"
+                            android:id="@+id/radio_portrait"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:checked="true"
@@ -122,6 +60,25 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/landscape" />
+                    </RadioGroup>
+
+                    <RadioGroup
+                        android:id="@+id/radioGroup_portrait_resolution"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <RadioButton
+                            android:id="@+id/radio_1080x1920"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="@string/r1080x1920" />
+
+                        <RadioButton
+                            android:id="@+id/radio_720x1280"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/r720x1080" />
                     </RadioGroup>
 
                     <Button
@@ -160,41 +117,11 @@
                             android:text="@string/hdmi" />
 
                         <RadioButton
-                            android:id="@+id/radio_dvi"
+                            android:id="@+id/radio_lcd"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
-                            android:text="@string/dvi" />
-                    </RadioGroup>
-
-                    <TextView
-                        android:id="@+id/textView_lcd"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:text="@string/fake_fb"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                    <RadioGroup
-                        android:id="@+id/radioGroup_lcd"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal" >
-
-                        <RadioButton
-                            android:id="@+id/radio_lcd_false"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp"
-                            android:checked="true"
-                            android:text="@string/fb_true" />
-
-                        <RadioButton
-                            android:id="@+id/radio_lcd_true"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="10dp"
-                            android:text="@string/fb_false" />
+                            android:text="@string/lcd" />
                     </RadioGroup>
 
                     <TextView
@@ -212,12 +139,12 @@
                         android:orientation="horizontal" >
 
                         <RadioButton
-                            android:id="@+id/radio_r1360"
+                            android:id="@+id/radio_r1280_800"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="5dp"
                             android:checked="true"
-                            android:text="@string/r1360x768" />
+                            android:text="@string/r1280x800" />
 
                         <RadioButton
                             android:id="@+id/radio_r1280"
@@ -249,19 +176,54 @@
                         android:orientation="horizontal" >
 
                         <RadioButton
-                            android:id="@+id/radio_p720"
+                            android:id="@+id/radio_p720p60"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="5dp"
                             android:checked="true"
-                            android:text="@string/p720p" />
+                            android:text="@string/p720p60" />
 
                         <RadioButton
-                            android:id="@+id/radio_p1080"
+                            android:id="@+id/radio_p720p50"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
-                            android:text="@string/p1080p" />
+                            android:text="@string/p720p50" />
+
+                        <RadioButton
+                            android:id="@+id/radio_p1080p60"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:text="@string/p1080p60" />
+
+                        <RadioButton
+                            android:id="@+id/radio_p1080p50"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:text="@string/p1080p50" />
+
+                        <RadioButton
+                            android:id="@+id/radio_p1080p30"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:text="@string/p1080p30" />
+
+                        <RadioButton
+                            android:id="@+id/radio_p1080i60"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:text="@string/p1080i60" />
+
+                        <RadioButton
+                            android:id="@+id/radio_p1080i50"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:text="@string/p1080i50" />
                     </RadioGroup>
 
                     <Button
@@ -327,52 +289,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:layout_weight="0" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp" >
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical" >
-
-                            <TextView
-                                android:id="@+id/textView2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/cpu_max_freq"
-                                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                            <Spinner
-                                android:id="@+id/spinner_max_freq"
-                                android:layout_width="300dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_marginLeft="30dp"
-                            android:orientation="vertical" >
-
-                            <TextView
-                                android:id="@+id/textView3"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/cpu_min_freq"
-                                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                            <Spinner
-                                android:id="@+id/spinner_min_freq"
-                                android:layout_width="300dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:layout_weight="0" />
-                        </LinearLayout>
-                    </LinearLayout>
                 </LinearLayout>
             </FrameLayout>
         </LinearLayout>
