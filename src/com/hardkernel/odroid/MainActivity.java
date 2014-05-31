@@ -341,8 +341,6 @@ public class MainActivity extends Activity {
         	tabHost.getTabWidget().getChildAt(4).setVisibility(View.GONE);
         else
         	tabHost.getTabWidget().getChildAt(5).setVisibility(View.GONE);
-
-       	tabHost.getTabWidget().getChildAt(3).setVisibility(View.GONE);
 				
 		Button btn = (Button)findViewById(R.id.button_mouse_apply);
 		btn.setOnClickListener(new OnClickListener() {
