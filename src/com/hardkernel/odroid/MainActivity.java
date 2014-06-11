@@ -719,12 +719,16 @@ public class MainActivity extends Activity {
 	
 	public void setDVIMode() {
 		mRadio_dvi.setChecked(true);
+
+        /*
 		for (int i = 0; i < mRG_resolution.getChildCount(); i++) {
 			mRG_resolution.getChildAt(i).setEnabled(false);
 		}
 		for (int i = 0; i < mRG_phy.getChildCount(); i++) {
 			mRG_phy.getChildAt(i).setEnabled(false);
 		}
+        */
+        mRadio_r1360.setEnabled(false);
 		mRadio_r1280.setChecked(true);
 		mRadio_p720.setChecked(true);
 	}
