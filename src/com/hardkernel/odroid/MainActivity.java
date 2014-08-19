@@ -73,10 +73,17 @@ public class MainActivity extends Activity {
 	
 	private String mOrientation;
 
+	private Process mSu;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+        try {
+            mSu = Runtime.getRuntime().exec("su");
+        } catch (Exception e) {
+        }
 		
 		mRadio_left = (RadioButton)findViewById(R.id.radio_left);
 		mRadio_right = (RadioButton)findViewById(R.id.radio_right);
@@ -135,10 +142,10 @@ public class MainActivity extends Activity {
 		tab4.setIndicator("Rotation");
 		tab4.setContent(R.id.tab4);
 
-		tabHost.addTab(tab1);
+		//tabHost.addTab(tab1);
 		tabHost.addTab(tab2);
 		tabHost.addTab(tab3);
-		tabHost.addTab(tab4);
+		//tabHost.addTab(tab4);
 		
 		mSpinnerGovernor = (Spinner) findViewById(R.id.spinner_governors);
 		// Create an ArrayAdapter using the string array and a default spinner layout
@@ -209,6 +216,7 @@ public class MainActivity extends Activity {
 	
 		mRadio_hdmi = (RadioButton)findViewById(R.id.radio_hdmi);
 		mRadio_lcd = (RadioButton)findViewById(R.id.radio_lcd);
+        mRadio_lcd.setVisibility(View.GONE);
 		mRadio_r1920 = (RadioButton)findViewById(R.id.radio_r1920);
 		mRadio_r1280_720 = (RadioButton)findViewById(R.id.radio_r1280);
 		mRadio_r1280_800 = (RadioButton)findViewById(R.id.radio_r1280_800);
@@ -384,10 +392,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-             Process p;
 		        try { 
-		            p = Runtime.getRuntime().exec("su");
-		            DataOutputStream stdin = new DataOutputStream(p.getOutputStream()); 
+		            DataOutputStream stdin = new DataOutputStream(mSu.getOutputStream()); 
 		            stdin.writeBytes("mount -o rw,remount /system\n"); 
 		             
 		            if (mRadio_portrait.isChecked())
@@ -501,12 +507,10 @@ public class MainActivity extends Activity {
 		
 	}
 	
-	void reboot() {
+	private void reboot() {
 		OutputStream stream;
-		Process p;
 		try {
-			p = Runtime.getRuntime().exec("su");
-			stream = p.getOutputStream();
+			stream = mSu.getOutputStream();
 			String cmd =  "reboot";
 			stream.write(cmd.getBytes());
 			stream.flush();
@@ -616,14 +620,6 @@ public class MainActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onResume();
 		
-		/*
-		try {
-            Runtime.getRuntime().exec("su").getInputStream();
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        */
 	}
 
 	protected String getCurrentGovernor() {
