@@ -55,30 +55,31 @@
                             android:checked="true"
                             android:text="@string/portrait" />
 
+                        <RadioGroup
+                            android:id="@+id/radioGroup_degree"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="20dp" >
+
+                            <RadioButton
+                                android:id="@+id/radio_90"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:checked="true"
+                                android:text="@string/degree_90" />
+
+                            <RadioButton
+                                android:id="@+id/radio_270"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/degree_270" />
+                        </RadioGroup>
+
                         <RadioButton
                             android:id="@+id/radio_landscape"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/landscape" />
-                    </RadioGroup>
-
-                    <RadioGroup
-                        android:id="@+id/radioGroup_portrait_resolution"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" >
-
-                        <RadioButton
-                            android:id="@+id/radio_1080x1920"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:checked="true"
-                            android:text="@string/r1080x1920" />
-
-                        <RadioButton
-                            android:id="@+id/radio_720x1280"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/r720x1080" />
                     </RadioGroup>
 
                     <Button

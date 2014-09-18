@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -64,14 +65,16 @@ public class MainActivity extends Activity {
 
     private RadioButton mRadio_portrait;
     private RadioButton mRadio_landscape;
-    private RadioButton mRadio_r1080x1920;
-    private RadioButton mRadio_r720x1280;
+
+    private RadioButton mRadio_90;
+    private RadioButton mRadio_270;
 
     private RadioGroup mRG_resolution;
     private RadioGroup mRG_phy;
-    private RadioGroup mRG_portrait_resolution;
+    private RadioGroup mRG_degree;
 
     private String mOrientation;
+    private int mDegree;
 
     private Process mSu;
 
@@ -99,6 +102,7 @@ public class MainActivity extends Activity {
                   new InputStreamReader(inputstream));
 
         mOrientation = "landscape";
+        mDegree = 0;
 
         String line;
         try {
@@ -117,6 +121,14 @@ public class MainActivity extends Activity {
                         Log.e(TAG, line);
                         mOrientation = "portrait";
                     }
+                }
+                if (line.contains("ro.sf.hwrotation")) {
+                    if (line.contains("90"))
+                        mDegree = 90;
+                    else if (line.contains("270"))
+                        mDegree = 270;
+                    else if (line.contains("0"))
+                        mDegree = 0;
                 }
             }
             bufferedReader.close();
@@ -143,9 +155,9 @@ public class MainActivity extends Activity {
         tab4.setContent(R.id.tab4);
 
         //tabHost.addTab(tab1);
-        tabHost.addTab(tab2);
+        //tabHost.addTab(tab2);
         tabHost.addTab(tab3);
-        //tabHost.addTab(tab4);
+        tabHost.addTab(tab4);
 
         mSpinnerGovernor = (Spinner) findViewById(R.id.spinner_governors);
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -355,15 +367,24 @@ public class MainActivity extends Activity {
 
         mRadio_portrait = (RadioButton)findViewById(R.id.radio_portrait);
         mRadio_landscape = (RadioButton)findViewById(R.id.radio_landscape);
-        mRadio_r1080x1920 = (RadioButton)findViewById(R.id.radio_1080x1920);
-        mRadio_r720x1280 = (RadioButton)findViewById(R.id.radio_720x1280);
-        mRG_portrait_resolution = (RadioGroup)findViewById(R.id.radioGroup_portrait_resolution);
+        mRadio_90 = (RadioButton)findViewById(R.id.radio_90);
+        mRadio_270 = (RadioButton)findViewById(R.id.radio_270);
+        mRG_degree = (RadioGroup)findViewById(R.id.radioGroup_degree);
         if (mOrientation.equals("landscape")) {
            mRadio_landscape.setChecked(true);
-           mRG_portrait_resolution.setVisibility(View.GONE);
+           mRG_degree.setVisibility(View.GONE);
+           mDegree = 0;
         } else {
            mRadio_portrait.setChecked(true);
-           mRG_portrait_resolution.setVisibility(View.VISIBLE);
+           mRG_degree.setVisibility(View.VISIBLE);
+        }
+
+        if (mDegree == 90) {
+            mRadio_90.setChecked(true);
+            mRadio_270.setChecked(false);
+        } else {
+            mRadio_90.setChecked(false);
+            mRadio_270.setChecked(true);
         }
 
         mRadio_portrait.setOnClickListener(new OnClickListener() {
@@ -371,7 +392,10 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                mRG_portrait_resolution.setVisibility(View.VISIBLE);
+                mRG_degree.setVisibility(View.VISIBLE);
+                mDegree = 270;
+                mRadio_90.setChecked(false);
+                mRadio_270.setChecked(true);
             }
 
         });
@@ -381,10 +405,32 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                mRG_portrait_resolution.setVisibility(View.GONE);
+                mRG_degree.setVisibility(View.GONE);
+                mDegree = 0;
             }
 
         });
+
+        mRadio_90.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                mDegree = 90;
+            }
+
+        });
+
+        mRadio_270.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                mDegree = 270;
+            }
+
+        });
+
 
         btn = (Button)findViewById(R.id.button_rotation_apply);
         btn.setOnClickListener(new OnClickListener() {
@@ -396,12 +442,27 @@ public class MainActivity extends Activity {
                     DataOutputStream stdin = new DataOutputStream(mSu.getOutputStream());
                     stdin.writeBytes("mount -o rw,remount /system\n");
 
-                    if (mRadio_portrait.isChecked())
+                    if (mRadio_portrait.isChecked()) {
                         stdin.writeBytes("sed -i s/persist.demo.hdmirotation=landscape/persist.demo.hdmirotation=portrait/g /system/build.prop\n");
-                    else if (mRadio_landscape.isChecked())
+                        if (mDegree == 90) {
+                            stdin.writeBytes("sed -i s/ro.sf.hwrotation=0/ro.sf.hwrotation=90/g /system/build.prop\n");
+                            stdin.writeBytes("sed -i s/ro.sf.hwrotation=270/ro.sf.hwrotation=90/g /system/build.prop\n");
+                        } else {
+                            stdin.writeBytes("sed -i s/ro.sf.hwrotation=0/ro.sf.hwrotation=270/g /system/build.prop\n");
+                            stdin.writeBytes("sed -i s/ro.sf.hwrotation=90/ro.sf.hwrotation=270/g /system/build.prop\n");
+                        }
+                    } else if (mRadio_landscape.isChecked()) {
                         stdin.writeBytes("sed -i s/persist.demo.hdmirotation=portrait/persist.demo.hdmirotation=landscape/g /system/build.prop\n");
+                        stdin.writeBytes("sed -i s/ro.sf.hwrotation=90/ro.sf.hwrotation=0/g /system/build.prop\n");
+                        stdin.writeBytes("sed -i s/ro.sf.hwrotation=270/ro.sf.hwrotation=0/g /system/build.prop\n");
+                    }
 
                     stdin.writeBytes("mount -o ro,remount /system\n");
+                    if (mDegree == 0)
+                        android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 1);
+                    else
+                        android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
+                    android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 1);
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -413,7 +474,7 @@ public class MainActivity extends Activity {
         });
     }
 
-    public void saveBootIni() {
+   public void saveBootIni() {
         File boot_ini = new File(BOOT_INI);
         if (boot_ini.exists()) {
             boot_ini.delete();
@@ -426,33 +487,19 @@ public class MainActivity extends Activity {
             writer.println("ODROIDXU-UBOOT-CONFIG\n");
 
             String value;
-            if (mRadio_landscape.isChecked()) {
-                if (mRadio_r1920.isChecked())
-                    value = "1920";
-                else
-                    value = "1280";
-                writer.println("setenv fb_x_res \"" + value +"\"");
+            if (mRadio_r1920.isChecked())
+                value = "1920";
+            else
+                value = "1280";
+            writer.println("setenv fb_x_res \"" + value +"\"");
 
-                if (mRadio_r1920.isChecked())
-                    value = "1080";
-                else if (mRadio_r1280_800.isChecked())
-                    value = "800";
-                else
-                    value = "720";
-                writer.println("setenv fb_y_res \"" + value +"\"\n");
-            } else {
-                if (mRadio_r1080x1920.isChecked())
-                    value = "1080";
-                else
-                    value = "720";
-                writer.println("setenv fb_x_res \"" + value +"\"");
-
-                if (mRadio_r1080x1920.isChecked())
-                    value = "1920";
-                else
-                    value = "1280";
-                writer.println("setenv fb_y_res \"" + value +"\"\n");
-            }
+            if (mRadio_r1920.isChecked())
+                value = "1080";
+            else if (mRadio_r1280_800.isChecked())
+                value = "800";
+            else
+                value = "720";
+            writer.println("setenv fb_y_res \"" + value +"\"\n");
 
             if (mRadio_hdmi.isChecked())
                 value = "hdmi";
@@ -468,27 +515,21 @@ public class MainActivity extends Activity {
             "setenv hsync    \"14\"\n" +
             "setenv vsync    \"3\"\n\n");
 
-            if (mRadio_landscape.isChecked()) {
-                if (mRadio_p720p60.isChecked())
-                    value = "720p60hz";
-                else if (mRadio_p720p50.isChecked())
-                    value = "720p50hz";
-                else if (mRadio_p1080p60.isChecked())
-                    value = "1080p60hz";
-                else if (mRadio_p1080i60.isChecked())
-                    value = "1080i60hz";
-                else if (mRadio_p1080i50.isChecked())
-                    value = "1080i50hz";
-                else if (mRadio_p1080p50.isChecked())
-                    value = "1080p50hz";
-                else if (mRadio_p1080p30.isChecked())
-                    value = "1080p30hz";
-            } else {
-                if (mRadio_r1080x1920.isChecked())
-                    value = "1080p60hz";
-                else if (mRadio_r720x1280.isChecked())
-                    value = "720p60hz";
-            }
+            if (mRadio_p720p60.isChecked())
+                value = "720p60hz";
+            else if (mRadio_p720p50.isChecked())
+                value = "720p50hz";
+            else if (mRadio_p1080p60.isChecked())
+                value = "1080p60hz";
+            else if (mRadio_p1080i60.isChecked())
+                value = "1080i60hz";
+            else if (mRadio_p1080i50.isChecked())
+                value = "1080i50hz";
+            else if (mRadio_p1080p50.isChecked())
+                value = "1080p50hz";
+            else if (mRadio_p1080p30.isChecked())
+                value = "1080p30hz";
+
             writer.println("setenv hdmi_phy_res \"" + value +"\"\n");
 
             writer.println("setenv led_blink        \"1\"\n");
