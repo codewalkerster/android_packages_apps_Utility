@@ -87,6 +87,13 @@ public class MainActivity extends Activity {
     private String mProduct;
     private String mHDMIRotation = "0";
 
+    private final static int CPU_TAB = 0;
+    private final static int MOUSE_TAB = 1;
+    private final static int SCREEN_TAB = 2;
+    private final static int ROTATION_TAB = 3;
+    private final static int CAMERA_TAB = 4;
+    private final static int MIC_TAB = 5;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -337,10 +344,11 @@ public class MainActivity extends Activity {
         else
             mRadio_left.setChecked(true);
 
-        if (!(mProduct.equals("odroidx") || mProduct.equals("odroidx2"))) 
-            tabHost.getTabWidget().getChildAt(4).setVisibility(View.GONE);
-        else
-            tabHost.getTabWidget().getChildAt(5).setVisibility(View.GONE);
+        tabHost.getTabWidget().getChildAt(MOUSE_TAB).setVisibility(View.GONE);
+        tabHost.getTabWidget().getChildAt(CAMERA_TAB).setVisibility(View.GONE);
+
+        if (mProduct.equals("odroidx") || mProduct.equals("odroidx2"))
+            tabHost.getTabWidget().getChildAt(MIC_TAB).setVisibility(View.GONE);
 
         //tabHost.getTabWidget().getChildAt(3).setVisibility(View.GONE);
 
