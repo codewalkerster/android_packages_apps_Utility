@@ -129,6 +129,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/apply" />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -249,19 +250,31 @@
                         android:orientation="horizontal" >
 
                         <RadioButton
-                            android:id="@+id/radio_p720"
+                            android:id="@+id/radio_p720p50"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/p720p50" />
+
+                        <RadioButton
+                            android:id="@+id/radio_p720p60"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="5dp"
                             android:checked="true"
-                            android:text="@string/p720p" />
+                            android:text="@string/p720p60" />
 
                         <RadioButton
-                            android:id="@+id/radio_p1080"
+                            android:id="@+id/radio_p1080p50"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/p1080p50" />
+
+                        <RadioButton
+                            android:id="@+id/radio_p1080p60"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
-                            android:text="@string/p1080p" />
+                            android:text="@string/p1080p60" />
                     </RadioGroup>
 
                     <Button
