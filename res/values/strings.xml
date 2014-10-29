@@ -12,7 +12,7 @@
     <string name="left_handed">Left-handed</string>
     <string name="right_handed">Right-handed</string>
     <string name="mouse">Mouse</string>
-    <string name="apply">Apply</string>
+    <string name="apply">Save</string>
     <string name="vout_mode">vout mode</string>
     <string name="hdmi">HDMI</string>
     <string name="dvi">DVI</string>
