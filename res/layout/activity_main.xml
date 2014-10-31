@@ -172,7 +172,7 @@
 
                     <RadioGroup
                         android:id="@+id/radioGroup_phy"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal" >
 
@@ -183,6 +183,12 @@
                             android:layout_marginLeft="5dp"
                             android:checked="true"
                             android:text="@string/p720p60" />
+
+                        <RadioButton
+                            android:id="@+id/radio_p800p59"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/p800p59" />
 
                         <RadioButton
                             android:id="@+id/radio_p720p50"

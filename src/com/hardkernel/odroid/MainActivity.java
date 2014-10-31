@@ -57,6 +57,7 @@ public class MainActivity extends Activity {
     private RadioButton mRadio_p1080p30;
     private RadioButton mRadio_p1080i60;
     private RadioButton mRadio_p1080i50;
+    private RadioButton mRadio_p800p59;
     private RadioButton mRadio_p720p60;
     private RadioButton mRadio_p720p50;
 
@@ -239,6 +240,7 @@ public class MainActivity extends Activity {
         mRadio_p1080i50 = (RadioButton)findViewById(R.id.radio_p1080i50);
         mRadio_p720p60 = (RadioButton)findViewById(R.id.radio_p720p60);
         mRadio_p720p50 = (RadioButton)findViewById(R.id.radio_p720p50);
+        mRadio_p800p59 = (RadioButton)findViewById(R.id.radio_p800p59);
 
         mRG_resolution = (RadioGroup)findViewById(R.id.radioGroup_resolution);
         mRG_phy = (RadioGroup)findViewById(R.id.radioGroup_phy);
@@ -304,10 +306,15 @@ public class MainActivity extends Activity {
                             Log.e(TAG, "720P 60Hz");
                             mRadio_saved_phy = mRadio_p720p60;
                         } else if (line.contains("720p50hz")) {
-                            mRadio_p720p60.setChecked(true);
+                            mRadio_p720p50.setChecked(true);
                             Log.e(TAG, "720P 50Hz");
                             mRadio_saved_phy = mRadio_p720p50;
+                        } else if (line.contains("800p59hz")) {
+                            mRadio_p800p59.setChecked(true);
+                            Log.e(TAG, "800P 59Hz");
+                            mRadio_saved_phy = mRadio_p800p59;
                         }
+
                     }
                 }
                 bufferedReader.close();
@@ -515,7 +522,9 @@ public class MainActivity extends Activity {
             "setenv hsync    \"14\"\n" +
             "setenv vsync    \"3\"\n\n");
 
-            if (mRadio_p720p60.isChecked())
+            if (mRadio_p800p59.isChecked())
+                value = "800p59hz";
+            else if (mRadio_p720p60.isChecked())
                 value = "720p60hz";
             else if (mRadio_p720p50.isChecked())
                 value = "720p50hz";
@@ -585,7 +594,7 @@ public class MainActivity extends Activity {
             mRG_phy.getChildAt(i).setEnabled(true);
         }
 
-        mRadio_r1280_800.setEnabled(false);
+        //mRadio_r1280_800.setEnabled(false);
 
         if (mRadio_saved_resolution == mRadio_r1920)
             mRadio_r1920.setChecked(true);
@@ -594,7 +603,9 @@ public class MainActivity extends Activity {
         else
             mRadio_r1280_720.setChecked(true);
 
-        if (mRadio_saved_phy == mRadio_p720p50)
+        if (mRadio_saved_phy == mRadio_p800p59)
+            mRadio_p800p59.setChecked(true);
+        else if (mRadio_saved_phy == mRadio_p720p50)
             mRadio_p720p60.setChecked(true);
         else if (mRadio_saved_phy == mRadio_p720p50)
             mRadio_p720p50.setChecked(true);
