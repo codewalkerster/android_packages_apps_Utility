@@ -16,7 +16,7 @@ public class BootReceiver extends BroadcastReceiver {
 		String action = intent.getAction();
 		if (action.equals(Intent.ACTION_BOOT_COMPLETED)) {
 			SharedPreferences pref = context.getSharedPreferences("utility", Context.MODE_PRIVATE);
-	        MainActivity.setGovernor(pref.getString("governor", "ondemand"));
+	        MainActivity.setGovernor(pref.getString("governor", "interactive"));
 	        MainActivity.setMouse(pref.getString("mouse", "right"));
 		}
 	}

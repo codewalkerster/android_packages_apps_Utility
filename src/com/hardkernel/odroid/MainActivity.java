@@ -155,7 +155,7 @@ public class MainActivity extends Activity {
         tab4.setIndicator("Rotation");
         tab4.setContent(R.id.tab4);
 
-        //tabHost.addTab(tab1);
+        tabHost.addTab(tab1);
         //tabHost.addTab(tab2);
         tabHost.addTab(tab3);
         tabHost.addTab(tab4);
@@ -163,7 +163,7 @@ public class MainActivity extends Activity {
         mSpinnerGovernor = (Spinner) findViewById(R.id.spinner_governors);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> mAdapterGovenor = ArrayAdapter.createFromResource(this,
-                R.array.governor_array, android.R.layout.simple_spinner_item);
+                R.array.governor_s805_array, android.R.layout.simple_spinner_item);
         mAdapterGovenor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinnerGovernor.setAdapter(mAdapterGovenor);
 
