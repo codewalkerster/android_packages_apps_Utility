@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="resolution_array">
+        <item >480i</item>
+        <item >480p</item>
+        <item >576i</item>
+        <item >576p</item>
+        <item >720p</item>
+        <item >800p</item>
+        <item >vga</item>
+        <item >sxga</item>
+        <item >xga</item>
+        <item >800x480p60hz</item>
+        <item >1920x1200</item>
+        <item >1080i</item>
+        <item >1080p</item>
+        <item >720p50hz</item>
+        <item >1080i50hz</item>
+        <item >1080p50hz</item>
+        <item >1080p24hz</item>
+    </string-array>
+</resources>
+
