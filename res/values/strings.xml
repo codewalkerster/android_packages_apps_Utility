@@ -43,5 +43,14 @@
     <string name="r720x1080">720 x 1280</string>
     <string name="degree_90">90°</string>
     <string name="degree_270">270°</string>
-    
+    <string name="top">Top</string>
+    <string name="bottom">Bottom</string>
+    <string name="left">Left</string>
+    <string name="right">Right</string>
+    <string name="left_arrorw">◀</string>
+    <string name="right_arrow">▶</string>
+    <string name="up_arrow">▲</string>
+    <string name="down_arrow">▼</string>
+    <string name="zero">0</string>
+
 </resources>
