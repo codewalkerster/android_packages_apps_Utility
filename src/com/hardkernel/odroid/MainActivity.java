@@ -381,7 +381,7 @@ public class MainActivity extends Activity {
                 else
                     mResolution = resolution;
 
-                enableOverScanButtons(mSystemResolution.equals(mResolution));
+                enableOverScanButtons(mSystemResolution.equals(mResolution) && mOrientation.equals("landscape"));
 
                 Log.e(TAG, "Selected resolution = " + resolution);
             }
@@ -401,8 +401,6 @@ public class MainActivity extends Activity {
             mRadio_right.setChecked(true);
         else
             mRadio_left.setChecked(true);
-
-        setOverScanRange(mResolution);
 
         mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
 
@@ -588,7 +586,7 @@ public class MainActivity extends Activity {
             btn.setEnabled(enable);
     }
 
-    private void setOverScanRange(String resolution) {
+    private void setOverScanRange() {
         String line = "";
         try {
             BufferedReader r = new BufferedReader(
@@ -608,8 +606,7 @@ public class MainActivity extends Activity {
         mTopValue = new Integer(axis[1]);
         mRightValue = new Integer(axis[2]);
         mBottomValue = new Integer(axis[3]);
-        Log.e(TAG, "Resolution = " + resolution
-                + " :  left : " + mLeftValue
+        Log.e(TAG, "left : " + mLeftValue
                 + ", top : " + mTopValue
                 + ", right : " + mRightValue
                 + ", bottom : " + mBottomValue);
@@ -719,6 +716,9 @@ public class MainActivity extends Activity {
         // TODO Auto-generated method stub
         super.onResume();
 
+        setOverScanRange();
+
+        enableOverScanButtons(mOrientation.equals("landscape"));
     }
 
     protected String getCurrentGovernor() {
