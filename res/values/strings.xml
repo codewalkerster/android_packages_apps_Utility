@@ -52,5 +52,6 @@
     <string name="up_arrow">▲</string>
     <string name="down_arrow">▼</string>
     <string name="zero">0</string>
+    <string name="kodi">Auto start KODI on boot.</string>
 
 </resources>

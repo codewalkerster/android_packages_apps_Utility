@@ -9,6 +9,7 @@ import android.util.Log;
 public class BootReceiver extends BroadcastReceiver {
 
     private final static String TAG = "ODROIDUtility";
+    private final static String autoStart = "org.xbmc.kodi";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -18,6 +19,11 @@ public class BootReceiver extends BroadcastReceiver {
             SharedPreferences pref = context.getSharedPreferences("utility", Context.MODE_PRIVATE);
             MainActivity.setGovernor(pref.getString("governor", "interactive"));
             MainActivity.setMouse(pref.getString("mouse", "right"));
+
+            /* Auto start application on boot */
+            if (pref.getBoolean("kodi", false))
+                context.startActivity(context.getPackageManager()
+                                        .getLaunchIntentForPackage(autoStart));
         }
     }
 

@@ -26,6 +26,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -45,6 +48,8 @@ public class MainActivity extends Activity {
 
     private Spinner mSpinnerGovernor;
     private String mGovernorString;
+
+    private CheckBox mCBKodi;
 
     private RadioButton mRadio_left;
     private RadioButton mRadio_right;
@@ -101,8 +106,6 @@ public class MainActivity extends Activity {
             mSu = Runtime.getRuntime().exec("su");
         } catch (Exception e) {
         }
-
-        SharedPreferences pref = getSharedPreferences("utility", Context.MODE_PRIVATE);
 
         mRadio_left = (RadioButton)findViewById(R.id.radio_left);
         mRadio_right = (RadioButton)findViewById(R.id.radio_right);
@@ -231,6 +234,19 @@ public class MainActivity extends Activity {
         if (mGovernorString != null) {
             mSpinnerGovernor.setSelection(mAdapterGovenor.getPosition(mGovernorString));
         }
+
+        mCBKodi = (CheckBox)findViewById(R.id.cb_kodi);
+        mCBKodi.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // TODO Auto-generated method stub
+                SharedPreferences pref = getSharedPreferences("utility", MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putBoolean("kodi", isChecked);
+                editor.commit();
+            }
+        });
 
         mTextViewTopValue = (TextView)findViewById(R.id.tv_top);
         mTextViewTopValue.setText(Integer.toString(mTopDelta));
@@ -396,11 +412,6 @@ public class MainActivity extends Activity {
 
         mRadio_left = (RadioButton)findViewById(R.id.radio_left);
         mRadio_right = (RadioButton)findViewById(R.id.radio_right);
-
-        if (pref.getString("mouse", "right").equals("right"))
-            mRadio_right.setChecked(true);
-        else
-            mRadio_left.setChecked(true);
 
         mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
 
@@ -719,6 +730,14 @@ public class MainActivity extends Activity {
         setOverScanRange();
 
         enableOverScanButtons(mOrientation.equals("landscape"));
+        SharedPreferences pref = getSharedPreferences("utility", Context.MODE_PRIVATE);
+        mCBKodi.setChecked(pref.getBoolean("kodi", false));
+
+        if (pref.getString("mouse", "right").equals("right"))
+            mRadio_right.setChecked(true);
+        else
+            mRadio_left.setChecked(true);
+
     }
 
     protected String getCurrentGovernor() {
