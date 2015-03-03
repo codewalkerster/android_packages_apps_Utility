@@ -67,6 +67,7 @@ public class MainActivity extends Activity {
     private RadioButton mRadio_r1280;
     private RadioButton mRadio_r1360;
     private RadioButton mRadio_p1080p60;
+    private RadioButton mRadio_p1080i60;
     private RadioButton mRadio_p1080p50;
     private RadioButton mRadio_p720p60;
     private RadioButton mRadio_p720p50;
@@ -380,6 +381,7 @@ public class MainActivity extends Activity {
         mRadio_r1280 = (RadioButton)findViewById(R.id.radio_r1280);
         mRadio_r1360 = (RadioButton)findViewById(R.id.radio_r1360);
         mRadio_p1080p60 = (RadioButton)findViewById(R.id.radio_p1080p60);
+        mRadio_p1080i60 = (RadioButton)findViewById(R.id.radio_p1080i60);
         mRadio_p1080p50 = (RadioButton)findViewById(R.id.radio_p1080p50);
         mRadio_p720p60 = (RadioButton)findViewById(R.id.radio_p720p60);
         mRadio_p720p50 = (RadioButton)findViewById(R.id.radio_p720p50);
@@ -448,7 +450,10 @@ public class MainActivity extends Activity {
 
                     if (line.contains("hdmi_phy_res")) {
                         mRadio_saved_phy = null;
-                        if (line.contains("1080")) {
+                        if (line.contains("1080i")) {
+                            mRadio_p1080i60.setChecked(true);
+                            Log.e(TAG, "1080I60");
+                        } else if (line.contains("1080")) {
                             mRadio_p1080p60.setChecked(true);
                             Log.e(TAG, "1080P60");
                             mRadio_saved_phy = mRadio_p1080p60;
@@ -670,6 +675,8 @@ public class MainActivity extends Activity {
                 value = "720";
             else if (mRadio_p720p50.isChecked())
                 value = "720p50";
+            else if (mRadio_p1080i60.isChecked())
+                value = "1080i";
             else if (mRadio_p1080p60.isChecked())
                 value = "1080";
             else if (mRadio_p1080p50.isChecked())
@@ -736,6 +743,8 @@ public class MainActivity extends Activity {
                 mRadio_p720p60.setChecked(true);
             else if (mRadio_saved_phy == mRadio_p720p50)
                 mRadio_p720p50.setChecked(true);
+            else if (mRadio_saved_phy == mRadio_p1080i60)
+                mRadio_p1080i60.setChecked(true);
             else if (mRadio_saved_phy == mRadio_p1080p60)
                 mRadio_p1080p60.setChecked(true);
             else if (mRadio_saved_phy == mRadio_p1080p50)

@@ -275,6 +275,12 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
                             android:text="@string/p1080p60" />
+
+                        <RadioButton
+                            android:id="@+id/radio_p1080i60"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/p1080i60" />
                     </RadioGroup>
 
                     <Button
