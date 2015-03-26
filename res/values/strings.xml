@@ -8,6 +8,7 @@
     <string name="cpu_governor">CPU Governor</string>
     <string name="cpu_max_freq">CPU Max Frequency</string>
     <string name="cpu_min_freq">CPU Min Frequency</string>
+    <string name="cpu_freq">CPU Frequency</string>
     <string name="buttons">Buttons</string>
     <string name="left_handed">Left-handed</string>
     <string name="right_handed">Right-handed</string>

@@ -41,6 +41,9 @@ public class MainActivity extends Activity {
     private final static String TAG = "ODROIDUtility";
     public final static String GOVERNOR_NODE = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor";
 
+    public final static String SCALING_AVAILABLE_FREQUESIES = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies";
+    public final static String SCALING_MAX_FREQ = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq";
+
     public final static String WINDOW_AXIS = "/sys/class/graphics/fb0/window_axis";
     public final static String FREE_SCALE_AXIS = "/sys/class/graphics/fb0/free_scale_axis";
     public final static String FREE_SCALE = "/sys/class/graphics/fb0/free_scale";
@@ -48,6 +51,9 @@ public class MainActivity extends Activity {
 
     private Spinner mSpinnerGovernor;
     private String mGovernorString;
+
+    private Spinner mSpinnerFreq;
+    private String mScalingMaxFreq;
 
     private CheckBox mCBKodi;
 
@@ -234,6 +240,41 @@ public class MainActivity extends Activity {
         if (mGovernorString != null) {
             mSpinnerGovernor.setSelection(mAdapterGovenor.getPosition(mGovernorString));
         }
+
+        mSpinnerFreq = (Spinner) findViewById(R.id.spinner_freq);
+
+        String available_freq = getScaclingAvailableFrequensies();
+        String[] freq_array = available_freq.split(" ");
+        ArrayAdapter<String> freqAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, freq_array);
+        freqAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinnerFreq.setAdapter(freqAdapter);
+
+        mSpinnerFreq.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                    int position, long id) {
+                // TODO Auto-generated method stub
+                String freq = parent.getItemAtPosition(position).toString();
+                Log.e(TAG, "freq");
+                setScalingMaxFreq(freq);
+
+                SharedPreferences pref = getSharedPreferences("utility", MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("freq", freq);
+                editor.commit();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // TODO Auto-generated method stub
+            }
+        });
+
+        mScalingMaxFreq = getScaclingCurFreq();
+
+        if (mScalingMaxFreq != null)
+            mSpinnerFreq.setSelection(freqAdapter.getPosition(mScalingMaxFreq));
 
         mCBKodi = (CheckBox)findViewById(R.id.cb_kodi);
         mCBKodi.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -691,6 +732,19 @@ public class MainActivity extends Activity {
         }
     }
 
+    public static void setScalingMaxFreq(String freq) {
+        BufferedWriter out;
+        try {
+            out = new BufferedWriter(new FileWriter(SCALING_MAX_FREQ));
+            out.write(freq);
+            out.newLine();
+            out.close();
+            Log.e(TAG, "set freq : " + freq);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void setResolution(String resolution) {
         try {
             OutputStream stream;
@@ -756,6 +810,38 @@ public class MainActivity extends Activity {
         }
 
         return governor;
+    }
+
+    protected String getScaclingCurFreq() {
+        String freq = null;
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(SCALING_MAX_FREQ));
+            freq = bufferedReader.readLine();
+            bufferedReader.close();
+            Log.e(TAG, freq);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return freq;
+    }
+
+    protected String getScaclingAvailableFrequensies() {
+        String available_freq = null;
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(SCALING_AVAILABLE_FREQUESIES));
+            available_freq = bufferedReader.readLine();
+            bufferedReader.close();
+            Log.e(TAG, available_freq);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return available_freq;
     }
 
     @Override
