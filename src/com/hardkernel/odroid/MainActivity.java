@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -78,17 +79,24 @@ public class MainActivity extends Activity {
     private RadioButton mRadio_saved_resolution;
     private RadioButton mRadio_saved_phy;
 
-    private RadioButton mRadio_hdmi_portrait;
-    private RadioButton mRadio_hdmi_landscape;
+    private RadioButton mRadio_portrait;
+    private RadioButton mRadio_landscape;
+
+    private RadioButton mRadio_90;
+    private RadioButton mRadio_270;
 
     private RadioButton mRadio_AnalogMIC;
     private RadioButton mRadio_DigitalMIC;
 
     private RadioGroup mRG_resolution;
     private RadioGroup mRG_phy;
+    private RadioGroup mRG_degree;
 
     private String mProduct;
-    private String mHDMIRotation = "0";
+    private String mOrientation;
+    private int mDegree;
+
+    private Process mSu;
 
     private final static int CPU_TAB = 0;
     private final static int MOUSE_TAB = 1;
@@ -101,6 +109,12 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        try {
+            mSu = Runtime.getRuntime().exec("su");
+        } catch (Exception e) {
+        }
+
 
         mRadio_left = (RadioButton)findViewById(R.id.radio_left);
         mRadio_right = (RadioButton)findViewById(R.id.radio_right);
@@ -117,6 +131,9 @@ public class MainActivity extends Activity {
         }
         BufferedReader bufferedReader = new BufferedReader(
                   new InputStreamReader(inputstream));
+
+        mOrientation = "landscape";
+        mDegree = 0;
 
         String line;
         try {
@@ -135,9 +152,19 @@ public class MainActivity extends Activity {
                     mProduct = line.substring(21, line.length() -1);
                     Log.e(TAG, mProduct);
                 }
-                if (line.contains("ro.sf.hdmirotation")) {
-                    Log.e(TAG, line);
-                    mHDMIRotation = line.substring(line.length() - 2, line.length() - 1);
+                if (line.contains("persist.demo.hdmirotation")) {
+                    if (line.contains("portrait")) {
+                        Log.e(TAG, line);
+                        mOrientation = "portrait";
+                    }
+                }
+                if (line.contains("ro.sf.hwrotation")) {
+                    if (line.contains("90"))
+                        mDegree = 90;
+                    else if (line.contains("270"))
+                        mDegree = 270;
+                    else if (line.contains("0"))
+                        mDegree = 0;
                 }
             }
             bufferedReader.close();
@@ -548,8 +575,7 @@ public class MainActivity extends Activity {
                 OutputStream stream;
                 Process p;
                 try {
-                    p = Runtime.getRuntime().exec("su");
-                    stream = p.getOutputStream();
+                    stream = mSu.getOutputStream();
                     String cmd =  "mount -o rw,remount /system \n";
                     stream.write(cmd.getBytes());
                     stream.flush();
@@ -574,49 +600,6 @@ public class MainActivity extends Activity {
 
         });
 
-        mRadio_hdmi_portrait = (RadioButton)findViewById(R.id.radio_potrait);
-        mRadio_hdmi_landscape = (RadioButton)findViewById(R.id.radio_landscape);
-
-        if (mHDMIRotation.equals("0"))
-            mRadio_hdmi_landscape.setChecked(true);
-        else
-            mRadio_hdmi_portrait.setChecked(true);
-
-        btn = (Button)findViewById(R.id.button_rotation_apply);
-        btn.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-
-                Process p;
-                try {
-                    p = Runtime.getRuntime().exec("su");
-                    DataOutputStream stdin = new DataOutputStream(p.getOutputStream());
-                    stdin.writeBytes("mount -o rw,remount /system\n");
-
-                    SharedPreferences pref = getSharedPreferences("utility", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = pref.edit();
-
-                    if (mRadio_hdmi_portrait.isChecked()) {
-                        stdin.writeBytes("sed -i s/ro.sf.hdmirotation=0/ro.sf.hdmirotation=1/g /system/build.prop\n");
-                        editor.putString("hdmi_rotation", "1");
-                    } else if (mRadio_hdmi_landscape.isChecked()) {
-                        stdin.writeBytes("sed -i s/ro.sf.hdmirotation=1/ro.sf.hdmirotation=0/g /system/build.prop\n");
-                        editor.putString("hdmi_rotation", "0");
-                    }
-
-                    editor.commit();
-
-                    stdin.writeBytes("mount -o ro,remount /system\n");
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-
-        });
-
         btn = (Button)findViewById(R.id.button_apply_reboot);
         btn.setOnClickListener(new OnClickListener() {
 
@@ -629,6 +612,118 @@ public class MainActivity extends Activity {
 
         });
 
+        mRadio_portrait = (RadioButton)findViewById(R.id.radio_portrait);
+        mRadio_landscape = (RadioButton)findViewById(R.id.radio_landscape);
+        mRadio_90 = (RadioButton)findViewById(R.id.radio_90);
+        mRadio_270 = (RadioButton)findViewById(R.id.radio_270);
+        mRG_degree = (RadioGroup)findViewById(R.id.radioGroup_degree);
+        if (mOrientation.equals("landscape")) {
+           mRadio_landscape.setChecked(true);
+           mRG_degree.setVisibility(View.GONE);
+           mDegree = 0;
+        } else {
+           mRadio_portrait.setChecked(true);
+           mRG_degree.setVisibility(View.VISIBLE);
+        }
+
+        if (mDegree == 90) {
+            mRadio_90.setChecked(true);
+            mRadio_270.setChecked(false);
+        } else {
+            mRadio_90.setChecked(false);
+            mRadio_270.setChecked(true);
+        }
+
+        mRadio_portrait.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                mRG_degree.setVisibility(View.VISIBLE);
+                mDegree = 270;
+                mRadio_90.setChecked(false);
+                mRadio_270.setChecked(true);
+            }
+
+        });
+
+        mRadio_landscape.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                mRG_degree.setVisibility(View.GONE);
+                mDegree = 0;
+            }
+
+        });
+
+        mRadio_90.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                mDegree = 90;
+            }
+
+        });
+
+        mRadio_270.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                mDegree = 270;
+            }
+
+        });
+
+
+        btn = (Button)findViewById(R.id.button_rotation_apply);
+        btn.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                try {
+                    DataOutputStream stdin = new DataOutputStream(mSu.getOutputStream());
+                    stdin.writeBytes("mount -o rw,remount /system\n");
+
+                    if (mRadio_portrait.isChecked()) {
+                        stdin.writeBytes("sed -i s/persist.demo.hdmirotation=landscape/persist.demo.hdmirotation=portrait/g /system/build.prop\n");
+                        if (mDegree == 90) {
+                            stdin.writeBytes("sed -i s/ro.sf.hwrotation=0/ro.sf.hwrotation=90/g /system/build.prop\n");
+                            stdin.writeBytes("sed -i s/ro.sf.hwrotation=270/ro.sf.hwrotation=90/g /system/build.prop\n");
+                        } else {
+                            stdin.writeBytes("sed -i s/ro.sf.hwrotation=0/ro.sf.hwrotation=270/g /system/build.prop\n");
+                            stdin.writeBytes("sed -i s/ro.sf.hwrotation=90/ro.sf.hwrotation=270/g /system/build.prop\n");
+                        }
+                    } else if (mRadio_landscape.isChecked()) {
+                        stdin.writeBytes("sed -i s/persist.demo.hdmirotation=portrait/persist.demo.hdmirotation=landscape/g /system/build.prop\n");
+                        stdin.writeBytes("sed -i s/ro.sf.hwrotation=90/ro.sf.hwrotation=0/g /system/build.prop\n");
+                        stdin.writeBytes("sed -i s/ro.sf.hwrotation=270/ro.sf.hwrotation=0/g /system/build.prop\n");
+                    }
+
+                    stdin.writeBytes("mount -o ro,remount /system\n");
+                    if (mDegree == 0) {
+                        android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
+                        android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 0);
+                    } else if (mDegree == 90) {
+                        android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
+                        android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 1);
+                    } else if (mDegree == 270) {
+                        android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
+                        android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 3);
+                    }
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+                saveBootIni();
+            }
+
+        });
     }
 
     public void saveBootIni() {
@@ -703,10 +798,8 @@ public class MainActivity extends Activity {
 
     void reboot() {
         OutputStream stream;
-        Process p;
         try {
-            p = Runtime.getRuntime().exec("su");
-            stream = p.getOutputStream();
+            stream = mSu.getOutputStream();
             String cmd =  "reboot";
             stream.write(cmd.getBytes());
             stream.flush();
@@ -828,15 +921,9 @@ public class MainActivity extends Activity {
     protected void onResume() {
         // TODO Auto-generated method stub
         super.onResume();
-
-        /*
-        try {
-            Runtime.getRuntime().exec("su").getInputStream();
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        if (mRadio_portrait.isChecked()) {
+            mRG_degree.setVisibility(View.VISIBLE);
         }
-        */
     }
 
     protected String getCurrentGovernor() {
