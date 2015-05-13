@@ -465,11 +465,16 @@ public class MainActivity extends Activity {
                     }
 
                     stdin.writeBytes("mount -o ro,remount /system\n");
-                    if (mDegree == 0)
-                        android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 1);
-                    else
+                    if (mDegree == 0) {
                         android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
-                    android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 1);
+                        android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 0);
+                    } else if (mDegree == 90) {
+                        android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
+                        android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 1);
+                    } else if (mDegree == 270) {
+                        android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
+                        android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 3);
+                    }
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
