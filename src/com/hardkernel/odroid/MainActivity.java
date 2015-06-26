@@ -119,14 +119,6 @@ public class MainActivity extends Activity {
                     else if (line.contains("0"))
                         mDegree = 0;
                 }
-                if (line.contains("vout")) {
-                    Log.e(TAG, line);
-                    if (line.contains("hdmi"))
-                        mRadio_hdmi.setChecked(true);
-                    else
-                        mRadio_dvi.setChecked(true);
-                }
-
             }
             bufferedReader.close();
         } catch (IOException e1) {
@@ -208,16 +200,16 @@ public class MainActivity extends Activity {
                         break;
                     if (line.contains("vout")) {
                         Log.e(TAG, line);
-                        if (line.contains("hdmi")) {
+                        if (line.contains("hdmi") && line.indexOf("#") < 0) {
                             Log.e(TAG, "HDMI");
                             mRadio_hdmi.setChecked(true);
-                        } else if (line.contains("dvi")) {
+                        } else if (line.contains("dvi") && line.indexOf("#") < 0) {
                             Log.e(TAG, "DVI");
                             mRadio_dvi.setChecked(true);
                         }
                     }
 
-                    if (line.contains("hdmi_phy_res")) {
+                    if (line.contains("hdmi_phy_res") && line.indexOf("#") < 0) {
                         Log.e(TAG, line);
                         mResolution = line.substring(line.indexOf("\"") + 1, line.length() - 1);
                         Log.e(TAG, mResolution);
