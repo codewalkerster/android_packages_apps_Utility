@@ -118,120 +118,17 @@
                             android:text="@string/hdmi" />
 
                         <RadioButton
-                            android:id="@+id/radio_lcd"
+                            android:id="@+id/radio_dvi"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
-                            android:text="@string/lcd" />
+                            android:text="@string/dvi" />
                     </RadioGroup>
 
-                    <TextView
-                        android:id="@+id/textView5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:text="@string/resolution"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                    <RadioGroup
-                        android:id="@+id/radioGroup_resolution"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal" >
-
-                        <RadioButton
-                            android:id="@+id/radio_r1280_800"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp"
-                            android:checked="true"
-                            android:text="@string/r1280x800" />
-
-                        <RadioButton
-                            android:id="@+id/radio_r1280"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="10dp"
-                            android:text="@string/r1280x720" />
-
-                        <RadioButton
-                            android:id="@+id/radio_r1920"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="10dp"
-                            android:text="@string/r1920x1080" />
-                    </RadioGroup>
-
-                    <TextView
-                        android:id="@+id/textView6"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:text="@string/hdmi_phy"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                    <RadioGroup
-                        android:id="@+id/radioGroup_phy"
+                    <Spinner
+                        android:id="@+id/spinner_resolution"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal" >
-
-                        <RadioButton
-                            android:id="@+id/radio_p720p60"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="5dp"
-                            android:checked="true"
-                            android:text="@string/p720p60" />
-
-                        <RadioButton
-                            android:id="@+id/radio_p800p59"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/p800p59" />
-
-                        <RadioButton
-                            android:id="@+id/radio_p720p50"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="10dp"
-                            android:text="@string/p720p50" />
-
-                        <RadioButton
-                            android:id="@+id/radio_p1080p60"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="10dp"
-                            android:text="@string/p1080p60" />
-
-                        <RadioButton
-                            android:id="@+id/radio_p1080p50"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="10dp"
-                            android:text="@string/p1080p50" />
-
-                        <RadioButton
-                            android:id="@+id/radio_p1080p30"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="10dp"
-                            android:text="@string/p1080p30" />
-
-                        <RadioButton
-                            android:id="@+id/radio_p1080i60"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="10dp"
-                            android:text="@string/p1080i60" />
-
-                        <RadioButton
-                            android:id="@+id/radio_p1080i50"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="10dp"
-                            android:text="@string/p1080i50" />
-                    </RadioGroup>
+                        android:layout_height="wrap_content" />
 
                     <Button
                         android:id="@+id/button_screen_apply"

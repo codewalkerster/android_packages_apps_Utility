@@ -48,21 +48,9 @@ public class MainActivity extends Activity {
     private RadioButton mRadio_right;
 
     private RadioButton mRadio_hdmi;
-    private RadioButton mRadio_lcd;
-    private RadioButton mRadio_r1920;
-    private RadioButton mRadio_r1280_720;
-    private RadioButton mRadio_r1280_800;
-    private RadioButton mRadio_p1080p60;
-    private RadioButton mRadio_p1080p50;
-    private RadioButton mRadio_p1080p30;
-    private RadioButton mRadio_p1080i60;
-    private RadioButton mRadio_p1080i50;
-    private RadioButton mRadio_p800p59;
-    private RadioButton mRadio_p720p60;
-    private RadioButton mRadio_p720p50;
-
-    private RadioButton mRadio_saved_resolution;
-    private RadioButton mRadio_saved_phy;
+    private RadioButton mRadio_dvi;
+    private Spinner mSpinner_Resolution;
+    private String mResolution = "720p60hz";
 
     private RadioButton mRadio_portrait;
     private RadioButton mRadio_landscape;
@@ -131,6 +119,14 @@ public class MainActivity extends Activity {
                     else if (line.contains("0"))
                         mDegree = 0;
                 }
+                if (line.contains("vout")) {
+                    Log.e(TAG, line);
+                    if (line.contains("hdmi"))
+                        mRadio_hdmi.setChecked(true);
+                    else
+                        mRadio_dvi.setChecked(true);
+                }
+
             }
             bufferedReader.close();
         } catch (IOException e1) {
@@ -159,6 +155,9 @@ public class MainActivity extends Activity {
         //tabHost.addTab(tab2);
         tabHost.addTab(tab3);
         tabHost.addTab(tab4);
+
+        mRadio_hdmi = (RadioButton)findViewById(R.id.radio_hdmi);
+        mRadio_dvi = (RadioButton)findViewById(R.id.radio_dvi);
 
         mSpinnerGovernor = (Spinner) findViewById(R.id.spinner_governors);
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -197,6 +196,77 @@ public class MainActivity extends Activity {
             mSpinnerGovernor.setSelection(mAdapterGovenor.getPosition(mGovernorString));
         }
 
+        mRadio_hdmi = (RadioButton)findViewById(R.id.radio_hdmi);
+        mRadio_dvi = (RadioButton)findViewById(R.id.radio_dvi);
+
+        File boot_init = new File(BOOT_INI);
+        if (boot_init.exists()) {
+            try {
+                bufferedReader = new BufferedReader(new FileReader(BOOT_INI));
+                while ((line = bufferedReader.readLine()) != null) {
+                    if (line.contains("bootargs"))
+                        break;
+                    if (line.contains("vout")) {
+                        Log.e(TAG, line);
+                        if (line.contains("hdmi")) {
+                            Log.e(TAG, "HDMI");
+                            mRadio_hdmi.setChecked(true);
+                        } else if (line.contains("dvi")) {
+                            Log.e(TAG, "DVI");
+                            mRadio_dvi.setChecked(true);
+                        }
+                    }
+
+                    if (line.contains("hdmi_phy_res")) {
+                        Log.e(TAG, line);
+                        mResolution = line.substring(line.indexOf("\"") + 1, line.length() - 1);
+                        Log.e(TAG, mResolution);
+                    }
+                }
+                bufferedReader.close();
+            } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+        } else {
+            //default value
+            mRadio_hdmi.setChecked(true);
+        }
+
+        mSpinner_Resolution = (Spinner)findViewById(R.id.spinner_resolution);
+        ArrayAdapter<CharSequence> mAdapterResolution = ArrayAdapter.createFromResource(this,
+                R.array.resolution_array, android.R.layout.simple_spinner_item);
+        mAdapterResolution.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinner_Resolution.setAdapter(mAdapterResolution);
+
+        mSpinner_Resolution.setOnItemSelectedListener(new OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1,
+                    int arg2, long arg3) {
+                // TODO Auto-generated method stub
+                String resolution = arg0.getItemAtPosition(arg2).toString();
+                if (mResolution.equals(resolution))
+                    return;
+                else
+                    mResolution = resolution;
+
+                Log.e(TAG, "Selected resolution = " + resolution);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
+
+            }
+
+        });
+        for(int i = 0; i < mAdapterResolution.getCount(); i++) {
+            String item = (String)mAdapterResolution.getItem(i);
+            Log.e(TAG, item);
+        }
+
+        mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
+
         mRadio_left = (RadioButton)findViewById(R.id.radio_left);
         mRadio_right = (RadioButton)findViewById(R.id.radio_right);
 
@@ -205,7 +275,6 @@ public class MainActivity extends Activity {
             mRadio_right.setChecked(true);
         else
             mRadio_left.setChecked(true);
-
 
         Button btn = (Button)findViewById(R.id.button_mouse_apply);
         btn.setOnClickListener(new OnClickListener() {
@@ -223,128 +292,6 @@ public class MainActivity extends Activity {
                     setMouse("right");
                 }
                 editor.commit();
-            }
-
-        });
-
-        mRadio_hdmi = (RadioButton)findViewById(R.id.radio_hdmi);
-        mRadio_lcd = (RadioButton)findViewById(R.id.radio_lcd);
-        mRadio_lcd.setVisibility(View.GONE);
-        mRadio_r1920 = (RadioButton)findViewById(R.id.radio_r1920);
-        mRadio_r1280_720 = (RadioButton)findViewById(R.id.radio_r1280);
-        mRadio_r1280_800 = (RadioButton)findViewById(R.id.radio_r1280_800);
-        mRadio_p1080p60 = (RadioButton)findViewById(R.id.radio_p1080p60);
-        mRadio_p1080p50 = (RadioButton)findViewById(R.id.radio_p1080p50);
-        mRadio_p1080p30 = (RadioButton)findViewById(R.id.radio_p1080p30);
-        mRadio_p1080i60 = (RadioButton)findViewById(R.id.radio_p1080i60);
-        mRadio_p1080i50 = (RadioButton)findViewById(R.id.radio_p1080i50);
-        mRadio_p720p60 = (RadioButton)findViewById(R.id.radio_p720p60);
-        mRadio_p720p50 = (RadioButton)findViewById(R.id.radio_p720p50);
-        mRadio_p800p59 = (RadioButton)findViewById(R.id.radio_p800p59);
-
-        mRG_resolution = (RadioGroup)findViewById(R.id.radioGroup_resolution);
-        mRG_phy = (RadioGroup)findViewById(R.id.radioGroup_phy);
-
-        File boot_init = new File(BOOT_INI);
-        if (boot_init.exists()) {
-            try {
-                bufferedReader = new BufferedReader(new FileReader(BOOT_INI));
-                while ((line = bufferedReader.readLine()) != null) {
-                    if (line.contains("bootargs"))
-                        break;
-                    if (line.contains("fb_y_res")) {
-                        mRadio_saved_resolution = null;
-                        if (line.contains("1080")) {
-                            mRadio_r1920.setChecked(true);
-                            Log.e(TAG, "1920x1080");
-                            mRadio_saved_resolution = mRadio_r1920;
-                        } else if (line.contains("800")) {
-                            mRadio_r1280_800.setChecked(true);
-                            Log.e(TAG, "1280x800");
-                            mRadio_saved_resolution = mRadio_r1280_800;
-                        } else if (line.contains("720")) {
-                            mRadio_r1280_800.setChecked(true);
-                            Log.e(TAG, "1280x720");
-                            mRadio_saved_resolution = mRadio_r1280_720;
-                        }
-                    }
-
-                    if (line.contains("vout")) {
-                        if (line.contains("hdmi")) {
-                            Log.e(TAG, "HDMI");
-                            setHDMIMode();
-                        } else if (line.contains("lcd")) {
-                            Log.e(TAG, "LCD");
-                            setLCDMode();
-                        }
-                    }
-
-                    if (line.contains("hdmi_phy_res")) {
-                        mRadio_saved_phy = null;
-                        if (line.contains("1080p60hz")) {
-                            mRadio_p1080p60.setChecked(true);
-                            Log.e(TAG, "1080P 60Hz");
-                            mRadio_saved_phy = mRadio_p1080p60;
-                        } else if (line.contains("1080p50hz")) {
-                            mRadio_p1080p50.setChecked(true);
-                            Log.e(TAG, "1080P 50Hz");
-                            mRadio_saved_phy = mRadio_p1080p50;
-                        } else if (line.contains("1080p30hz")) {
-                            mRadio_p1080p30.setChecked(true);
-                            Log.e(TAG, "1080P 30Hz");
-                            mRadio_saved_phy = mRadio_p1080p30;
-                        } else if (line.contains("1080i60hz")) {
-                            mRadio_p1080p60.setChecked(true);
-                            Log.e(TAG, "1080i 60Hz");
-                            mRadio_saved_phy = mRadio_p1080i60;
-                        } else if (line.contains("1080i50hz")) {
-                            mRadio_p1080i50.setChecked(true);
-                            Log.e(TAG, "1080i 60Hz");
-                            mRadio_saved_phy = mRadio_p1080i50;
-                        } else if (line.contains("720p60hz")) {
-                            mRadio_p720p60.setChecked(true);
-                            Log.e(TAG, "720P 60Hz");
-                            mRadio_saved_phy = mRadio_p720p60;
-                        } else if (line.contains("720p50hz")) {
-                            mRadio_p720p50.setChecked(true);
-                            Log.e(TAG, "720P 50Hz");
-                            mRadio_saved_phy = mRadio_p720p50;
-                        } else if (line.contains("800p59hz")) {
-                            mRadio_p800p59.setChecked(true);
-                            Log.e(TAG, "800P 59Hz");
-                            mRadio_saved_phy = mRadio_p800p59;
-                        }
-
-                    }
-                }
-                bufferedReader.close();
-            } catch (IOException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
-        } else {
-            //default value
-            mRadio_hdmi.setChecked(true);
-            mRadio_r1280_720.setChecked(true);
-            mRadio_p720p60.setChecked(true);
-        }
-
-        mRadio_hdmi.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                setHDMIMode();
-            }
-
-        });
-
-        mRadio_lcd.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                setLCDMode();
             }
 
         });
@@ -498,26 +445,121 @@ public class MainActivity extends Activity {
 
             writer.println("ODROIDXU-UBOOT-CONFIG\n");
 
-            String value;
-            if (mRadio_r1920.isChecked())
-                value = "1920";
-            else
-                value = "1280";
-            writer.println("setenv fb_x_res \"" + value +"\"");
+            String x_res = "1280";
+            String y_res = "720";
+            if ("480p60hz".equals(mResolution)) {
+                x_res = "640";
+                y_res = "480";
+           } else if ("480p59.45hz".equals(mResolution)) {
+                x_res = "720";
+                y_res = "480";
+            } else if ("576p50hz".equals(mResolution)) {
+                x_res = "720";
+                y_res = "576";
+            } else if ("600p60hz".equals(mResolution)) {
+                x_res = "800";
+                y_res = "600";
+            } else if ("768p60hz".equals(mResolution)) {
+                x_res = "1024";
+                y_res = "768";
+            } else if (mResolution.contains("720p")) {
+                x_res = "1280";
+                y_res = "720";
+            } else if ("800p59hz".equals(mResolution)) {
+                x_res = "1280";
+                y_res = "800";
+            } else if ("960p60hz".equals(mResolution)) {
+                x_res = "1280";
+                y_res = "960";
+            } else if ("900p60hz".equals(mResolution)) {
+                x_res = "1440";
+                y_res = "900";
+            } else if ("1024p60hz".equals(mResolution)) {
+                x_res = "1280";
+                y_res = "1024";
+            } else if (mResolution.contains("1080")) {
+                x_res = "1920";
+                y_res = "1080";
+            }
 
-            if (mRadio_r1920.isChecked())
-                value = "1080";
-            else if (mRadio_r1280_800.isChecked())
-                value = "800";
-            else
-                value = "720";
-            writer.println("setenv fb_y_res \"" + value +"\"\n");
+            writer.println("# setenv fb_x_res \"640\"");
+            writer.println("# setenv fb_y_res \"480\"");
+            writer.println("# setenv hdmi_phy_res \"480p60hz\"\n");
 
-            if (mRadio_hdmi.isChecked())
-                value = "hdmi";
-            else
-                value = "lcd";
-            writer.println("setenv vout \"" + value +"\"\n");
+            writer.println("# setenv fb_x_res \"720\"");
+            writer.println("# setenv fb_y_res \"489\"");
+            writer.println("# setenv hdmi_phy_res \"480p59.45\"\n");
+
+            writer.println("# setenv fb_x_res \"720\"");
+            writer.println("# setenv fb_y_res \"576\"");
+            writer.println("# setenv hdmi_phy_res \"576p50hz\"\n");
+
+            writer.println("# setenv fb_x_res \"800\"");
+            writer.println("# setenv fb_y_res \"600\"");
+            writer.println("# setenv hdmi_phy_res \"600p60hz\"\n");
+
+            writer.println("# setenv fb_x_res \"1280\"");
+            writer.println("# setenv fb_y_res \"720\"");
+            writer.println("# setenv hdmi_phy_res \"720p50hz\"\n");
+
+            writer.println("# setenv fb_x_res \"1280\"");
+            writer.println("# setenv fb_y_res \"720\"");
+            writer.println("# setenv hdmi_phy_res \"720p60hz\"\n");
+
+            writer.println("# setenv fb_x_res \"1280\"");
+            writer.println("# setenv fb_y_res \"768\"");
+            writer.println("# setenv hdmi_phy_res \"768p60hz\"\n");
+
+            writer.println("# setenv fb_x_res \"1280\"");
+            writer.println("# setenv fb_y_res \"800\"");
+            writer.println("# setenv hdmi_phy_res \"800p59hz\"\n");
+
+            writer.println("# setenv fb_x_res \"1280\"");
+            writer.println("# setenv fb_y_res \"960\"");
+            writer.println("# setenv hdmi_phy_res \"960p60hz\"\n");
+
+            writer.println("# setenv fb_x_res \"1440\"");
+            writer.println("# setenv fb_y_res \"900\"");
+            writer.println("# setenv hdmi_phy_res \"900p60hz\"\n");
+
+            writer.println("# setenv fb_x_res \"1440\"");
+            writer.println("# setenv fb_y_res \"900\"");
+            writer.println("# setenv hdmi_phy_res \"900p60hz\"\n");
+
+            writer.println("# setenv fb_x_res \"1280\"");
+            writer.println("# setenv fb_y_res \"1024\"");
+            writer.println("# setenv hdmi_phy_res \"1024p60hz\"\n");
+
+            writer.println("# setenv fb_x_res \"1920\"");
+            writer.println("# setenv fb_y_res \"1080\"");
+            writer.println("# setenv hdmi_phy_res \"1080i50hz\"\n");
+
+            writer.println("# setenv fb_x_res \"1920\"");
+            writer.println("# setenv fb_y_res \"1080\"");
+            writer.println("# setenv hdmi_phy_res \"1080i60hz\"\n");
+
+            writer.println("# setenv fb_x_res \"1920\"");
+            writer.println("# setenv fb_y_res \"1080\"");
+            writer.println("# setenv hdmi_phy_res \"1080p30hz\"\n");
+
+            writer.println("# setenv fb_x_res \"1920\"");
+            writer.println("# setenv fb_y_res \"1080\"");
+            writer.println("# setenv hdmi_phy_res \"1080p50hz\"\n");
+
+            writer.println("# setenv fb_x_res \"1920\"");
+            writer.println("# setenv fb_y_res \"1080\"");
+            writer.println("# setenv hdmi_phy_res \"1080p60hz\"\n");
+
+            writer.println("setenv fb_x_res \"" + x_res +"\"");
+            writer.println("setenv fb_y_res \"" + y_res +"\"\n");
+
+            if (mRadio_hdmi.isChecked()) {
+                writer.println("setenv vout \"hdmi\"");
+                writer.println("# setenv vout \"dvi\"\n");
+            } else {
+                writer.println("# setenv vout \"hdmi\"");
+                writer.println("setenv vout \"dvi\"\n");
+            }
 
             writer.println(
             "setenv left     \"56\"\n" +
@@ -527,24 +569,7 @@ public class MainActivity extends Activity {
             "setenv hsync    \"14\"\n" +
             "setenv vsync    \"3\"\n\n");
 
-            if (mRadio_p800p59.isChecked())
-                value = "800p59hz";
-            else if (mRadio_p720p60.isChecked())
-                value = "720p60hz";
-            else if (mRadio_p720p50.isChecked())
-                value = "720p50hz";
-            else if (mRadio_p1080p60.isChecked())
-                value = "1080p60hz";
-            else if (mRadio_p1080i60.isChecked())
-                value = "1080i60hz";
-            else if (mRadio_p1080i50.isChecked())
-                value = "1080i50hz";
-            else if (mRadio_p1080p50.isChecked())
-                value = "1080p50hz";
-            else if (mRadio_p1080p30.isChecked())
-                value = "1080p30hz";
-
-            writer.println("setenv hdmi_phy_res \"" + value +"\"\n");
+            writer.println("setenv hdmi_phy_res \"" + mResolution +"\"\n");
             writer.println("setenv edid \"0\"\n");
             writer.println("setenv led_blink        \"1\"\n");
             writer.println("setenv bootcmd      \"movi read kernel 0 40008000;bootz 40008000\"\n");
@@ -574,56 +599,6 @@ public class MainActivity extends Activity {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    }
-
-    public void setLCDMode() {
-        mRadio_lcd.setChecked(true);
-        for (int i = 0; i < mRG_resolution.getChildCount(); i++) {
-            mRG_resolution.getChildAt(i).setEnabled(false);
-        }
-
-        for (int i = 0; i < mRG_phy.getChildCount(); i++) {
-            mRG_phy.getChildAt(i).setEnabled(false);
-        }
-
-        mRadio_r1280_800.setChecked(true);
-        mRadio_p1080p60.setChecked(true);
-    }
-
-    public void setHDMIMode() {
-        mRadio_hdmi.setChecked(true);
-        for (int i = 0; i < mRG_resolution.getChildCount(); i++) {
-            mRG_resolution.getChildAt(i).setEnabled(true);
-        }
-        for (int i = 0; i < mRG_phy.getChildCount(); i++) {
-            mRG_phy.getChildAt(i).setEnabled(true);
-        }
-
-        //mRadio_r1280_800.setEnabled(false);
-
-        if (mRadio_saved_resolution == mRadio_r1920)
-            mRadio_r1920.setChecked(true);
-        else if (mRadio_saved_resolution == mRadio_r1280_800)
-            mRadio_r1280_800.setChecked(true);
-        else
-            mRadio_r1280_720.setChecked(true);
-
-        if (mRadio_saved_phy == mRadio_p800p59)
-            mRadio_p800p59.setChecked(true);
-        else if (mRadio_saved_phy == mRadio_p720p50)
-            mRadio_p720p60.setChecked(true);
-        else if (mRadio_saved_phy == mRadio_p720p50)
-            mRadio_p720p50.setChecked(true);
-        else if (mRadio_saved_phy == mRadio_p1080p60)
-            mRadio_p1080p60.setChecked(true);
-        else if (mRadio_saved_phy == mRadio_p1080i60)
-            mRadio_p1080i60.setChecked(true);
-        else if (mRadio_saved_phy == mRadio_p1080i50)
-            mRadio_p1080i50.setChecked(true);
-        else if (mRadio_saved_phy == mRadio_p1080p50)
-            mRadio_p1080p50.setChecked(true);
-        else if (mRadio_saved_phy == mRadio_p1080p30)
-            mRadio_p1080p30.setChecked(true);
     }
 
     public static void setMouse(String handed) {

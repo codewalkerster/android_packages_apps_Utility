@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="resolution_array">
+        <item >480p60hz</item>
+        <item >480p59.45hz</item>
+        <item >576p50hz</item>
+        <item >600p60hz</item>
+        <item >768p60hz</item>
+        <item >720p50hz</item>
+        <item >720p60hz</item>
+        <item >800p59hz</item>
+        <item >960p60hz</item>
+        <item >900p60hz</item>
+        <item >1024p60hz</item>
+        <item >1080i50hz</item>
+        <item >1080i60hz</item>
+        <item >1080p30hz</item>
+        <item >1080p50hz</item>
+        <item >1080p60hz</item>
+    </string-array>
+</resources>
+
