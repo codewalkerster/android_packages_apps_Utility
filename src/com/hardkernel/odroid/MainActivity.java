@@ -543,7 +543,8 @@ public class MainActivity extends Activity {
             writer.println("# setenv hdmi_phy_res \"1080p60hz\"\n");
 
             writer.println("setenv fb_x_res \"" + x_res +"\"");
-            writer.println("setenv fb_y_res \"" + y_res +"\"\n");
+            writer.println("setenv fb_y_res \"" + y_res +"\"");
+            writer.println("setenv hdmi_phy_res \"" + mResolution +"\"\n");
 
             if (mRadio_hdmi.isChecked()) {
                 writer.println("setenv vout \"hdmi\"");
@@ -553,15 +554,6 @@ public class MainActivity extends Activity {
                 writer.println("setenv vout \"dvi\"\n");
             }
 
-            writer.println(
-            "setenv left     \"56\"\n" +
-            "setenv right    \"24\"\n" +
-            "setenv upper    \"3\"\n" +
-            "setenv lower    \"3\"\n" +
-            "setenv hsync    \"14\"\n" +
-            "setenv vsync    \"3\"\n\n");
-
-            writer.println("setenv hdmi_phy_res \"" + mResolution +"\"\n");
             writer.println("setenv edid \"0\"\n");
             writer.println("setenv led_blink        \"1\"\n");
             writer.println("setenv bootcmd      \"movi read kernel 0 40008000;bootz 40008000\"\n");
