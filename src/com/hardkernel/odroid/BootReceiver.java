@@ -25,6 +25,8 @@ public class BootReceiver extends BroadcastReceiver {
             if (pref.getBoolean("kodi", false))
                 context.startActivity(context.getPackageManager()
                                         .getLaunchIntentForPackage(autoStart));
+
+            MainActivity.checkBootINI();
         }
     }
 

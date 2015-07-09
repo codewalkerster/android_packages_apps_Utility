@@ -3,6 +3,7 @@ package com.hardkernel.odroid;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -10,13 +11,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
@@ -49,6 +54,7 @@ public class MainActivity extends Activity {
     public final static String FREE_SCALE = "/sys/class/graphics/fb0/free_scale";
     public final static String FREE_SCALE_VALUE = "0x10001";
 
+    private final static String BOOT_INI = Environment.getExternalStorageDirectory() + "/boot.ini";
     private Spinner mSpinnerGovernor;
     private String mGovernorString;
 
@@ -62,7 +68,7 @@ public class MainActivity extends Activity {
 
     private Spinner mSpinner_Resolution;
     private String mResolution = "720p";
-    private static String mSystemResolution;
+    private static String mSystemResolution = "720p";
 
     private int mTopValue;
     private int mTopDelta = 0;
@@ -154,27 +160,6 @@ public class MainActivity extends Activity {
                         mDegree = 270;
                     else if (line.contains("0"))
                         mDegree = 0;
-                }
-                if (line.contains("[hdmimode]")) {
-                    mResolution = line.substring(line.lastIndexOf("[") + 1, line.length() - 1);
-                    mSystemResolution = mResolution;
-                    Log.e(TAG, mResolution);
-                }
-                if (line.contains("[overscan.top]")) {
-                    mTopDelta = Integer.parseInt(line.substring(line.lastIndexOf("[") + 1, line.length() - 1));
-                    Log.e(TAG, "top : " + mTopDelta);
-                }
-                if (line.contains("[overscan.left]")) {
-                    mLeftDelta = Integer.parseInt(line.substring(line.lastIndexOf("[") + 1, line.length() - 1));
-                    Log.e(TAG, "left : " + mLeftDelta);
-                }
-                if (line.contains("[overscan.right]")) {
-                    mRightDelta = Integer.parseInt(line.substring(line.lastIndexOf("[") + 1, line.length() - 1));
-                    Log.e(TAG, "right : " + mRightDelta);
-                }
-                if (line.contains("[overscan.bottom]")) {
-                    mBottomDelta = Integer.parseInt(line.substring(line.lastIndexOf("[") + 1, line.length() - 1));
-                    Log.e(TAG, "bottom : " + mBottomDelta);
                 }
             }
             bufferedReader.close();
@@ -288,6 +273,51 @@ public class MainActivity extends Activity {
                 editor.commit();
             }
         });
+
+        File boot_init = new File(BOOT_INI);
+        if (boot_init.exists()) {
+            try {
+                bufferedReader = new BufferedReader(new FileReader(BOOT_INI));
+                while ((line = bufferedReader.readLine()) != null) {
+                    if (line.startsWith("setenv bootargs"))
+                        break;
+
+                    if (line.startsWith("setenv hdmimode")) {
+                        Log.e(TAG, line);
+                        mResolution = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
+                        mSystemResolution = mResolution;
+                        Log.e(TAG, mResolution);
+                    }
+
+                    if (line.startsWith("setenv top")) {
+                        mTopDelta = Integer.parseInt(line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")));
+                        Log.e(TAG, "top : " + mTopDelta);
+                    }
+
+                    if (line.startsWith("setenv left")) {
+                        mLeftDelta = Integer.parseInt(line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")));
+                        Log.e(TAG, "left : " + mLeftDelta);
+                    }
+
+                    if (line.startsWith("setenv right")) {
+                        mRightDelta = Integer.parseInt(line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")));
+                        Log.e(TAG, "right : " + mRightDelta);
+                    }
+
+                    if (line.startsWith("setenv bottom")) {
+                        mBottomDelta = Integer.parseInt(line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")));
+                        Log.e(TAG, "bottom : " + mBottomDelta);
+                    }
+                }
+                bufferedReader.close();
+            } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+        } else {
+            //default value
+            Log.e(TAG, "Not found " + BOOT_INI);
+        }
 
         mTextViewTopValue = (TextView)findViewById(R.id.tv_top);
         mTextViewTopValue.setText(Integer.toString(mTopDelta));
@@ -483,12 +513,7 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 Log.e(TAG, "mSystemResolution = " + mSystemResolution + ", mResolution = " + mResolution);
-                if (!mSystemResolution.equals(mResolution)) {
-                    setResolution(mResolution);
-                    saveDelt2ubootenv(0, 0, 0, 0);
-                } else
-                    saveDelt2ubootenv(mLeftDelta, mTopDelta, mRightDelta, mBottomDelta);
-
+                modifyBootIni();
                 reboot();
             }
 
@@ -560,7 +585,6 @@ public class MainActivity extends Activity {
 
         });
 
-
         btn = (Button)findViewById(R.id.button_rotation_apply);
         btn.setOnClickListener(new OnClickListener() {
 
@@ -610,31 +634,111 @@ public class MainActivity extends Activity {
     protected void onPause() {
         // TODO Auto-generated method stub
         super.onPause();
-        saveDelt2ubootenv(mLeftDelta, mTopDelta, mRightDelta, mBottomDelta);
+        modifyBootIni();
     }
 
-    private void saveDelt2ubootenv(int left, int top, int right, int bottom) {
+    public void modifyBootIni() {
+        String resolution = "setenv hdmimode \"720p\"           # 720p 1280x720";
+        if (mResolution.equals("vga"))
+            resolution = "setenv hdmimode \"vga\"            # 640x480";
+        else if (mResolution.equals("480p"))
+            resolution = "setenv hdmimode \"480p\"           # 720x480";
+        else if (mResolution.equals("576p"))
+            resolution = "setenv hdmimode \"576p\"           # 720x576";
+        else if (mResolution.equals("800x480p60hz"))
+            resolution = "setenv hdmimode \"800x480p60hz\"   # 800x480";
+        else if (mResolution.equals("800x600p60hz"))
+            resolution = "setenv hdmimode \"800x600p60hz\"   # 800x600";
+        else if (mResolution.equals("1024x600p60hz"))
+            resolution = "setenv hdmimode \"1024x600p60hz\"  # 1024x600";
+        else if (mResolution.equals("1024x768p60hz"))
+            resolution = "setenv hdmimode \"1024x768p60hz\"  # 1024x768";
+        else if (mResolution.equals("1360x768p60hz"))
+            resolution = "setenv hdmimode \"1360x768p60hz\"  # 1360x768";
+        else if (mResolution.equals("1366x768p60hz"))
+            resolution = "setenv hdmimode \"1366x768p60hz\"  # 1366x768";
+        else if (mResolution.equals("1440x900p60hz"))
+            resolution = "setenv hdmimode \"1440x900p60hz\"  # 1440x900";
+        else if (mResolution.equals("1600x900p60hz"))
+            resolution = "setenv hdmimode \"1600x900p60hz\"  # 1600x900";
+        else if (mResolution.equals("1680x1050p60hz"))
+            resolution = "setenv hdmimode \"1680x1050p60hz\" # 1680x1050";
+        else if (mResolution.equals("720p"))
+            resolution = "setenv hdmimode \"720p\"           # 720p 1280x720";
+        else if (mResolution.equals("800p"))
+            resolution = "setenv hdmimode \"800p\"           # 1280x800";
+        else if (mResolution.equals("sxga"))
+            resolution = "setenv hdmimode \"sxga\"           # 1280x1024";
+        else if (mResolution.equals("1080i50hz"))
+            resolution = "setenv hdmimode \"1080i50hz\"      # 1080I@50Hz";
+        else if (mResolution.equals("1080p24hz"))
+            resolution = "setenv hdmimode \"1080p24hz\"      # 1080P@24Hz";
+        else if (mResolution.equals("1080p50hz"))
+            resolution = "setenv hdmimode \"1080p50hz\"      # 1080P@50Hz";
+        else if (mResolution.equals("1080p"))
+            resolution = "setenv hdmimode \"1080p\"          # 1080P@60Hz";
+        else if (mResolution.equals("1920x1200"))
+            resolution = "setenv hdmimode \"1920x1200\"      # 1920x1200";
+
+        String top, left, bottom, right;
+        if (!mSystemResolution.equals(mResolution)) {
+            top = "setenv top \"0\"";
+            left = "setenv left \"0\"";
+            bottom = "setenv bottom \"0\"";
+            right = "setenv right \"0\"\n";
+        } else {
+            top = "setenv top \"" + mTopDelta + "\"";
+            left = "setenv left \"" + mLeftDelta + "\"";
+            bottom = "setenv bottom \"" + mBottomDelta + "\"";
+            right = "setenv right \"" + mRightDelta + "\"\n";
+        }
+
+        List<String> lines = new ArrayList<String>();
+        String line = null;
+
         try {
-            Log.e(TAG, "saveDelt2ubootenv : " + top + " " + left + " " + right + " " + bottom);
-            OutputStream stream;
-            Process p = Runtime.getRuntime().exec("su");
-            stream = p.getOutputStream();
-            String cmd = "fw_setenv overscan_top " + top + "\n";
-            stream.write(cmd.getBytes());
-            stream.flush();
-            cmd = "fw_setenv overscan_left " + left + "\n";
-            stream.write(cmd.getBytes());
-            stream.flush();
-            cmd = "fw_setenv overscan_right " + right + "\n";
-            stream.write(cmd.getBytes());
-            stream.flush();
-            cmd = "fw_setenv overscan_bottom " + bottom;
-            stream.write(cmd.getBytes());
-            stream.flush();
-            stream.close();
-        } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            File f1 = new File(BOOT_INI);
+            FileReader fr = new FileReader(f1);
+            BufferedReader br = new BufferedReader(fr);
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith("setenv hdmimode")) {
+                    Log.e(TAG, line);
+                    line = resolution;
+                }
+
+                if (line.startsWith("setenv top")) {
+                    Log.e(TAG, line);
+                    line = top;
+                }
+
+                if (line.startsWith("setenv left")) {
+                    Log.e(TAG, line);
+                    line = left;
+                }
+
+                if (line.startsWith("setenv bottom")) {
+                    Log.e(TAG, line);
+                    line = bottom;
+                }
+
+                if (line.startsWith("setenv right")) {
+                    Log.e(TAG, line);
+                    line = right;
+                }
+
+                lines.add(line + "\n");
+            }
+            fr.close();
+            br.close();
+
+            FileWriter fw = new FileWriter(f1);
+            BufferedWriter out = new BufferedWriter(fw);
+            for(String s : lines)
+                out.write(s);
+            out.flush();
+            out.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -723,6 +827,24 @@ public class MainActivity extends Activity {
 
     }
 
+    public static void checkBootINI() {
+        File boot_init = new File(BOOT_INI);
+        if (!boot_init.exists()) {
+            try {
+                OutputStream stream;
+                Process p = Runtime.getRuntime().exec("su");
+                stream = p.getOutputStream();
+                String cmd =  "cp /system/etc/boot.ini.template /sdcard/boot.ini";
+                stream.write(cmd.getBytes());
+                stream.flush();
+                stream.close();
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
     public static void setGovernor(String governor) {
         BufferedWriter out;
         try {
@@ -746,23 +868,6 @@ public class MainActivity extends Activity {
             out.close();
             Log.e(TAG, "set freq : " + freq);
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void setResolution(String resolution) {
-        try {
-            OutputStream stream;
-            Process p = Runtime.getRuntime().exec("su");
-            stream = p.getOutputStream();
-            String cmd = "fw_setenv hdmimode " + resolution;
-            stream.write(cmd.getBytes());
-            stream.flush();
-            stream.close();
-
-            Log.e(TAG, "fw_setenv hdmimode " + resolution);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
