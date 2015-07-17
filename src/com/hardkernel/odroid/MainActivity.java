@@ -641,10 +641,14 @@ public class MainActivity extends Activity {
         String resolution = "setenv hdmimode \"720p\"           # 720p 1280x720";
         if (mResolution.equals("vga"))
             resolution = "setenv hdmimode \"vga\"            # 640x480";
+        else if (mResolution.equals("480i"))
+            resolution = "setenv hdmimode \"480i\"           # 720x480";
         else if (mResolution.equals("480p"))
             resolution = "setenv hdmimode \"480p\"           # 720x480";
         else if (mResolution.equals("576p"))
             resolution = "setenv hdmimode \"576p\"           # 720x576";
+        else if (mResolution.equals("576i"))
+            resolution = "setenv hdmimode \"576i\"           # 720x576";
         else if (mResolution.equals("800x480p60hz"))
             resolution = "setenv hdmimode \"800x480p60hz\"   # 800x480";
         else if (mResolution.equals("800x600p60hz"))
@@ -665,6 +669,8 @@ public class MainActivity extends Activity {
             resolution = "setenv hdmimode \"1680x1050p60hz\" # 1680x1050";
         else if (mResolution.equals("720p"))
             resolution = "setenv hdmimode \"720p\"           # 720p 1280x720";
+        else if (mResolution.equals("720p50hz"))
+            resolution = "setenv hdmimode \"720p50hz\"           # 720p 1280x720";
         else if (mResolution.equals("800p"))
             resolution = "setenv hdmimode \"800p\"           # 1280x800";
         else if (mResolution.equals("sxga"))
