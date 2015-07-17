@@ -677,6 +677,8 @@ public class MainActivity extends Activity {
             resolution = "setenv hdmimode \"1080p50hz\"      # 1080P@50Hz";
         else if (mResolution.equals("1080p"))
             resolution = "setenv hdmimode \"1080p\"          # 1080P@60Hz";
+        else if (mResolution.equals("1080i"))
+            resolution = "setenv hdmimode \"1080i\"          # 1080I@60Hz";
         else if (mResolution.equals("1920x1200"))
             resolution = "setenv hdmimode \"1920x1200\"      # 1920x1200";
 
