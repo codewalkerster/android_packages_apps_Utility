@@ -54,6 +54,8 @@ public class MainActivity extends Activity {
     public final static String FREE_SCALE = "/sys/class/graphics/fb0/free_scale";
     public final static String FREE_SCALE_VALUE = "0x10001";
 
+    public final static String DISP_CAP = "/sys/devices/virtual/amhdmitx/amhdmitx0/disp_cap";
+
     private final static String BOOT_INI = Environment.getExternalStorageDirectory() + "/boot.ini";
     private Spinner mSpinnerGovernor;
     private String mGovernorString;
@@ -452,10 +454,37 @@ public class MainActivity extends Activity {
         mBtnOverScanList.add(mBtnBottomDecrease);
 
         mSpinner_Resolution = (Spinner)findViewById(R.id.spinner_resolution);
-        ArrayAdapter<CharSequence> mAdapterResolution = ArrayAdapter.createFromResource(this,
-                R.array.resolution_array, android.R.layout.simple_spinner_item);
-        mAdapterResolution.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSpinner_Resolution.setAdapter(mAdapterResolution);
+
+        List<String> disp = new ArrayList<String>();
+        File disp_cap = new File(DISP_CAP);
+        try {
+            FileReader fr = new FileReader(disp_cap);
+            BufferedReader br = new BufferedReader(fr);
+            while ((line = br.readLine()) != null) {
+                if (!line.equals("null edid")) {
+                    Log.e(TAG, line);
+                    if (line.indexOf('*') != -1)
+                        line = line.substring(0, line.indexOf('*'));
+                    disp.add(line);
+                }
+            }
+            fr.close();
+            br.close();
+        } catch (Exception e) {
+        }
+
+        ArrayAdapter<CharSequence> adapterResolution = null;
+
+        if (disp.size() > 0) {
+            adapterResolution = new ArrayAdapter(this, android.R.layout.simple_spinner_item, 
+                    disp);
+        } else {
+            adapterResolution = ArrayAdapter.createFromResource(this,
+            R.array.resolution_array, android.R.layout.simple_spinner_item);
+        }
+
+        adapterResolution.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinner_Resolution.setAdapter(adapterResolution);
 
         mSpinner_Resolution.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
@@ -484,7 +513,7 @@ public class MainActivity extends Activity {
         mRadio_left = (RadioButton)findViewById(R.id.radio_left);
         mRadio_right = (RadioButton)findViewById(R.id.radio_right);
 
-        mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
+        mSpinner_Resolution.setSelection(adapterResolution.getPosition(mResolution));
 
         Button btn = (Button)findViewById(R.id.button_mouse_apply);
         btn.setOnClickListener(new OnClickListener() {
