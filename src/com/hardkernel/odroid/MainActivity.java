@@ -555,9 +555,10 @@ public class MainActivity extends Activity {
             }
 
             writer.println("setenv edid \"0\"\n");
+            writer.println("setenv hpd \"1\"\n");
             writer.println("setenv led_blink        \"1\"\n");
             writer.println("setenv bootcmd      \"movi read kernel 0 40008000;bootz 40008000\"\n");
-            writer.println("setenv bootargs     \"fb_x_res=${fb_x_res} fb_y_res=${fb_y_res} vout=${vout} hdmi_phy_res=${hdmi_phy_res} edid=${edid} left=${left} right=${right} upper=${upper} lower=${lower} vsync=${vsync} hsync=${hsync} led_blink=${led_blink}\"");
+            writer.println("setenv bootargs     \"fb_x_res=${fb_x_res} fb_y_res=${fb_y_res} vout=${vout} hdmi_phy_res=${hdmi_phy_res} edid=${edid} hpd=${hpd} led_blink=${led_blink}\"");
 
             writer.println("boot");
             writer.close();
