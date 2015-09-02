@@ -11,20 +11,32 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.RecoverySystem;
+import android.os.StatFs;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -34,12 +46,14 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -111,10 +125,116 @@ public class MainActivity extends Activity {
 
     private Process mSu;
 
+    private static Context context;
+
+    private static final String LATEST_VERSION = "latestupdate";
+    private static final int FILE_SELECT_CODE = 0;
+
+    private DownloadManager downloadManager;
+    private long enqueue;
+
+    private UpdatePackage m_updatePackage = null;
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0L);
+            if (id != enqueue) {
+                Log.v(TAG, "Ingnoring unrelated download " + id);
+                return;
+            }
+
+            DownloadManager.Query query = new DownloadManager.Query();
+            query.setFilterById(id);
+            Cursor cursor = downloadManager.query(query);
+
+            if (!cursor.moveToFirst()) {
+                Log.e(TAG, "Not able to move the cursor for downloaded content.");
+                return;
+            }
+
+            int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
+            if (DownloadManager.ERROR_INSUFFICIENT_SPACE == status) {
+                Log.e(TAG, "Download is failed due to insufficient space");
+                return;
+            }
+            if (DownloadManager.STATUS_SUCCESSFUL != status) {
+                Log.e(TAG, "Download Failed");
+                return;
+            }
+
+            /* Get URI of downloaded file */
+            Uri uri = Uri.parse(cursor.getString(
+                        cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI)));
+
+            cursor.close();
+
+            File file = new File(uri.getPath());
+            if (!file.exists()) {
+                Log.e(TAG, "Not able to find downloaded file: " + uri.getPath());
+                return;
+            }
+
+            if (file.getName().equals(LATEST_VERSION)) {
+                try {
+                    StringBuilder text = new StringBuilder();
+
+                    BufferedReader br = new BufferedReader(new FileReader(file));
+                    text.append(br.readLine());
+                    br.close();
+
+                    m_updatePackage = new UpdatePackage(text.toString());
+
+                    int currentVersion = 0;
+                    String[] version = Build.VERSION.INCREMENTAL.split("-");
+                    if (version.length < 4) {
+                        Toast.makeText(context,
+                                "Not able to detect the version number installed. "
+                                + "Remote package will be installed anyway!",
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        currentVersion = Integer.parseInt(version[3]);
+                    }
+
+                    if (currentVersion < m_updatePackage.buildNumber()) {
+                        updatePckageFromOnline();
+                    } else if (currentVersion > m_updatePackage.buildNumber()) {
+                        Toast.makeText(context,
+                                "The current installed build number might be wrong",
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(context,
+                                "Already latest Android image is installed.",
+                                Toast.LENGTH_LONG).show();
+                    }
+                } catch (IOException e) {
+                    Log.d(TAG, e.toString());
+                    e.printStackTrace();
+                }
+            } else if (id == m_updatePackage.downloadId()) {
+                /* Update package download is done, time to install */
+                installPackage(new File(m_updatePackage.localUri(context).getPath()));
+            }
+        }
+    };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        context = getApplicationContext();
+
+        String url = ServerInfo.read();
+        if (url == null)
+            ServerInfo.write(UpdatePackage.remoteUrl());
+
+        downloadManager = (DownloadManager)context.getSystemService(
+                Context.DOWNLOAD_SERVICE);
+
+        registerReceiver(receiver,
+                new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
         try {
             mSu = Runtime.getRuntime().exec("su");
@@ -998,6 +1118,266 @@ public class MainActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.server_setting:
+                editServerUrl();
+                return true;
+
+            case R.id.check_online_update:
+                checkLatestVersion();
+                return true;
+
+            case R.id.update_from_file:
+                updatePackageFromStorage();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    static class ServerInfo {
+        private static File file;
+        private static final String FILENAME = "server.cfg";
+
+        static {
+            file = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+                    FILENAME);
+
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                    write(UpdatePackage.remoteUrl());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        static public String read() {
+            String text = null;
+
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(file));
+                text = br.readLine();
+                br.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return text;
+        }
+
+        static void write(String url) {
+            try {
+                FileWriter fw = new FileWriter(file.getAbsoluteFile());
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write(url);
+                bw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void editServerUrl() {
+            // get prompts.xml view
+            LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
+            View promptView = layoutInflater.inflate(R.layout.url_dialog, null);
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+            alertDialogBuilder.setView(promptView);
+
+            final EditText editText = (EditText)promptView.findViewById(R.id.edittext);
+            editText.setText(UpdatePackage.remoteUrl(), TextView.BufferType.EDITABLE);
+
+            alertDialogBuilder.setCancelable(false)
+                .setPositiveButton("OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            ServerInfo.write(editText.getText().toString());
+                            UpdatePackage.setRemoteUrl(editText.getText().toString());
+                        }
+                    })
+                .setNegativeButton("Cancel",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+
+            AlertDialog alert = alertDialogBuilder.create();
+            alert.show();
+    }
+
+    /*
+     * Request to retrive the latest update package version
+     */
+    public void checkLatestVersion() {
+        String remote = UpdatePackage.remoteUrl();
+
+        /* Remove if the same file is exist */
+        new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+                LATEST_VERSION).delete();
+
+        DownloadManager.Request request = new DownloadManager.Request(
+                Uri.parse(remote + LATEST_VERSION));
+        request.setVisibleInDownloadsUi(false);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN);
+        request.setDestinationInExternalFilesDir(context,
+                Environment.DIRECTORY_DOWNLOADS,
+                LATEST_VERSION);
+
+        enqueue = downloadManager.enqueue(request);
+    }
+
+    public void updatePckageFromOnline() {
+        new AlertDialog.Builder(this)
+            .setTitle("New update package is found!")
+            .setMessage("Do you want to download new update package?\n"
+                    + "It would take a few minutes or hours depends on your network speed.")
+            .setPositiveButton("Download",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog,
+                            int whichButton) {
+                            if (sufficientSpace()) {
+                                enqueue = m_updatePackage.requestDownload(context,
+                                    downloadManager);
+                            }
+                        }
+                    })
+            .setCancelable(true)
+            .create().show();
+    }
+
+    public void updatePackageFromStorage() {
+        // TODO Auto-generated method stub
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+
+        intent.setType("application/zip");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        try {
+            startActivityForResult(
+                    Intent.createChooser(intent, "Select a File to Update"),
+                    FILE_SELECT_CODE);
+        } catch (android.content.ActivityNotFoundException ex) {
+            // Potentially direct the user to the Market with a Dialog
+            Toast.makeText(context,
+                    "Please install a File Manager.",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void installPackage(final File packageFile) {
+        try {
+            RecoverySystem.verifyPackage(packageFile, null, null);
+
+            new AlertDialog.Builder(this)
+                .setTitle("Selected package file is verified")
+                .setMessage("Your Android can be updated, do you want to proceed?")
+                .setPositiveButton("Proceed", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        try {
+                            RecoverySystem.installPackage(context,
+                                packageFile);
+                        } catch (Exception e) {
+                            Toast.makeText(context,
+                                "Error while install OTA package: " + e,
+                                Toast.LENGTH_LONG).show();
+                        }
+                    }
+                })
+                .setCancelable(true)
+                .create().show();
+        } catch (Exception e) {
+            Toast.makeText(context,
+                    "The package file seems to be corrupted!!\n" +
+                    "Please select another package file...",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private boolean sufficientSpace() {
+        StatFs stat = new StatFs(UpdatePackage.getDownloadDir(context).getPath());
+
+        double available = (double)stat.getAvailableBlocks() * (double)stat.getBlockSize();
+
+        if (available < UpdatePackage.PACKAGE_MAXSIZE) {
+            new AlertDialog.Builder(this)
+                .setTitle("Check free space")
+                .setMessage("Insufficient free space!\nAbout " +
+                        UpdatePackage.PACKAGE_MAXSIZE / 1024 / 1024 +
+                        " MBytes free space is required.")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case FILE_SELECT_CODE:
+                if (resultCode == RESULT_OK) {
+                    // Get the Uri of the selected file
+                    Uri uri = data.getData();
+                    String path = getRealPathFromURI(uri);
+                    if (path == null)
+                        return;
+                    if (path.startsWith("/document")) {
+                        Toast.makeText(context, "The file was not copied in the normal way.",
+                                Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    installPackage(new File(path));
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private String getRealPathFromURI(Uri uri) {
+        String filePath = "";
+        filePath = uri.getPath();
+        if (filePath.startsWith("/storage"))
+            return filePath;
+
+        String wholeID = DocumentsContract.getDocumentId(uri);
+
+        // Split at colon, use second item in the array
+        String id = wholeID.split(":")[1];
+
+        Log.e(TAG, "id = " + id);
+
+        String[] column = { MediaStore.Files.FileColumns.DATA };
+
+        // where id is equal to
+        String sel = MediaStore.Files.FileColumns.DATA + " LIKE '%" + id + "%'";
+
+        Cursor cursor = getContentResolver().query(MediaStore.Files.getContentUri("external"),
+                column, sel, null, null);
+
+        int columnIndex = cursor.getColumnIndex(column[0]);
+
+        if (cursor.moveToFirst()) {
+            filePath = cursor.getString(columnIndex);
+        }
+        cursor.close();
+        return filePath;
     }
 
 }
