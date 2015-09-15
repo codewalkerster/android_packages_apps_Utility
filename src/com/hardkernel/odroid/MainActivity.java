@@ -47,8 +47,6 @@ public class MainActivity extends Activity {
     private RadioButton mRadio_left;
     private RadioButton mRadio_right;
 
-    private RadioButton mRadio_hdmi;
-    private RadioButton mRadio_dvi;
     private Spinner mSpinner_Resolution;
     private String mResolution = "720p60hz";
 
@@ -148,9 +146,6 @@ public class MainActivity extends Activity {
         tabHost.addTab(tab3);
         tabHost.addTab(tab4);
 
-        mRadio_hdmi = (RadioButton)findViewById(R.id.radio_hdmi);
-        mRadio_dvi = (RadioButton)findViewById(R.id.radio_dvi);
-
         mSpinnerGovernor = (Spinner) findViewById(R.id.spinner_governors);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> mAdapterGovenor = ArrayAdapter.createFromResource(this,
@@ -188,26 +183,13 @@ public class MainActivity extends Activity {
             mSpinnerGovernor.setSelection(mAdapterGovenor.getPosition(mGovernorString));
         }
 
-        mRadio_hdmi = (RadioButton)findViewById(R.id.radio_hdmi);
-        mRadio_dvi = (RadioButton)findViewById(R.id.radio_dvi);
-
-        File boot_init = new File(BOOT_INI);
-        if (boot_init.exists()) {
+        File boot_ini = new File(BOOT_INI);
+        if (boot_ini.exists()) {
             try {
                 bufferedReader = new BufferedReader(new FileReader(BOOT_INI));
                 while ((line = bufferedReader.readLine()) != null) {
                     if (line.contains("bootargs"))
                         break;
-                    if (line.contains("vout")) {
-                        Log.e(TAG, line);
-                        if (line.contains("hdmi") && line.indexOf("#") < 0) {
-                            Log.e(TAG, "HDMI");
-                            mRadio_hdmi.setChecked(true);
-                        } else if (line.contains("dvi") && line.indexOf("#") < 0) {
-                            Log.e(TAG, "DVI");
-                            mRadio_dvi.setChecked(true);
-                        }
-                    }
 
                     if (line.contains("hdmi_phy_res") && line.indexOf("#") < 0) {
                         Log.e(TAG, line);
@@ -220,9 +202,6 @@ public class MainActivity extends Activity {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
-        } else {
-            //default value
-            mRadio_hdmi.setChecked(true);
         }
 
         mSpinner_Resolution = (Spinner)findViewById(R.id.spinner_resolution);
@@ -546,19 +525,11 @@ public class MainActivity extends Activity {
             writer.println("setenv fb_y_res \"" + y_res +"\"");
             writer.println("setenv hdmi_phy_res \"" + mResolution +"\"\n");
 
-            if (mRadio_hdmi.isChecked()) {
-                writer.println("setenv vout \"hdmi\"");
-                writer.println("# setenv vout \"dvi\"\n");
-            } else {
-                writer.println("# setenv vout \"hdmi\"");
-                writer.println("setenv vout \"dvi\"\n");
-            }
-
             writer.println("setenv edid \"0\"\n");
             writer.println("setenv hpd \"1\"\n");
             writer.println("setenv led_blink        \"1\"\n");
             writer.println("setenv bootcmd      \"movi read kernel 0 40008000;bootz 40008000\"\n");
-            writer.println("setenv bootargs     \"fb_x_res=${fb_x_res} fb_y_res=${fb_y_res} vout=${vout} hdmi_phy_res=${hdmi_phy_res} edid=${edid} hpd=${hpd} led_blink=${led_blink}\"");
+            writer.println("setenv bootargs     \"fb_x_res=${fb_x_res} fb_y_res=${fb_y_res} hdmi_phy_res=${hdmi_phy_res} edid=${edid} hpd=${hpd} led_blink=${led_blink}\"");
 
             writer.println("boot");
             writer.close();
