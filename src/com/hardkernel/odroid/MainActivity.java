@@ -83,8 +83,8 @@ public class MainActivity extends Activity {
     private RadioButton mRadio_right;
 
     private Spinner mSpinner_Resolution;
-    private String mResolution = "720p";
-    private static String mSystemResolution = "720p";
+    private String mResolution = "720p60hz";
+    private static String mSystemResolution = "720p60hz";
 
     private int mTopValue;
     private int mTopDelta = 0;
@@ -787,57 +787,9 @@ public class MainActivity extends Activity {
     }
 
     public void modifyBootIni() {
-        String resolution = "setenv hdmimode \"720p\"           # 720p 1280x720";
-        if (mResolution.equals("vga"))
-            resolution = "setenv hdmimode \"vga\"            # 640x480";
-        else if (mResolution.equals("480i"))
-            resolution = "setenv hdmimode \"480i\"           # 720x480";
-        else if (mResolution.equals("480p"))
-            resolution = "setenv hdmimode \"480p\"           # 720x480";
-        else if (mResolution.equals("576p"))
-            resolution = "setenv hdmimode \"576p\"           # 720x576";
-        else if (mResolution.equals("576i"))
-            resolution = "setenv hdmimode \"576i\"           # 720x576";
-        else if (mResolution.equals("800x480p60hz"))
-            resolution = "setenv hdmimode \"800x480p60hz\"   # 800x480";
-        else if (mResolution.equals("800x600p60hz"))
-            resolution = "setenv hdmimode \"800x600p60hz\"   # 800x600";
-        else if (mResolution.equals("1024x600p60hz"))
-            resolution = "setenv hdmimode \"1024x600p60hz\"  # 1024x600";
-        else if (mResolution.equals("1024x768p60hz"))
-            resolution = "setenv hdmimode \"1024x768p60hz\"  # 1024x768";
-        else if (mResolution.equals("1360x768p60hz"))
-            resolution = "setenv hdmimode \"1360x768p60hz\"  # 1360x768";
-        else if (mResolution.equals("1366x768p60hz"))
-            resolution = "setenv hdmimode \"1366x768p60hz\"  # 1366x768";
-        else if (mResolution.equals("1440x900p60hz"))
-            resolution = "setenv hdmimode \"1440x900p60hz\"  # 1440x900";
-        else if (mResolution.equals("1600x900p60hz"))
-            resolution = "setenv hdmimode \"1600x900p60hz\"  # 1600x900";
-        else if (mResolution.equals("1680x1050p60hz"))
-            resolution = "setenv hdmimode \"1680x1050p60hz\" # 1680x1050";
-        else if (mResolution.equals("720p"))
-            resolution = "setenv hdmimode \"720p\"           # 720p 1280x720";
-        else if (mResolution.equals("720p50hz"))
-            resolution = "setenv hdmimode \"720p50hz\"           # 720p 1280x720";
-        else if (mResolution.equals("800p"))
-            resolution = "setenv hdmimode \"800p\"           # 1280x800";
-        else if (mResolution.equals("sxga"))
-            resolution = "setenv hdmimode \"sxga\"           # 1280x1024";
-        else if (mResolution.equals("1080i50hz"))
-            resolution = "setenv hdmimode \"1080i50hz\"      # 1080I@50Hz";
-        else if (mResolution.equals("1080p24hz"))
-            resolution = "setenv hdmimode \"1080p24hz\"      # 1080P@24Hz";
-        else if (mResolution.equals("1080p50hz"))
-            resolution = "setenv hdmimode \"1080p50hz\"      # 1080P@50Hz";
-        else if (mResolution.equals("1080p"))
-            resolution = "setenv hdmimode \"1080p\"          # 1080P@60Hz";
-        else if (mResolution.equals("1080i"))
-            resolution = "setenv hdmimode \"1080i\"          # 1080I@60Hz";
-        else if (mResolution.equals("1920x1200"))
-            resolution = "setenv hdmimode \"1920x1200\"      # 1920x1200";
-
+        String resolution = "setenv hdmimode \\" + mResolution + "\\";
         String top, left, bottom, right;
+
         if (!mSystemResolution.equals(mResolution)) {
             top = "setenv top \"0\"";
             left = "setenv left \"0\"";
