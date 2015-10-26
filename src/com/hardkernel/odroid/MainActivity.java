@@ -787,7 +787,7 @@ public class MainActivity extends Activity {
     }
 
     public void modifyBootIni() {
-        String resolution = "setenv hdmimode \\" + mResolution + "\\";
+        String resolution = "setenv hdmimode \"" + mResolution + "\"";
         String top, left, bottom, right;
 
         if (!mSystemResolution.equals(mResolution)) {
