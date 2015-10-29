@@ -72,7 +72,8 @@ public class MainActivity extends Activity {
 
     public final static String DISP_CAP = "/sys/devices/virtual/amhdmitx/amhdmitx0/disp_cap";
 
-    private final static String BOOT_INI = Environment.getExternalStorageDirectory() + "/boot.ini";
+    //private final static String BOOT_INI = Environment.getExternalStorageDirectory() + "/boot.ini";
+    private final static String BOOT_INI = "/storage/internal/boot.ini";
     private Spinner mSpinnerGovernor;
     private String mGovernorString;
 
