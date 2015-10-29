@@ -70,7 +70,8 @@ public class MainActivity extends Activity {
 
     public final static String DISP_CAP = "/sys/devices/virtual/amhdmitx/amhdmitx0/disp_cap";
 
-    private final static String BOOT_INI = Environment.getExternalStorageDirectory() + "/boot.ini";
+    //private final static String BOOT_INI = Environment.getExternalStorageDirectory() + "/boot.ini";
+    private final static String BOOT_INI = "/storage/internal/boot.ini";
     private Spinner mSpinnerGovernor;
     private String mGovernorString;
 
@@ -619,7 +620,7 @@ public class MainActivity extends Activity {
 
                 enableOverScanButtons(mSystemResolution.equals(mResolution) && mOrientation.equals("landscape"));
 
-                Log.e(TAG, "Selected resolution = " + resolution);
+                Log.e(TAG, "Selected resolution = " + mResolution);
             }
 
             @Override
@@ -811,28 +812,28 @@ public class MainActivity extends Activity {
             BufferedReader br = new BufferedReader(fr);
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("setenv hdmimode")) {
-                    Log.e(TAG, line);
                     line = resolution;
+                    Log.e(TAG, line);
                 }
 
                 if (line.startsWith("setenv top")) {
-                    Log.e(TAG, line);
                     line = top;
+                    Log.e(TAG, line);
                 }
 
                 if (line.startsWith("setenv left")) {
-                    Log.e(TAG, line);
                     line = left;
+                    Log.e(TAG, line);
                 }
 
                 if (line.startsWith("setenv bottom")) {
-                    Log.e(TAG, line);
                     line = bottom;
+                    Log.e(TAG, line);
                 }
 
                 if (line.startsWith("setenv right")) {
-                    Log.e(TAG, line);
                     line = right;
+                    Log.e(TAG, line);
                 }
 
                 lines.add(line + "\n");
@@ -943,10 +944,11 @@ public class MainActivity extends Activity {
                 OutputStream stream;
                 Process p = Runtime.getRuntime().exec("su");
                 stream = p.getOutputStream();
-                String cmd =  "cp /system/etc/boot.ini.template /sdcard/boot.ini";
+                String cmd =  "cp /system/etc/boot.ini.template " + BOOT_INI;
                 stream.write(cmd.getBytes());
                 stream.flush();
                 stream.close();
+                Log.e(TAG, cmd);
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
