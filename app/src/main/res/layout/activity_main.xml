@@ -38,6 +38,249 @@
                 android:layout_height="match_parent" >
 
                 <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/tab5">
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/fan_mode"
+                            android:id="@+id/textView2" />
+
+                        <ToggleButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/auto"
+                            android:id="@+id/btn_fan_mode"
+                            android:textOff="@string/manual"
+                            android:textOn="@string/auto" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/fan_speed"
+                            android:id="@+id/textView10" />
+
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberSigned"
+                            android:ems="10"
+                            android:id="@+id/et_speed1"
+                            android:width="50dp"
+                            android:autoText="false"
+                            android:numeric="integer|signed|decimal"
+                            android:gravity="right" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/percent"
+                            android:id="@+id/textView6" />
+
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberSigned"
+                            android:ems="10"
+                            android:id="@+id/et_speed2"
+                            android:width="50dp"
+                            android:numeric="integer|signed|decimal"
+                            android:gravity="right"
+                            android:layout_marginLeft="5dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/percent"
+                            android:id="@+id/textView7" />
+
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberSigned"
+                            android:ems="10"
+                            android:id="@+id/et_speed3"
+                            android:width="50dp"
+                            android:numeric="integer|signed|decimal"
+                            android:gravity="right"
+                            android:layout_marginLeft="5dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/percent"
+                            android:id="@+id/textView8" />
+
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberSigned"
+                            android:ems="10"
+                            android:id="@+id/et_speed4"
+                            android:width="50dp"
+                            android:numeric="integer|signed|decimal"
+                            android:gravity="right"
+                            android:layout_marginLeft="5dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/percent"
+                            android:id="@+id/textView9" />
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/apply"
+                            android:id="@+id/btn_speed"
+                            android:layout_marginLeft="10dp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/pwm_duty"
+                            android:id="@+id/textView12" />
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/get_pwm_duty"
+                            android:id="@+id/btn_get_pwm_duty" />
+
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberSigned"
+                            android:ems="10"
+                            android:id="@+id/et_pwm_duty"
+                            android:width="70dp"
+                            android:numeric="integer|signed|decimal"
+                            android:gravity="right" />
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/apply"
+                            android:id="@+id/btn_pwm_duty"
+                            android:layout_marginLeft="10dp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/pwm_enable"
+                            android:id="@+id/textView" />
+
+                        <ToggleButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/btn_pwm_enable"
+                            android:textOff="@string/off"
+                            android:textOn="@string/on"
+                            android:text="@string/on" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/temp_levels"
+                            android:id="@+id/textView11" />
+
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberSigned"
+                            android:ems="10"
+                            android:id="@+id/et_temp1"
+                            android:width="50dp"
+                            android:numeric="integer|signed|decimal"
+                            android:gravity="right" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/celsius"
+                            android:id="@+id/textView3" />
+
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberSigned"
+                            android:ems="10"
+                            android:id="@+id/et_temp2"
+                            android:width="50dp"
+                            android:numeric="integer|signed|decimal"
+                            android:gravity="right"
+                            android:layout_marginLeft="5dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/celsius"
+                            android:id="@+id/textView4" />
+
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberSigned"
+                            android:ems="10"
+                            android:id="@+id/et_temp3"
+                            android:width="50dp"
+                            android:numeric="integer|signed|decimal"
+                            android:gravity="right"
+                            android:layout_marginLeft="5dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/celsius"
+                            android:id="@+id/textView5" />
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/apply"
+                            android:id="@+id/btn_temp_levels"
+                            android:layout_marginLeft="10dp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/tab4"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -87,6 +330,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/apply" />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -164,7 +408,9 @@
                         android:layout_marginTop="10dp"
                         android:layout_weight="0" />
                 </LinearLayout>
+
             </FrameLayout>
+
         </LinearLayout>
     </TabHost>
 

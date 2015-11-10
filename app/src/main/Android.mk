@@ -10,6 +10,8 @@ LOCAL_PACKAGE_NAME := Utility
 
 LOCAL_CERTIFICATE := platform
 
+LOCAL_REQUIRED_MODULES := libfancontrol
+
 LOCAL_RESOURCE_DIR += $(LOCAL_PATH)/res 
 
 include $(BUILD_PACKAGE)

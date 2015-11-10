@@ -28,11 +28,17 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
+import android.widget.Toast;
+import android.widget.ToggleButton;
+
+import static java.lang.System.*;
 
 public class MainActivity extends Activity {
 
@@ -62,6 +68,23 @@ public class MainActivity extends Activity {
 
     private String mOrientation;
     private int mDegree;
+
+    private ToggleButton mBtnFanMode;
+    private EditText mEditTextFanSpeed1;
+    private EditText mEditTextFanSpeed2;
+    private EditText mEditTextFanSpeed3;
+    private EditText mEditTextFanSpeed4;
+    private EditText mEditTextSpeeds[] = new EditText[4];
+    private Button mBtnFanSpeedsApply;
+    private Button mBtnGetPWMDuty;
+    private EditText mEditTextPWMDuty;
+    private Button mBtnPWMDutyApply;
+    private ToggleButton mBtnPWMEnable;
+    private EditText mEditTextTempLevels[] = new EditText[3];
+    private EditText mEditTextTempLevel1;
+    private EditText mEditTextTempLevel2;
+    private EditText mEditTextTempLevel3;
+    private Button mBtnTempLevelsApply;
 
     private Process mSu;
 
@@ -131,6 +154,7 @@ public class MainActivity extends Activity {
         TabSpec tab2 = tabHost.newTabSpec("Mouse");
         TabSpec tab3 = tabHost.newTabSpec("Screen");
         TabSpec tab4 = tabHost.newTabSpec("Rotation");
+        TabSpec tab5 = tabHost.newTabSpec("Fan");
 
         tab1.setIndicator("CPU");
         tab1.setContent(R.id.tab1);
@@ -140,11 +164,14 @@ public class MainActivity extends Activity {
         tab3.setContent(R.id.tab3);
         tab4.setIndicator("Rotation");
         tab4.setContent(R.id.tab4);
+        tab5.setIndicator("Fan");
+        tab5.setContent(R.id.tab5);
 
         //tabHost.addTab(tab1);
         //tabHost.addTab(tab2);
         tabHost.addTab(tab3);
         tabHost.addTab(tab4);
+        tabHost.addTab(tab5);
 
         mSpinnerGovernor = (Spinner) findViewById(R.id.spinner_governors);
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -402,9 +429,176 @@ public class MainActivity extends Activity {
             }
 
         });
+
+        mBtnFanMode = (ToggleButton) findViewById(R.id.btn_fan_mode);
+
+        mBtnFanMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                int auto_manual = 0;
+                if (isChecked) {
+                    auto_manual = 1;
+                }
+                setFanMode(auto_manual);
+                getFanValues();
+            }
+        });
+
+        mEditTextFanSpeed1 = (EditText) findViewById(R.id.et_speed1);
+        mEditTextFanSpeed2 = (EditText) findViewById(R.id.et_speed2);
+        mEditTextFanSpeed3 = (EditText) findViewById(R.id.et_speed3);
+        mEditTextFanSpeed4 = (EditText) findViewById(R.id.et_speed4);
+
+        mEditTextSpeeds[0]= mEditTextFanSpeed1;
+        mEditTextSpeeds[1]= mEditTextFanSpeed2;
+        mEditTextSpeeds[2]= mEditTextFanSpeed3;
+        mEditTextSpeeds[3]= mEditTextFanSpeed4;
+
+        mBtnFanSpeedsApply = (Button) findViewById(R.id.btn_speed);
+        mBtnFanSpeedsApply.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int fan_speed[] = new int[4];
+                int i = 0;
+                for(EditText ed : mEditTextSpeeds) {
+                    fan_speed[i++] = Integer.parseInt(ed.getText().toString());
+                }
+                String value;
+                if ((fan_speed[0] > 0) && (fan_speed[0] < fan_speed[1]) &&
+                        (fan_speed[1] < fan_speed[2]) && (fan_speed[2] < fan_speed[3]) && fan_speed[3] <= 100) {
+                    value = mEditTextFanSpeed1.getText() + " " + mEditTextFanSpeed2.getText() + " " +
+                            mEditTextFanSpeed3.getText() + " " + mEditTextFanSpeed4.getText();
+                    Log.e(TAG, value);
+                    setFanSpeeds(value);
+                    getFanValues();
+                } else {
+                    Toast.makeText(
+                            getBaseContext(), "Wrong format",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        mBtnGetPWMDuty = (Button) findViewById(R.id.btn_get_pwm_duty);
+        mBtnGetPWMDuty.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String value = readPWMDuty();
+                Log.e(TAG, value);
+                value = value.trim();
+                mEditTextPWMDuty.setText(value);
+            }
+        });
+
+        mEditTextPWMDuty = (EditText) findViewById(R.id.et_pwm_duty);
+        mBtnPWMDutyApply = (Button) findViewById(R.id.btn_pwm_duty);
+        mBtnPWMDutyApply.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int duty = Integer.parseInt(mEditTextPWMDuty.getText().toString());
+                if (duty >= 0 && duty < 256) {
+                    String value = mEditTextPWMDuty.getText().toString().trim();
+                    setPWMDuty(value);
+                    getFanValues();
+                } else {
+                    Toast.makeText(
+                            getBaseContext(), "Wrong format",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        mBtnPWMEnable = (ToggleButton) findViewById(R.id.btn_pwm_enable);
+        mBtnPWMEnable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                int enable = 0;
+                if (isChecked) {
+                    enable = 1;
+                }
+                setPWMEnable(enable);
+                getFanValues();
+            }
+        });
+
+        mEditTextTempLevel1 = (EditText) findViewById(R.id.et_temp1);
+        mEditTextTempLevel2 = (EditText) findViewById(R.id.et_temp2);
+        mEditTextTempLevel3 = (EditText) findViewById(R.id.et_temp3);
+
+        mEditTextTempLevels[0] = mEditTextTempLevel1;
+        mEditTextTempLevels[1] = mEditTextTempLevel2;
+        mEditTextTempLevels[2] = mEditTextTempLevel3;
+
+        mBtnTempLevelsApply = (Button) findViewById(R.id.btn_temp_levels);
+        mBtnTempLevelsApply.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int temp_levels[] = new int[3];
+                int i = 0;
+                for(EditText ed : mEditTextTempLevels) {
+                    temp_levels[i++] = Integer.parseInt(ed.getText().toString());
+                }
+                String value;
+                if ((temp_levels[0] > 0) && (temp_levels[0] < temp_levels[1]) &&
+                        (temp_levels[1] < temp_levels[2]) && temp_levels[2] <= 100) {
+                    value = mEditTextTempLevels[0].getText() + " " + mEditTextTempLevels[1].getText() + " " +
+                            mEditTextTempLevels[2].getText();
+                    Log.e(TAG, value);
+                    setTempLevels(value);
+                    getFanValues();
+                } else {
+                    Toast.makeText(
+                            getBaseContext(), "Wrong format",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        getFanValues();
     }
 
-   public void saveBootIni() {
+    private void getFanValues() {
+        String value = readFanMode();
+        Log.e(TAG, value);
+
+        if (value.contains("auto")) {
+            mBtnFanMode.setChecked(true);
+        } else {
+            mBtnFanMode.setChecked(false);
+        }
+
+        value = readFanSpeeds();
+        Log.e(TAG, value);
+        int i = 0;
+        for (String token : value.split(" ")) {
+            token = token.trim();
+            mEditTextSpeeds[i++].setText(token);
+        }
+
+        value = readPWMDuty();
+        Log.e(TAG, value);
+        value = value.trim();
+        mEditTextPWMDuty.setText(value);
+
+        value = readPWMEnable();
+        Log.e(TAG, value);
+
+        if (value.contains("on")) {
+            mBtnPWMEnable.setChecked(true);
+        } else {
+            mBtnPWMEnable.setChecked(false);
+        }
+
+        value = readTempLevels();
+        Log.e(TAG, value);
+        i = 0;
+        for (String token : value.split(" ")) {
+            token = token.trim();
+            mEditTextTempLevels[i++].setText(token);
+        }
+    }
+
+    public void saveBootIni() {
         File boot_ini = new File(BOOT_INI);
         if (boot_ini.exists()) {
             boot_ini.delete();
@@ -635,4 +829,18 @@ public class MainActivity extends Activity {
         return true;
     }
 
+    public native static String readFanMode();
+    public native static void setFanMode(int auto_manual);
+    public native static String readFanSpeeds();
+    public native static void setFanSpeeds(String speeds);
+    public native static String readPWMDuty();
+    public native static void setPWMDuty(String duty);
+    public native static String readPWMEnable();
+    public native static void setPWMEnable(int enable);
+    public native static String readTempLevels();
+    public native static void setTempLevels(String temps);
+
+    static {
+        System.loadLibrary("fancontrol");
+    }
 }

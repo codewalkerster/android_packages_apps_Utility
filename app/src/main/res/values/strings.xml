@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">ODROID Utility</string><string name="action_settings">Settings</string>
-    
+
     <string name="cpu">CPU</string>
     <string name="screen">Screen</string>
     <string name="cpu_governor">CPU Governor</string>
@@ -12,7 +12,7 @@
     <string name="left_handed">Left-handed</string>
     <string name="right_handed">Right-handed</string>
     <string name="mouse">Mouse</string>
-    <string name="apply">Save</string>
+    <string name="apply">Apply</string>
     <string name="vout_mode">vout mode</string>
     <string name="hdmi">HDMI</string>
     <string name="dvi">DVI</string>
@@ -22,8 +22,6 @@
     <string name="r1920x1080">1920 x 1080</string>
     <string name="r1280x720">1280 x 720</string>
     <string name="apply_reboot">Apply and Reboot</string>
-    
-    
     <string name="hdmi_phy">HDMI phy</string>
     <string name="fake_fb">LCD Mode ( for ODROID-X/X2 LCD Kit)</string>
     <string name="fb_true">True</string>
@@ -32,5 +30,18 @@
     <string name="landscape">HDMI Landscape</string>
     <string name="degree_90">90°</string>
     <string name="degree_270">270°</string>
-    
+    <string name="auto">Auto</string>
+    <string name="manual">Manual</string>
+    <string name="fan_speed">Fan Speed : </string>
+    <string name="pwm_duty">PWM duty : </string>
+    <string name="pwm_enable">PWM Enable : </string>
+    <string name="temp_levels">Temperature Levels : </string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="fan_mode">Fan Mode : </string>
+    <string name="celsius">°C</string>
+    <string name="percent">%</string>
+    <string name="save">Save</string>
+    <string name="get_pwm_duty">Get PWM duty</string>
+
 </resources>
