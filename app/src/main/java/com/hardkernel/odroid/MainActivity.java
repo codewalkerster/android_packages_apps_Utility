@@ -123,6 +123,10 @@ public class MainActivity extends Activity {
     private String mOrientation;
     private int mDegree;
 
+    private CheckBox mCBEnableIR;
+    private Button mBtnIRSave;
+    private int mEnableIR;
+
     private Process mSu;
 
     private static Context context;
@@ -243,6 +247,7 @@ public class MainActivity extends Activity {
 
         mRadio_left = (RadioButton)findViewById(R.id.radio_left);
         mRadio_right = (RadioButton)findViewById(R.id.radio_right);
+        mCBEnableIR = (CheckBox)findViewById(R.id.cb_ir);
 
         InputStream inputstream = null;
         try {
@@ -297,6 +302,7 @@ public class MainActivity extends Activity {
         TabSpec tab2 = tabHost.newTabSpec("Mouse");
         TabSpec tab3 = tabHost.newTabSpec("Screen");
         TabSpec tab4 = tabHost.newTabSpec("Rotation");
+        TabSpec tab5 = tabHost.newTabSpec("IR Remote Control");
 
         tab1.setIndicator("CPU");
         tab1.setContent(R.id.tab1);
@@ -306,11 +312,14 @@ public class MainActivity extends Activity {
         tab3.setContent(R.id.tab3);
         tab4.setIndicator("Rotation");
         tab4.setContent(R.id.tab4);
+        tab5.setIndicator("IR remote control");
+        tab5.setContent(R.id.tab5);
 
         tabHost.addTab(tab1);
         //tabHost.addTab(tab2);
         tabHost.addTab(tab3);
         tabHost.addTab(tab4);
+        tabHost.addTab(tab5);
 
         mSpinnerGovernor = (Spinner) findViewById(R.id.spinner_governors);
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -429,6 +438,16 @@ public class MainActivity extends Activity {
                     if (line.startsWith("setenv bottom")) {
                         mBottomDelta = Integer.parseInt(line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")));
                         Log.e(TAG, "bottom : " + mBottomDelta);
+                    }
+
+                        Log.e(TAG, line);
+                    if (line.startsWith("setenv ir_remote")) {
+                        mEnableIR = Integer.parseInt(line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")));
+                        Log.e(TAG, "mEnableIR " + mEnableIR);
+                        if (mEnableIR == 1)
+                            mCBEnableIR.setChecked(true);
+                        else
+                            mCBEnableIR.setChecked(false);
                     }
                 }
                 bufferedReader.close();
@@ -777,6 +796,14 @@ public class MainActivity extends Activity {
             }
 
         });
+
+        mBtnIRSave = (Button)findViewById(R.id.btn_ir_save);
+        mBtnIRSave.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setIREnable(mCBEnableIR.isChecked());
+            }
+        });
     }
 
     @Override
@@ -784,6 +811,36 @@ public class MainActivity extends Activity {
         // TODO Auto-generated method stub
         super.onPause();
         modifyBootIni();
+    }
+
+    public void setIREnable(boolean enable) {
+        List<String> lines = new ArrayList<String>();
+        String line = null;
+
+        try {
+            File f1 = new File(BOOT_INI);
+            FileReader fr = new FileReader(f1);
+            BufferedReader br = new BufferedReader(fr);
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith("setenv ir_remote")) {
+                    Log.e(TAG, line);
+                    line = "setenv ir_remote \"" + (enable ? "1" : "0") + "\"";
+                }
+
+                lines.add(line + "\n");
+            }
+            fr.close();
+            br.close();
+
+            FileWriter fw = new FileWriter(f1);
+            BufferedWriter out = new BufferedWriter(fw);
+            for(String s : lines)
+                out.write(s);
+            out.flush();
+            out.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void modifyBootIni() {

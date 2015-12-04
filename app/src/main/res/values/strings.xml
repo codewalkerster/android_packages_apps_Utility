@@ -56,4 +56,6 @@
     <string name="kodi">Auto start KODI on boot.</string>
 
     <string name="enter_url">Please enter your Android update server URL properly</string>
+    <string name="enable_ir">Enable IR Remote Control</string>
+    <string name="disable_ir">Disable IR Remote Control</string>
 </resources>
