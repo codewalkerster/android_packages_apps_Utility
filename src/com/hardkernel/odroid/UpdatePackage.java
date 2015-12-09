@@ -13,13 +13,13 @@ class UpdatePackage {
     private static final String TAG = "UpdatePackage";
 
     private static final String HEADER = "updatepackage";
-    private static final String MODEL = "odroidc";
+    private static final String MODEL = "odroidc2";
     private static final String VARIANT = "eng";
-    private static final String BRANCH = "s805_4.4.2_master";
+    private static final String BRANCH = "odroidc2_bsp_20151031";
 
     public static final long PACKAGE_MAXSIZE = 400 * 1024 * 1024;   /* 400MB */
 
-    private static String m_remoteUrl = "http://dn.odroid.com/S805/Android/ODROID-C/";
+    private static String m_remoteUrl = "http://dn.odroid.com/S905/Android/ODROID-C2/";
 
     private int m_buildNumber = -1;
     private long m_downloadId = -1;
