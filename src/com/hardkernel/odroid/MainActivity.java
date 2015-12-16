@@ -397,8 +397,8 @@ public class MainActivity extends Activity {
             }
         });
 
-        File boot_init = new File(BOOT_INI);
-        if (boot_init.exists()) {
+        File boot_ini = new File(BOOT_INI);
+        if (boot_ini.exists()) {
             try {
                 bufferedReader = new BufferedReader(new FileReader(BOOT_INI));
                 while ((line = bufferedReader.readLine()) != null) {
@@ -938,8 +938,8 @@ public class MainActivity extends Activity {
     }
 
     public static void checkBootINI() {
-        File boot_init = new File(BOOT_INI);
-        if (!boot_init.exists()) {
+        File boot_ini = new File(BOOT_INI);
+        if (!boot_ini.exists()) {
             try {
                 OutputStream stream;
                 Process p = Runtime.getRuntime().exec("su");
