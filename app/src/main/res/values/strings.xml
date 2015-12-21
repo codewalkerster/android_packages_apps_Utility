@@ -54,6 +54,7 @@
     <string name="down_arrow">▼</string>
     <string name="zero">0</string>
     <string name="kodi">Auto start KODI on boot.</string>
+    <string name="show_all">Show all resolutions.</string>
 
     <string name="enter_url">Please enter your Android update server URL properly</string>
     <string name="enable_ir">Enable IR Remote Control</string>

@@ -131,6 +131,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1" />
+
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/show_all"
+                            android:id="@+id/cb_show_all"
+                            android:layout_marginLeft="10dp" />
                     </LinearLayout>
 
                     <Button

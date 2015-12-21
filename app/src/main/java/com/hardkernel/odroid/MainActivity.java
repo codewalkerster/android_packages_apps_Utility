@@ -23,6 +23,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -85,6 +86,10 @@ public class MainActivity extends Activity {
     private Spinner mSpinner_Resolution;
     private String mResolution = "720p";
     private static String mSystemResolution = "720p";
+
+    private CheckBox mShowAllResolution;
+    List<String> mAvableDispList = new ArrayList<String>();
+    ArrayAdapter<CharSequence> mAdapterResolution = null;
 
     private int mTopValue;
     private int mTopDelta = 0;
@@ -593,8 +598,8 @@ public class MainActivity extends Activity {
         mBtnOverScanList.add(mBtnBottomDecrease);
 
         mSpinner_Resolution = (Spinner)findViewById(R.id.spinner_resolution);
+        mShowAllResolution = (CheckBox)findViewById(R.id.cb_show_all);
 
-        List<String> disp = new ArrayList<String>();
         File disp_cap = new File(DISP_CAP);
         try {
             FileReader fr = new FileReader(disp_cap);
@@ -604,7 +609,7 @@ public class MainActivity extends Activity {
                     Log.e(TAG, line);
                     if (line.indexOf('*') != -1)
                         line = line.substring(0, line.indexOf('*'));
-                    disp.add(line);
+                    mAvableDispList.add(line);
                 }
             }
             fr.close();
@@ -612,25 +617,23 @@ public class MainActivity extends Activity {
         } catch (Exception e) {
         }
 
-        ArrayAdapter<CharSequence> adapterResolution = null;
-
-        if (disp.size() > 0) {
-            adapterResolution = new ArrayAdapter(this, android.R.layout.simple_spinner_item, 
-                    disp);
+        if (mAvableDispList.size() > 0) {
+            mAdapterResolution = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,
+                    mAvableDispList);
         } else {
-            adapterResolution = ArrayAdapter.createFromResource(this,
-            R.array.resolution_array, android.R.layout.simple_spinner_item);
+            mAdapterResolution = ArrayAdapter.createFromResource(this,
+            R.array.resolution_array, android.R.layout.simple_spinner_dropdown_item);
+            mShowAllResolution.setEnabled(false);
         }
 
-        adapterResolution.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSpinner_Resolution.setAdapter(adapterResolution);
+        mSpinner_Resolution.setAdapter(mAdapterResolution);
 
         mSpinner_Resolution.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> arg0, View arg1,
-                    int arg2, long arg3) {
+            public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 // TODO Auto-generated method stub
                 String resolution = arg0.getItemAtPosition(arg2).toString();
+                Log.e(TAG, "mResolution = " + mResolution);
                 if (mResolution.equals(resolution))
                     return;
                 else
@@ -649,10 +652,20 @@ public class MainActivity extends Activity {
 
         });
 
+        mShowAllResolution.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mAvableDispList.clear();
+                mResolution = "720p";
+                fillResolutionTable(isChecked, mAvableDispList, mSpinner_Resolution, mAdapterResolution);
+                mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
+            }
+        });
+
         mRadio_left = (RadioButton)findViewById(R.id.radio_left);
         mRadio_right = (RadioButton)findViewById(R.id.radio_right);
 
-        mSpinner_Resolution.setSelection(adapterResolution.getPosition(mResolution));
+        mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
 
         Button btn = (Button)findViewById(R.id.button_mouse_apply);
         btn.setOnClickListener(new OnClickListener() {
@@ -841,6 +854,38 @@ public class MainActivity extends Activity {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    private void fillResolutionTable(boolean all, List<String> list, Spinner spinner,
+                                     ArrayAdapter<CharSequence> adapter) {
+        adapter.clear();
+        if (all) {
+            Resources res = getResources();
+            String[] resolution = res.getStringArray(R.array.resolution_array);
+            adapter.addAll(resolution);
+        } else {
+            File disp_cap = new File(DISP_CAP);
+            try {
+                FileReader fr = new FileReader(disp_cap);
+                BufferedReader br = new BufferedReader(fr);
+                String line;
+                while ((line = br.readLine()) != null) {
+                    if (!line.equals("null edid")) {
+                        Log.e(TAG, line);
+                        if (line.indexOf('*') != -1)
+                            line = line.substring(0, line.indexOf('*'));
+                        list.add(line);
+                    }
+                }
+                fr.close();
+                br.close();
+            } catch (Exception e) {
+            }
+
+            adapter.addAll(list);
+        }
+
+        spinner.setAdapter(adapter);
     }
 
     public void modifyBootIni() {
