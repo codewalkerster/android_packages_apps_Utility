@@ -599,6 +599,7 @@ public class MainActivity extends Activity {
 
         mSpinner_Resolution = (Spinner)findViewById(R.id.spinner_resolution);
         mShowAllResolution = (CheckBox)findViewById(R.id.cb_show_all);
+        mShowAllResolution.setChecked(true);
 
         File disp_cap = new File(DISP_CAP);
         try {
