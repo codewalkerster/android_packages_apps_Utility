@@ -601,31 +601,8 @@ public class MainActivity extends Activity {
         mShowAllResolution = (CheckBox)findViewById(R.id.cb_show_all);
         mShowAllResolution.setChecked(true);
 
-        File disp_cap = new File(DISP_CAP);
-        try {
-            FileReader fr = new FileReader(disp_cap);
-            BufferedReader br = new BufferedReader(fr);
-            while ((line = br.readLine()) != null) {
-                if (!line.equals("null edid")) {
-                    Log.e(TAG, line);
-                    if (line.indexOf('*') != -1)
-                        line = line.substring(0, line.indexOf('*'));
-                    mAvableDispList.add(line);
-                }
-            }
-            fr.close();
-            br.close();
-        } catch (Exception e) {
-        }
-
-        if (mAvableDispList.size() > 0) {
-            mAdapterResolution = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,
-                    mAvableDispList);
-        } else {
-            mAdapterResolution = ArrayAdapter.createFromResource(this,
-            R.array.resolution_array, android.R.layout.simple_spinner_dropdown_item);
-            mShowAllResolution.setEnabled(false);
-        }
+        mAdapterResolution = ArrayAdapter.createFromResource(this,
+        R.array.resolution_array, android.R.layout.simple_spinner_dropdown_item);
 
         mSpinner_Resolution.setAdapter(mAdapterResolution);
 
@@ -656,7 +633,6 @@ public class MainActivity extends Activity {
         mShowAllResolution.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mAvableDispList.clear();
                 mResolution = "720p";
                 fillResolutionTable(isChecked, mAvableDispList, mSpinner_Resolution, mAdapterResolution);
                 mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
@@ -859,11 +835,10 @@ public class MainActivity extends Activity {
 
     private void fillResolutionTable(boolean all, List<String> list, Spinner spinner,
                                      ArrayAdapter<CharSequence> adapter) {
-        adapter.clear();
+        list.clear();
         if (all) {
-            Resources res = getResources();
-            String[] resolution = res.getStringArray(R.array.resolution_array);
-            adapter.addAll(resolution);
+            adapter = ArrayAdapter.createFromResource(this,
+            R.array.resolution_array, android.R.layout.simple_spinner_dropdown_item);
         } else {
             File disp_cap = new File(DISP_CAP);
             try {
@@ -883,7 +858,8 @@ public class MainActivity extends Activity {
             } catch (Exception e) {
             }
 
-            adapter.addAll(list);
+            adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,
+                    list);
         }
 
         spinner.setAdapter(adapter);
