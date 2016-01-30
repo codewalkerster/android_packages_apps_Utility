@@ -1313,12 +1313,6 @@ public class MainActivity extends Activity {
                     String path = getRealPathFromURI(uri);
                     if (path == null)
                         return;
-                    if (path.startsWith("/document")) {
-                        Toast.makeText(context, "The file was not copied in the normal way.",
-                                Toast.LENGTH_LONG).show();
-                        return;
-                    }
-
                     installPackage(new File(path));
                 }
                 break;
@@ -1329,6 +1323,7 @@ public class MainActivity extends Activity {
     private String getRealPathFromURI(Uri uri) {
         String filePath = "";
         filePath = uri.getPath();
+        Log.e(TAG, "uri.getPath() = " + filePath);
         if (filePath.startsWith("/storage"))
             return filePath;
 
