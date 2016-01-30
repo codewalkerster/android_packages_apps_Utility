@@ -60,6 +60,7 @@ public class MainActivity extends Activity {
 
     private final static String TAG = "ODROIDUtility";
     public final static String GOVERNOR_NODE = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor";
+    public final static String SCALING_AVAILABLE_GOVERNORS = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors";
 
     public final static String SCALING_AVAILABLE_FREQUESIES = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies";
     public final static String SCALING_MAX_FREQ = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq";
@@ -319,11 +320,11 @@ public class MainActivity extends Activity {
         tabHost.addTab(tab4);
 
         mSpinnerGovernor = (Spinner) findViewById(R.id.spinner_governors);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> mAdapterGovenor = ArrayAdapter.createFromResource(this,
-                R.array.governor_s805_array, android.R.layout.simple_spinner_item);
-        mAdapterGovenor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSpinnerGovernor.setAdapter(mAdapterGovenor);
+        String available_governors = getScaclingAvailableGovernor();
+        String[] governor_array = available_governors.split(" ");
+        ArrayAdapter<String> governorAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, governor_array);
+        governorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinnerGovernor.setAdapter(governorAdapter);
 
         mSpinnerGovernor.setOnItemSelectedListener(new OnItemSelectedListener() {
 
@@ -350,9 +351,8 @@ public class MainActivity extends Activity {
 
         mGovernorString = getCurrentGovernor();
 
-        if (mGovernorString != null) {
-            mSpinnerGovernor.setSelection(mAdapterGovenor.getPosition(mGovernorString));
-        }
+        if (mGovernorString != null)
+            mSpinnerGovernor.setSelection(governorAdapter.getPosition(mGovernorString));
 
         mSpinnerFreq = (Spinner) findViewById(R.id.spinner_freq);
 
@@ -1072,6 +1072,23 @@ public class MainActivity extends Activity {
 
         return freq;
     }
+
+    protected String getScaclingAvailableGovernor() {
+        String available_governors = null;
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(SCALING_AVAILABLE_GOVERNORS));
+            available_governors = bufferedReader.readLine();
+            bufferedReader.close();
+            Log.e(TAG, available_governors);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return available_governors;
+    }
+
 
     protected String getScaclingAvailableFrequensies() {
         String available_freq = null;
