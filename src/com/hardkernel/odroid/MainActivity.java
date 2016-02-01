@@ -733,7 +733,7 @@ public class MainActivity extends Activity {
                 // TODO Auto-generated method stub
                 try {
                     DataOutputStream stdin = new DataOutputStream(mSu.getOutputStream());
-                    stdin.writeBytes("mount -o rw,remount /system\n");
+                    stdin.writeBytes("mount -o rw,remount /\n");
 
                     if (mRadio_portrait.isChecked()) {
                         stdin.writeBytes("sed -i s/persist.demo.hdmirotation=landscape/persist.demo.hdmirotation=portrait/g /system/build.prop\n");
