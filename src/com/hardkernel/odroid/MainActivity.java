@@ -617,7 +617,8 @@ public class MainActivity extends Activity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mResolution = "720p60hz";
                 fillResolutionTable(isChecked, mAvableDispList, mSpinner_Resolution, mAdapterResolution);
-                mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
+                if (isChecked)
+                    mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
             }
         });
 
@@ -780,6 +781,7 @@ public class MainActivity extends Activity {
     private void fillResolutionTable(boolean all, List<String> list, Spinner spinner,
                                      ArrayAdapter<CharSequence> adapter) {
         list.clear();
+        adapter = null;
         if (all) {
             adapter = ArrayAdapter.createFromResource(this,
             R.array.resolution_array, android.R.layout.simple_spinner_dropdown_item);
