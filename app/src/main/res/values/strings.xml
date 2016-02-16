@@ -17,7 +17,7 @@
     <string name="vout_mode">vout mode</string>
     <string name="hdmi">HDMI</string>
     <string name="dvi">DVI</string>
-    <string name="resolution">Resoultion</string>
+    <string name="resolution">Resolution</string>
     <string name="r1280x800_lcd">1280 x 800 (LCD)</string>
     <string name="r1280x800">1280 x 800 (ODROID-VU)</string>
     <string name="r1920x1080">1920 x 1080</string>
