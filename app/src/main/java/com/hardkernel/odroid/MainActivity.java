@@ -59,6 +59,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.droidlogic.app.OutputModeManager;
+import com.droidlogic.app.PlayBackManager;
 
 public class MainActivity extends Activity {
 
@@ -126,6 +127,8 @@ public class MainActivity extends Activity {
 
     private ArrayList<Button> mBtnOverScanList;
 
+    private CheckBox mCBSelfAdaption;
+
     private RadioButton mRadio_portrait;
     private RadioButton mRadio_landscape;
 
@@ -150,6 +153,7 @@ public class MainActivity extends Activity {
     private UpdatePackage m_updatePackage = null;
 
     private OutputModeManager mOutputModeManager;
+    private PlayBackManager mPlayBackManager;
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -307,6 +311,7 @@ public class MainActivity extends Activity {
         }
 
         mOutputModeManager = new OutputModeManager(this);
+        mPlayBackManager = new PlayBackManager(this);
 
         TabHost tabHost = (TabHost)findViewById(android.R.id.tabhost);
         tabHost.setup();
@@ -673,6 +678,18 @@ public class MainActivity extends Activity {
                 }
             }
         });
+
+        mCBSelfAdaption = (CheckBox)findViewById(R.id.cb_selfadaption);
+        mCBSelfAdaption.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // TODO Auto-generated method stub
+                mPlayBackManager.setHdmiSelfadaption(isChecked);
+                updateHDMISelfAdaption();
+            }
+        });
+
 
         mRadio_left = (RadioButton)findViewById(R.id.radio_left);
         mRadio_right = (RadioButton)findViewById(R.id.radio_right);
@@ -1090,6 +1107,16 @@ public class MainActivity extends Activity {
 
         if (mRadio_portrait.isChecked())
             mRG_degree.setVisibility(View.VISIBLE);
+
+        updateHDMISelfAdaption();
+    }
+
+    private void updateHDMISelfAdaption() {
+        mCBSelfAdaption.setChecked(mPlayBackManager.isHdmiSelfadaptionOn());
+        if (mCBSelfAdaption.isChecked())
+            mCBSelfAdaption.setText(R.string.on);
+        else
+            mCBSelfAdaption.setText(R.string.off);
     }
 
     protected String getCurrentGovernor() {
