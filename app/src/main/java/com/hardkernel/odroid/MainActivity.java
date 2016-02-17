@@ -13,6 +13,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -56,6 +58,8 @@ import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.droidlogic.app.OutputModeManager;
+
 public class MainActivity extends Activity {
 
     private final static String TAG = "ODROIDUtility";
@@ -87,7 +91,10 @@ public class MainActivity extends Activity {
 
     private Spinner mSpinner_Resolution;
     private String mResolution = "720p60hz";
+    private String mPreviousResolution = "720p60hz";
     private static String mSystemResolution = "720p60hz";
+
+    private Timer mTimer = null;
 
     private CheckBox mShowAllResolution;
     List<String> mAvableDispList = new ArrayList<String>();
@@ -141,6 +148,8 @@ public class MainActivity extends Activity {
     private long enqueue;
 
     private UpdatePackage m_updatePackage = null;
+
+    private OutputModeManager mOutputModeManager;
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -296,6 +305,8 @@ public class MainActivity extends Activity {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
+
+        mOutputModeManager = new OutputModeManager(this);
 
         TabHost tabHost = (TabHost)findViewById(android.R.id.tabhost);
         tabHost.setup();
@@ -583,8 +594,7 @@ public class MainActivity extends Activity {
         mShowAllResolution = (CheckBox)findViewById(R.id.cb_show_all);
         mShowAllResolution.setChecked(true);
 
-        mAdapterResolution = ArrayAdapter.createFromResource(this,
-        R.array.resolution_array, android.R.layout.simple_spinner_dropdown_item);
+        mAdapterResolution = fillResolutionTable(true, mAvableDispList, mSpinner_Resolution);
 
         mSpinner_Resolution.setAdapter(mAdapterResolution);
 
@@ -593,15 +603,51 @@ public class MainActivity extends Activity {
             public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 // TODO Auto-generated method stub
                 String resolution = arg0.getItemAtPosition(arg2).toString();
-                Log.e(TAG, "mResolution = " + mResolution);
+                Log.e(TAG, "Selected resolution = " + resolution);
                 if (mResolution.equals(resolution))
                     return;
-                else
+                else {
+                    mPreviousResolution = mResolution;
                     mResolution = resolution;
+                }
 
                 enableOverScanButtons(mSystemResolution.equals(mResolution) && mOrientation.equals("landscape"));
+                mOutputModeManager.setBestMode(mResolution);
 
-                Log.e(TAG, "Selected resolution = " + mResolution);
+                mTimer = new Timer();
+
+                final AlertDialog.Builder dialog =
+                    new AlertDialog.Builder(MainActivity.this)
+                    .setCancelable(false)
+                    .setTitle("Does the display look OK?")
+                    .setMessage("The display will be reset to its previous configuration in few seconds.")
+                    .setPositiveButton("Keep this configuration", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            mTimer.cancel();
+                            modifyBootIni();
+                        }
+                    });
+
+                final AlertDialog alert = dialog.create();
+                alert.show();
+
+                mTimer.schedule(new TimerTask() {
+                    public void run() {
+                        mTimer.cancel();
+                        mOutputModeManager.setBestMode(mPreviousResolution);
+                        mResolution = mPreviousResolution;
+                        Log.e(TAG, "Time over, set to = " + mResolution);
+                        alert.dismiss();
+                    }
+                }, 5000);
+
+                alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
+                    }
+                });
             }
 
             @Override
@@ -615,10 +661,16 @@ public class MainActivity extends Activity {
         mShowAllResolution.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mResolution = "720p60hz";
-                fillResolutionTable(isChecked, mAvableDispList, mSpinner_Resolution, mAdapterResolution);
-                if (isChecked)
+                mAdapterResolution = fillResolutionTable(isChecked, mAvableDispList, mSpinner_Resolution);
+                if (mAdapterResolution.getPosition(mResolution) >= 0)
                     mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
+                else {
+                    if (mAdapterResolution.getPosition("720p60hz") >= 0) {
+                        mResolution = "720p60hz";
+                        mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
+                        mOutputModeManager.setBestMode(mResolution);
+                    }
+                }
             }
         });
 
@@ -653,8 +705,6 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                Log.e(TAG, "mSystemResolution = " + mSystemResolution + ", mResolution = " + mResolution);
-                modifyBootIni();
                 reboot();
             }
 
@@ -775,13 +825,11 @@ public class MainActivity extends Activity {
     protected void onPause() {
         // TODO Auto-generated method stub
         super.onPause();
-        modifyBootIni();
     }
 
-    private void fillResolutionTable(boolean all, List<String> list, Spinner spinner,
-                                     ArrayAdapter<CharSequence> adapter) {
+    private ArrayAdapter<CharSequence> fillResolutionTable(boolean all, List<String> list, Spinner spinner) {
         list.clear();
-        adapter = null;
+        ArrayAdapter<CharSequence> adapter = null;
         if (all) {
             adapter = ArrayAdapter.createFromResource(this,
             R.array.resolution_array, android.R.layout.simple_spinner_dropdown_item);
@@ -809,6 +857,7 @@ public class MainActivity extends Activity {
         }
 
         spinner.setAdapter(adapter);
+        return adapter;
     }
 
     public void modifyBootIni() {
@@ -819,12 +868,12 @@ public class MainActivity extends Activity {
             top = "setenv top \"0\"";
             left = "setenv left \"0\"";
             bottom = "setenv bottom \"0\"";
-            right = "setenv right \"0\"\n";
+            right = "setenv right \"0\"";
         } else {
             top = "setenv top \"" + mTopDelta + "\"";
             left = "setenv left \"" + mLeftDelta + "\"";
             bottom = "setenv bottom \"" + mBottomDelta + "\"";
-            right = "setenv right \"" + mRightDelta + "\"\n";
+            right = "setenv right \"" + mRightDelta + "\"";
         }
 
         List<String> lines = new ArrayList<String>();
@@ -874,6 +923,8 @@ public class MainActivity extends Activity {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+
+        Log.e(TAG, "Update boot.ini");
     }
 
     private void enableOverScanButtons(boolean enable) {
