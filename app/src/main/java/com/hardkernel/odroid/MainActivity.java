@@ -601,8 +601,7 @@ public class MainActivity extends Activity {
         mShowAllResolution = (CheckBox)findViewById(R.id.cb_show_all);
         mShowAllResolution.setChecked(true);
 
-        mAdapterResolution = ArrayAdapter.createFromResource(this,
-        R.array.resolution_array, android.R.layout.simple_spinner_dropdown_item);
+        mAdapterResolution = fillResolutionTable(true, mAvableDispList, mSpinner_Resolution);
 
         mSpinner_Resolution.setAdapter(mAdapterResolution);
 
@@ -633,10 +632,15 @@ public class MainActivity extends Activity {
         mShowAllResolution.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mResolution = "720p";
-                fillResolutionTable(isChecked, mAvableDispList, mSpinner_Resolution, mAdapterResolution);
-                if (isChecked)
+                mAdapterResolution = fillResolutionTable(isChecked, mAvableDispList, mSpinner_Resolution);
+                if (mAdapterResolution.getPosition(mResolution) >= 0)
                     mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
+                else {
+                    if (mAdapterResolution.getPosition("720p") >= 0) {
+                        mResolution = "720p";
+                        mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
+                    }
+                }
             }
         });
 
@@ -834,10 +838,9 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void fillResolutionTable(boolean all, List<String> list, Spinner spinner,
-                                     ArrayAdapter<CharSequence> adapter) {
+    private ArrayAdapter<CharSequence> fillResolutionTable(boolean all, List<String> list, Spinner spinner) {
         list.clear();
-        adapter = null;
+        ArrayAdapter<CharSequence> adapter = null;
         if (all) {
             adapter = ArrayAdapter.createFromResource(this,
             R.array.resolution_array, android.R.layout.simple_spinner_dropdown_item);
@@ -865,6 +868,7 @@ public class MainActivity extends Activity {
         }
 
         spinner.setAdapter(adapter);
+        return adapter;
     }
 
     public void modifyBootIni() {
@@ -923,12 +927,12 @@ public class MainActivity extends Activity {
             top = "setenv top \"0\"";
             left = "setenv left \"0\"";
             bottom = "setenv bottom \"0\"";
-            right = "setenv right \"0\"\n";
+            right = "setenv right \"0\"";
         } else {
             top = "setenv top \"" + mTopDelta + "\"";
             left = "setenv left \"" + mLeftDelta + "\"";
             bottom = "setenv bottom \"" + mBottomDelta + "\"";
-            right = "setenv right \"" + mRightDelta + "\"\n";
+            right = "setenv right \"" + mRightDelta + "\"";
         }
 
         List<String> lines = new ArrayList<String>();
