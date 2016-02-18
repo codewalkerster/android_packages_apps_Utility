@@ -17,6 +17,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
+import android.app.ActivityManager.RunningServiceInfo;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
@@ -25,6 +27,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
@@ -57,9 +60,11 @@ import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.LinearLayout;
 
 import com.droidlogic.app.OutputModeManager;
 import com.droidlogic.app.PlayBackManager;
+import com.droidlogic.app.HdmiCecManager;
 
 public class MainActivity extends Activity {
 
@@ -128,6 +133,12 @@ public class MainActivity extends Activity {
     private ArrayList<Button> mBtnOverScanList;
 
     private CheckBox mCBSelfAdaption;
+    private CheckBox mCBCECSwitch;
+    private CheckBox mCBOneKeyPlay;
+    private CheckBox mCBAutoChangeLanguage;
+
+    private LinearLayout mLLOneKeyPlay;
+    private LinearLayout mLLAutoChangeLanguage;
 
     private RadioButton mRadio_portrait;
     private RadioButton mRadio_landscape;
@@ -154,6 +165,22 @@ public class MainActivity extends Activity {
 
     private OutputModeManager mOutputModeManager;
     private PlayBackManager mPlayBackManager;
+    private HdmiCecManager mHdmiCecManager;
+
+    private SharedPreferences mSharepreference = null;
+
+    //For sharedPreferences
+    private static final String PREFERENCE_BOX_SETTING = "preference_box_settings";
+    private static final String SWITCH_ON = "true";
+    private static final String SWITCH_OFF = "false";
+    private static final String SWITCH_CEC = "switch_cec";
+    private static final String SWITCH_ONE_KEY_PLAY = "switch_one_key_play";
+    //private static final String SWITCH_ONE_KEY_POWER_OFF = "switch_one_key_power_off";
+    private static final String SWITCH_AUTO_CHANGE_LANGUAGE = "switch_auto_change_languace";
+
+    //For start service
+    private static final String CEC_SERVICE = "com.android.tv.settings.system.CecService";
+    private static final String CEC_ACTION = "CEC_LANGUAGE_AUTO_SWITCH";
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -320,6 +347,7 @@ public class MainActivity extends Activity {
         TabSpec tab2 = tabHost.newTabSpec("Mouse");
         TabSpec tab3 = tabHost.newTabSpec("Screen");
         TabSpec tab4 = tabHost.newTabSpec("Rotation");
+        TabSpec tab5 = tabHost.newTabSpec("HDMI-CEC");
 
         tab1.setIndicator("CPU");
         tab1.setContent(R.id.tab1);
@@ -329,11 +357,14 @@ public class MainActivity extends Activity {
         tab3.setContent(R.id.tab3);
         tab4.setIndicator("Rotation");
         tab4.setContent(R.id.tab4);
+        tab5.setIndicator("HDMI-CEC");
+        tab5.setContent(R.id.tab5);
 
         tabHost.addTab(tab1);
         //tabHost.addTab(tab2);
         tabHost.addTab(tab3);
         tabHost.addTab(tab4);
+        tabHost.addTab(tab5);
 
         mSpinnerGovernor = (Spinner) findViewById(R.id.spinner_governors);
         String available_governors = getScaclingAvailableGovernor();
@@ -690,6 +721,40 @@ public class MainActivity extends Activity {
             }
         });
 
+        mLLOneKeyPlay = (LinearLayout)findViewById(R.id.layout_one_key_play);
+
+        mLLAutoChangeLanguage = (LinearLayout)findViewById(R.id.layout_auto_change_language);
+
+        mCBCECSwitch = (CheckBox)findViewById(R.id.cb_cecswitch);
+        mCBCECSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // TODO Auto-generated method stub
+                switchCec(isChecked);
+            }
+        });
+
+        mCBOneKeyPlay = (CheckBox)findViewById(R.id.cb_one_key_play);
+        mCBOneKeyPlay.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // TODO Auto-generated method stub
+                switchOneKeyPlay(isChecked);
+            }
+        });
+
+        mCBAutoChangeLanguage = (CheckBox)findViewById(R.id.cb_auto_change_language);
+        mCBAutoChangeLanguage.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // TODO Auto-generated method stub
+                switchAutoChangeLanguage(isChecked);
+            }
+        });
+
 
         mRadio_left = (RadioButton)findViewById(R.id.radio_left);
         mRadio_right = (RadioButton)findViewById(R.id.radio_right);
@@ -836,6 +901,169 @@ public class MainActivity extends Activity {
             }
 
         });
+
+        initCecFun();
+    }
+
+    private boolean isCecServiceRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (CEC_SERVICE.equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void initCecFun(){
+        Log.e(TAG, "initCecFun()");
+        mHdmiCecManager = new HdmiCecManager(this);
+        mSharepreference = getSharedPreferences(PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE);
+
+        Editor editor = this.getSharedPreferences(PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE).edit();
+        String str = mHdmiCecManager.getCurConfig();
+        Log.e(TAG, "cec config = " + str);
+        if (!mHdmiCecManager.remoteSupportCec()) {
+            switchCec(false);
+            mLLOneKeyPlay.setVisibility(View.GONE);
+            mLLAutoChangeLanguage.setVisibility(View.GONE);
+            return;
+        }
+
+        // get rid of '0x' prefix
+        int cec_config = Integer.valueOf(str.substring(2, str.length()), 16);
+        Log.d(TAG, "cec config str:" + str + ", value:" + cec_config);
+        if ((cec_config & HdmiCecManager.MASK_FUN_CEC) != 0) {
+            if ((cec_config & HdmiCecManager.MASK_ONE_KEY_PLAY) != 0) {
+                editor.putString(SWITCH_ONE_KEY_PLAY, SWITCH_ON);
+                mCBOneKeyPlay.setChecked(true);
+            } else {
+                editor.putString(SWITCH_ONE_KEY_PLAY, SWITCH_OFF);
+                mCBOneKeyPlay.setChecked(false);
+            }
+            /*
+            if ((cec_config & HdmiCecManager.MASK_ONE_KEY_STANDBY) != 0) {
+                editor.putString(SWITCH_ONE_KEY_POWER_OFF, SWITCH_ON);
+            } else {
+                editor.putString(SWITCH_ONE_KEY_POWER_OFF, SWITCH_OFF);
+            }
+            */
+            if ((cec_config & HdmiCecManager.MASK_AUTO_CHANGE_LANGUAGE) != 0) {
+                editor.putString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_ON);
+                mCBAutoChangeLanguage.setChecked(true);
+            } else {
+                editor.putString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_OFF);
+                mCBAutoChangeLanguage.setChecked(false);
+            }
+            editor.putString(SWITCH_CEC, SWITCH_ON);
+            mCBCECSwitch.setChecked(true);
+            mLLOneKeyPlay.setVisibility(View.VISIBLE);
+            mLLAutoChangeLanguage.setVisibility(View.VISIBLE);
+        } else {
+            editor.putString(SWITCH_ONE_KEY_PLAY, SWITCH_OFF);
+            //editor.putString(SWITCH_ONE_KEY_POWER_OFF, SWITCH_OFF);
+            editor.putString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_OFF);
+            editor.putString(SWITCH_CEC, SWITCH_OFF);
+            mCBCECSwitch.setChecked(false);
+            mLLOneKeyPlay.setVisibility(View.GONE);
+            mLLAutoChangeLanguage.setVisibility(View.GONE);
+        }
+        editor.commit();
+        mHdmiCecManager.setCecEnv(cec_config);
+    }
+
+    private void switchCec(boolean on) {
+        String isOpen = mSharepreference.getString(SWITCH_CEC, SWITCH_OFF);
+        Log.d(TAG, "switch CEC, on:" + on + ", isOpen:" + isOpen);
+        Editor editor = this.getSharedPreferences(PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE).edit();
+        if (isOpen.equals(SWITCH_ON) && !on) {
+            editor.putString(SWITCH_CEC, SWITCH_OFF);
+            editor.putString(SWITCH_ONE_KEY_PLAY, SWITCH_OFF);
+            //editor.putString(SWITCH_ONE_KEY_POWER_OFF, SWITCH_OFF);
+            editor.putString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_OFF);
+            editor.commit();
+            mHdmiCecManager.setCecSysfsValue(HdmiCecManager.FUN_CEC, HdmiCecManager.FUN_CLOSE);
+        } else if (isOpen.equals(SWITCH_OFF) && on) {
+            editor.putString(SWITCH_CEC, SWITCH_ON);
+            editor.putString(SWITCH_ONE_KEY_PLAY, SWITCH_ON);
+            //editor.putString(SWITCH_ONE_KEY_POWER_OFF, SWITCH_ON);
+            editor.putString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_ON);
+            editor.commit();
+            if (!isCecServiceRunning()) {
+                Intent serviceIntent = new Intent();
+                serviceIntent.setAction(CEC_ACTION);
+                this.startService(serviceIntent);
+            }
+            mHdmiCecManager.setCecSysfsValue(HdmiCecManager.FUN_CEC, HdmiCecManager.FUN_OPEN);
+            updateCecLanguage();
+        }
+        if (on) {
+            mCBCECSwitch.setText(R.string.on);
+            mLLOneKeyPlay.setVisibility(View.VISIBLE);
+            mLLAutoChangeLanguage.setVisibility(View.VISIBLE);
+        } else {
+            mCBCECSwitch.setText(R.string.off);
+            mLLOneKeyPlay.setVisibility(View.GONE);
+            mLLAutoChangeLanguage.setVisibility(View.GONE);
+        }
+    }
+
+    private void switchOneKeyPlay(boolean on) {
+        String isOpen = mSharepreference.getString(SWITCH_ONE_KEY_PLAY, SWITCH_OFF);
+        Editor editor = this.getSharedPreferences(PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE).edit();
+        if (isOpen.equals(SWITCH_ON) && !on) {
+            editor.putString(SWITCH_ONE_KEY_PLAY, SWITCH_OFF);
+            editor.commit();
+            mHdmiCecManager.setCecSysfsValue(HdmiCecManager.FUN_ONE_KEY_PLAY, HdmiCecManager.FUN_CLOSE);
+        } else if (isOpen.equals(SWITCH_OFF) && on) {
+            editor.putString(SWITCH_ONE_KEY_PLAY, SWITCH_ON);
+            editor.commit();
+            mHdmiCecManager.setCecSysfsValue(HdmiCecManager.FUN_ONE_KEY_PLAY, HdmiCecManager.FUN_OPEN);
+        }
+        if (on)
+            mCBOneKeyPlay.setText(R.string.on);
+        else
+            mCBOneKeyPlay.setText(R.string.off);
+    }
+
+    private void switchAutoChangeLanguage(boolean on) {
+        String isOpen = mSharepreference.getString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_OFF);
+        Editor editor = this.getSharedPreferences(
+                PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE).edit();
+        if (isOpen.equals(SWITCH_ON) && !on) {
+            editor.putString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_OFF);
+            editor.commit();
+            mHdmiCecManager.setCecSysfsValue(
+                    HdmiCecManager.FUN_AUTO_CHANGE_LANGUAGE, HdmiCecManager.FUN_CLOSE);
+        } else if (isOpen.equals(SWITCH_OFF) && on) {
+            editor.putString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_ON);
+            editor.commit();
+            if (!isCecServiceRunning()) {
+                Intent serviceIntent = new Intent();
+                serviceIntent.setAction(CEC_ACTION);
+                this.startService(serviceIntent);
+            }
+            mHdmiCecManager.setCecSysfsValue(
+                    HdmiCecManager.FUN_AUTO_CHANGE_LANGUAGE, HdmiCecManager.FUN_OPEN);
+            updateCecLanguage();
+        }
+        if (on)
+            mCBAutoChangeLanguage.setText(R.string.on);
+        else
+            mCBAutoChangeLanguage.setText(R.string.off);
+    }
+
+    private void updateCecLanguage(){
+        String curLanguage = mHdmiCecManager.getCurLanguage();
+        Log.d(TAG,"update curLanguage:" + curLanguage);
+        if (curLanguage == null)
+            return;
+
+        String[] cec_language_list = getResources().getStringArray(R.array.cec_language);
+        String[] language_list = getResources().getStringArray(R.array.language);
+        String[] country_list = getResources().getStringArray(R.array.country);
+        mHdmiCecManager.setLanguageList(cec_language_list, language_list, country_list);
+        mHdmiCecManager.doUpdateCECLanguage(curLanguage);
     }
 
     @Override

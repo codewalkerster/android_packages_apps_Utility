@@ -58,6 +58,9 @@
 
     <string name="enter_url">Please enter your Android update server URL properly</string>
     <string name="self_adaption">HDMI self-adaption</string>
+    <string name="cec_control">CEC Switch</string>
     <string name="on">On</string>
     <string name="off">Off</string>
+    <string name="one_key_play">One key play</string>
+    <string name="auto_change_language">Auto change Language</string>
 </resources>
