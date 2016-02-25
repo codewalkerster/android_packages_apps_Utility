@@ -926,6 +926,8 @@ public class MainActivity extends Activity {
         Log.e(TAG, "cec config = " + str);
         if (!mHdmiCecManager.remoteSupportCec()) {
             switchCec(false);
+            mCBCECSwitch.setChecked(false);
+            mCBCECSwitch.setEnabled(false);
             mLLOneKeyPlay.setVisibility(View.GONE);
             mLLAutoChangeLanguage.setVisibility(View.GONE);
             return;
