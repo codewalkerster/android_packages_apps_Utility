@@ -182,7 +182,7 @@ public class MainActivity extends Activity {
     private static final String CEC_SERVICE = "com.android.tv.settings.system.CecService";
     private static final String CEC_ACTION = "CEC_LANGUAGE_AUTO_SWITCH";
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0L);
@@ -280,7 +280,7 @@ public class MainActivity extends Activity {
         downloadManager = (DownloadManager)context.getSystemService(
                 Context.DOWNLOAD_SERVICE);
 
-        registerReceiver(receiver,
+        registerReceiver(mReceiver,
                 new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
         try {
@@ -1073,6 +1073,7 @@ public class MainActivity extends Activity {
     protected void onPause() {
         // TODO Auto-generated method stub
         super.onPause();
+        unregisterReceiver(mReceiver);
     }
 
     private ArrayAdapter<CharSequence> fillResolutionTable(boolean all, List<String> list, Spinner spinner) {
