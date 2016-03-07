@@ -63,4 +63,6 @@
     <string name="off">Off</string>
     <string name="one_key_play">One key play</string>
     <string name="auto_change_language">Auto change Language</string>
+    <string name="offical_server">Offical Server</string>
+    <string name="mirror_server">Mirror Server</string>
 </resources>

@@ -1499,6 +1499,34 @@ public class MainActivity extends Activity {
             final EditText editText = (EditText)promptView.findViewById(R.id.edittext);
             editText.setText(UpdatePackage.remoteUrl(), TextView.BufferType.EDITABLE);
 
+            final RadioButton rbOfficalServer =
+                (RadioButton)promptView.findViewById(R.id.rb_offical_server);
+
+            rbOfficalServer.setOnClickListener(new OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    // TODO Auto-generated method stub
+                    editText.setText(UpdatePackage.OFFICAL_SERVER_URL,
+                        TextView.BufferType.EDITABLE);
+                }
+            });
+
+            rbOfficalServer.setChecked(true);
+
+            final RadioButton rbMirrorServer =
+                (RadioButton)promptView.findViewById(R.id.rb_mirror_server);
+
+            rbMirrorServer.setOnClickListener(new OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    // TODO Auto-generated method stub
+                    editText.setText(UpdatePackage.MIRROR_SERVER_URL,
+                        TextView.BufferType.EDITABLE);
+                }
+            });
+
             alertDialogBuilder.setCancelable(false)
                 .setPositiveButton("OK",
                     new DialogInterface.OnClickListener() {

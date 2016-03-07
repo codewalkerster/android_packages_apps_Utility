@@ -19,8 +19,12 @@ class UpdatePackage {
 
     public static final long PACKAGE_MAXSIZE = 400 * 1024 * 1024;   /* 400MB */
 
-    private static String m_remoteUrl = "http://dn.odroid.com/S905/Android/ODROID-C2/";
+    public final static String OFFICAL_SERVER_URL =
+        "http://dn.odroid.com/S905/Android/ODROID-C2/";
+    public final static String MIRROR_SERVER_URL =
+        "http://www.odroid.in/mirror/dn.odroid.com/S905/Android/ODROID-C2/";
 
+    private static String mRemoteUrl = OFFICAL_SERVER_URL;
     private int m_buildNumber = -1;
     private long m_downloadId = -1;
 
@@ -66,11 +70,11 @@ class UpdatePackage {
     }
 
     static public String remoteUrl() {
-        return m_remoteUrl;
+        return mRemoteUrl;
     }
 
     static public void setRemoteUrl(String url) {
-        m_remoteUrl = url;
+        mRemoteUrl = url;
     }
 
     public long downloadId() {
