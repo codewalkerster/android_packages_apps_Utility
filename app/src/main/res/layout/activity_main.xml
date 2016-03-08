@@ -107,6 +107,26 @@
 
                     <LinearLayout
                         android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="20dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="@string/auto_power_on"
+                            android:id="@+id/textView9" />
+
+                        <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/on"
+                            android:id="@+id/cb_auto_power_on" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="20dp"
@@ -124,6 +144,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/on"
                             android:id="@+id/cb_auto_change_language" />
+
                     </LinearLayout>
 
                 </LinearLayout>
