@@ -678,7 +678,7 @@ public class MainActivity extends Activity {
                         Log.e(TAG, "Time over, set to = " + mResolution);
                         alert.dismiss();
                     }
-                }, 5000);
+                }, 10000);
 
                 alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
