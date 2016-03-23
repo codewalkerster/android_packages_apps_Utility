@@ -1649,6 +1649,7 @@ public class MainActivity extends Activity {
     }
 
     private void installPackage(final File packageFile) {
+        Log.e(TAG, "installPackage = " + packageFile.getPath());
         try {
             RecoverySystem.verifyPackage(packageFile, null, null);
 
@@ -1726,13 +1727,8 @@ public class MainActivity extends Activity {
         if (filePath.startsWith("/storage"))
             return filePath;
 
-        String wholeID = DocumentsContract.getDocumentId(uri);
-
-        if (!wholeID.contains(":"))
-            return filePath;
-
         // Split at colon, use second item in the array
-        String id = wholeID.split(":")[1];
+        String id = filePath.substring("/document/".length(), filePath.length());
 
         Log.e(TAG, "id = " + id);
 
