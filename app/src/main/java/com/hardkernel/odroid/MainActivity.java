@@ -895,7 +895,7 @@ public class MainActivity extends Activity {
                         stdin.writeBytes("sed -i s/ro.sf.hwrotation=270/ro.sf.hwrotation=0/g /system/build.prop\n");
                     }
 
-                    stdin.writeBytes("mount -o ro,remount /system\n");
+                    stdin.writeBytes("mount -o ro,remount /\n");
                     if (mDegree == 0) {
                         android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
                         android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 0);
@@ -1381,6 +1381,8 @@ public class MainActivity extends Activity {
 
         if (mRadio_portrait.isChecked())
             mRG_degree.setVisibility(View.VISIBLE);
+        else
+            mRG_degree.setVisibility(View.GONE);
 
         updateHDMISelfAdaption();
     }
