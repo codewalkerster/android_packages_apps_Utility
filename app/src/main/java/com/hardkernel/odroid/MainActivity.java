@@ -889,10 +889,15 @@ public class MainActivity extends Activity {
                             stdin.writeBytes("sed -i s/ro.sf.hwrotation=0/ro.sf.hwrotation=270/g /system/build.prop\n");
                             stdin.writeBytes("sed -i s/ro.sf.hwrotation=90/ro.sf.hwrotation=270/g /system/build.prop\n");
                         }
+                        stdin.writeBytes("setprop persist.demo.hdmirotation portrait\n");
+                        stdin.writeBytes("set_density2.sh\n");
                     } else if (mRadio_landscape.isChecked()) {
                         stdin.writeBytes("sed -i s/persist.demo.hdmirotation=portrait/persist.demo.hdmirotation=landscape/g /system/build.prop\n");
                         stdin.writeBytes("sed -i s/ro.sf.hwrotation=90/ro.sf.hwrotation=0/g /system/build.prop\n");
                         stdin.writeBytes("sed -i s/ro.sf.hwrotation=270/ro.sf.hwrotation=0/g /system/build.prop\n");
+                        stdin.writeBytes("sed -i s/ro.sf.hwrotation=90/ro.sf.hwrotation=270/g /system/build.prop\n");
+                        stdin.writeBytes("setprop persist.demo.hdmirotation landscape\n");
+                        stdin.writeBytes("set_density2.sh\n");
                     }
 
                     stdin.writeBytes("mount -o ro,remount /\n");
