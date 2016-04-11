@@ -878,7 +878,7 @@ public class MainActivity extends Activity {
                 // TODO Auto-generated method stub
                 try {
                     DataOutputStream stdin = new DataOutputStream(mSu.getOutputStream());
-                    stdin.writeBytes("mount -o rw,remount /\n");
+                    stdin.writeBytes("mount -o rw,remount /system\n");
 
                     if (mRadio_portrait.isChecked()) {
                         stdin.writeBytes("sed -i s/persist.demo.hdmirotation=landscape/persist.demo.hdmirotation=portrait/g /system/build.prop\n");
@@ -900,7 +900,7 @@ public class MainActivity extends Activity {
                         stdin.writeBytes("set_density2.sh\n");
                     }
 
-                    stdin.writeBytes("mount -o ro,remount /\n");
+                    stdin.writeBytes("mount -o ro,remount /system\n");
                     if (mDegree == 0) {
                         android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
                         android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 0);
