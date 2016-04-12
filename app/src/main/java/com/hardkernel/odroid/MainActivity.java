@@ -923,12 +923,12 @@ public class MainActivity extends Activity {
             top = "setenv top \"0\"";
             left = "setenv left \"0\"";
             bottom = "setenv bottom \"0\"";
-            right = "setenv right \"0\"\n";
+            right = "setenv right \"0\"";
         } else {
             top = "setenv top \"" + mTopDelta + "\"";
             left = "setenv left \"" + mLeftDelta + "\"";
             bottom = "setenv bottom \"" + mBottomDelta + "\"";
-            right = "setenv right \"" + mRightDelta + "\"\n";
+            right = "setenv right \"" + mRightDelta + "\"";
         }
 
         List<String> lines = new ArrayList<String>();
