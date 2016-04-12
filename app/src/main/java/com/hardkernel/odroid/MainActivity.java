@@ -145,7 +145,7 @@ public class MainActivity extends Activity {
 
     private UpdatePackage m_updatePackage = null;
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0L);
@@ -243,7 +243,7 @@ public class MainActivity extends Activity {
         downloadManager = (DownloadManager)context.getSystemService(
                 Context.DOWNLOAD_SERVICE);
 
-        registerReceiver(receiver,
+        registerReceiver(mReceiver,
                 new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
         try {
@@ -798,9 +798,9 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    protected void onPause() {
+    protected void onDestroy() {
         // TODO Auto-generated method stub
-        super.onPause();
+        super.onDestroy();
         modifyBootIni();
     }
 
@@ -1292,6 +1292,34 @@ public class MainActivity extends Activity {
 
             final EditText editText = (EditText)promptView.findViewById(R.id.edittext);
             editText.setText(UpdatePackage.remoteUrl(), TextView.BufferType.EDITABLE);
+
+            final RadioButton rbOfficalServer =
+                (RadioButton)promptView.findViewById(R.id.rb_offical_server);
+
+            rbOfficalServer.setOnClickListener(new OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    // TODO Auto-generated method stub
+                    editText.setText(UpdatePackage.OFFICAL_SERVER_URL,
+                        TextView.BufferType.EDITABLE);
+                }
+            });
+
+            rbOfficalServer.setChecked(true);
+
+            final RadioButton rbMirrorServer =
+                (RadioButton)promptView.findViewById(R.id.rb_mirror_server);
+
+            rbMirrorServer.setOnClickListener(new OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    // TODO Auto-generated method stub
+                    editText.setText(UpdatePackage.MIRROR_SERVER_URL,
+                        TextView.BufferType.EDITABLE);
+                }
+            });
 
             alertDialogBuilder.setCancelable(false)
                 .setPositiveButton("OK",
