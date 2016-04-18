@@ -1038,7 +1038,7 @@ public class MainActivity extends Activity {
     }
 
     private void switchOneKeyPlay(boolean on) {
-        String isOpen = mSharepreference.getString(SWITCH_ONE_KEY_PLAY, SWITCH_OFF);
+        String isOpen = mSharepreference.getString(SWITCH_ONE_KEY_PLAY, SWITCH_ON);
         Editor editor = this.getSharedPreferences(PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE).edit();
         if (isOpen.equals(SWITCH_ON) && !on) {
             editor.putString(SWITCH_ONE_KEY_PLAY, SWITCH_OFF);
