@@ -26,5 +26,7 @@
         <item >1080p24hz</item>
         <item >2160p60hz420</item>
         <item >2160p50hz420</item>
+        <item >ODROID-VU7</item>
+        <item >ODROID-VU7 Plus</item>
     </string-array>
 </resources>
