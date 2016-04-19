@@ -425,6 +425,18 @@ public class MainActivity extends Activity {
                         Log.e(TAG, mResolution);
                     }
 
+                    if (line.startsWith("setenv vout_mode")) {
+                        Log.e(TAG, line);
+                        String vout_mode = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
+                        if (vout_mode.equals("dvi")) {
+                            if (mResolution.equals("800x480p60hz"))
+                                mResolution = "ODROID-VU7";
+                            else if (mResolution.equals("1024x600p60hz"))
+                                mResolution = "ODROID-VU7 Plus";
+                        }
+                        Log.e(TAG, mResolution);
+                    }
+
                     if (line.startsWith("setenv top")) {
                         mTopDelta = Integer.parseInt(line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")));
                         Log.e(TAG, "top : " + mTopDelta);
@@ -868,6 +880,7 @@ public class MainActivity extends Activity {
     }
 
     public void modifyBootIni() {
+        String vout_mode = "setenv vout_mode \"hdmi\"";
         String resolution = "setenv hdmimode \"720p\"           # 720p 1280x720";
         if (mResolution.equals("vga"))
             resolution = "setenv hdmimode \"vga\"            # 640x480";
@@ -917,6 +930,14 @@ public class MainActivity extends Activity {
             resolution = "setenv hdmimode \"1080i\"          # 1080I@60Hz";
         else if (mResolution.equals("1920x1200"))
             resolution = "setenv hdmimode \"1920x1200\"      # 1920x1200";
+        else if (mResolution.equals("ODROID-VU7")) {
+            resolution = "setenv hdmimode \"800x480p60hz\"   # 800x480";
+            vout_mode = "setenv vout_mode \"dvi\"";
+        } else if (mResolution.equals("ODROID-VU7 Plus")) {
+            resolution = "setenv hdmimode \"1024x600p60hz\"  # 1024x600";
+            vout_mode = "setenv vout_mode \"dvi\"";
+        }
+
 
         String top, left, bottom, right;
         if (!mSystemResolution.equals(mResolution)) {
@@ -941,6 +962,11 @@ public class MainActivity extends Activity {
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("setenv hdmimode")) {
                     line = resolution;
+                    Log.e(TAG, line);
+                }
+
+                if (line.startsWith("setenv vout_mode")) {
+                    line = vout_mode;
                     Log.e(TAG, line);
                 }
 
