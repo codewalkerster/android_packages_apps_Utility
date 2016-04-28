@@ -623,13 +623,15 @@ public class MainActivity extends Activity {
                 y_res = "576";
             } else if ("800x480p60hz".equals(mResolution)
                     || "ODROID-VU7".equals(mResolution)) {
+                mResolution = "800x480p60hz";
                 x_res = "800";
                 y_res = "480";
             } else if ("600p60hz".equals(mResolution)) {
                 x_res = "800";
                 y_res = "600";
-            } else if ("1024x600p43hz".equals(mResolution)
+            } else if ("1024x600p60hz".equals(mResolution)
                     || "ODROID-VU7 Plus".equals(mResolution)) {
+                mResolution = "1024x600p60hz";
                 x_res = "1024";
                 y_res = "600";
             } else if ("768p60hz".equals(mResolution)) {
@@ -677,7 +679,7 @@ public class MainActivity extends Activity {
 
             writer.println("# setenv fb_x_res \"1024\"");
             writer.println("# setenv fb_y_res \"600\"");
-            writer.println("# setenv hdmi_phy_res \"1024x600p43hz\"\n");
+            writer.println("# setenv hdmi_phy_res \"1024x600p60hz\"\n");
 
             writer.println("# setenv fb_x_res \"1280\"");
             writer.println("# setenv fb_y_res \"720\"");
@@ -751,6 +753,20 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
 
+        try {
+            DataOutputStream stdin = new DataOutputStream(mSu.getOutputStream());
+            stdin.writeBytes("mount -o rw,remount /system\n");
+
+            if ("800x480p60hz".equals(mResolution)
+                    || "ODROID-VU7".equals(mResolution)) {
+                stdin.writeBytes("sed -i s/ro.sf.lcd_density=160/ro.sf.lcd_density=120/g /system/build.prop\n");
+            } else {
+                stdin.writeBytes("sed -i s/ro.sf.lcd_density=120/ro.sf.lcd_density=160/g /system/build.prop\n");
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     private void reboot() {
