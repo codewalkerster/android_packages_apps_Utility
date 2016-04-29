@@ -629,9 +629,9 @@ public class MainActivity extends Activity {
             } else if ("600p60hz".equals(mResolution)) {
                 x_res = "800";
                 y_res = "600";
-            } else if ("1024x600p60hz".equals(mResolution)
+            } else if ("1024x600p43hz".equals(mResolution)
                     || "ODROID-VU7 Plus".equals(mResolution)) {
-                mResolution = "1024x600p60hz";
+                mResolution = "1024x600p43hz";
                 x_res = "1024";
                 y_res = "600";
             } else if ("768p60hz".equals(mResolution)) {
@@ -679,7 +679,7 @@ public class MainActivity extends Activity {
 
             writer.println("# setenv fb_x_res \"1024\"");
             writer.println("# setenv fb_y_res \"600\"");
-            writer.println("# setenv hdmi_phy_res \"1024x600p60hz\"\n");
+            writer.println("# setenv hdmi_phy_res \"1024x600p43hz\"\n");
 
             writer.println("# setenv fb_x_res \"1280\"");
             writer.println("# setenv fb_y_res \"720\"");
