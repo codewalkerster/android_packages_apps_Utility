@@ -685,7 +685,6 @@ public class MainActivity extends Activity {
                 // TODO Auto-generated method stub
                 Log.e(TAG, "mSystemResolution = " + mSystemResolution + ", mResolution = " + mResolution);
                 modifyBootIni();
-                modifyDensity(mResolution);
                 reboot();
             }
 
@@ -815,7 +814,6 @@ public class MainActivity extends Activity {
         // TODO Auto-generated method stub
         super.onDestroy();
         modifyBootIni();
-        modifyDensity(mResolution);
     }
 
     public void setIREnable(boolean enable) {
@@ -1005,24 +1003,6 @@ public class MainActivity extends Activity {
             out.close();
         } catch (Exception ex) {
             ex.printStackTrace();
-        }
-    }
-
-    private void modifyDensity(String resolution) {
-        try {
-            DataOutputStream stdin = new DataOutputStream(mSu.getOutputStream());
-            stdin.writeBytes("mount -o rw,remount /system\n");
-
-            if ("800x480p60hz".equals(resolution)
-                    || "ODROID-VU7".equals(resolution)) {
-                stdin.writeBytes("sed -i s/ro.sf.lcd_density=160/ro.sf.lcd_density=120/g /system/build.prop\n");
-            } else {
-                stdin.writeBytes("sed -i s/ro.sf.lcd_density=120/ro.sf.lcd_density=160/g /system/build.prop\n");
-            }
-            stdin.writeBytes("mount -o ro,remount /system\n");
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
     }
 
