@@ -31,6 +31,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -101,6 +102,9 @@ public class MainActivity extends Activity {
     private static String mSystemResolution = "720p60hz";
 
     private Timer mTimer = null;
+    private Handler mAlertHandler = null;
+    private String mResolutionMessage = "The display will be reset to its previous configuration in ";
+    private int mResolutionCounter = 0;
 
     private CheckBox mShowAllResolution;
     List<String> mAvableDispList = new ArrayList<String>();
@@ -670,15 +674,28 @@ public class MainActivity extends Activity {
                     mOutputModeManager.setBestMode(mResolution);
 
                 mTimer = new Timer();
-
+                mResolutionCounter = 30;
+                mAlertHandler = new Handler();
+                
                 final AlertDialog.Builder dialog =
                     new AlertDialog.Builder(MainActivity.this)
                     .setCancelable(false)
                     .setTitle("Does the display look OK?")
-                    .setMessage("The display will be reset to its previous configuration in few seconds.")
+                    .setMessage(mResolutionMessage + Integer.toString(mResolutionCounter) + " seconds")
+                    .setNegativeButton("Restore Previous Configuration", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            mTimer.cancel();
+                            mAlertHandler = null;
+                            mOutputModeManager.setBestMode(mPreviousResolution);
+                            mResolution = mPreviousResolution;
+                            Log.e(TAG, "Cancled, set to = " + mResolution);
+                        }
+                    })
                     .setPositiveButton("Keep this configuration", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int whichButton) {
+                            mAlertHandler = null;
                             mTimer.cancel();
                             modifyBootIni();
                         }
@@ -689,13 +706,24 @@ public class MainActivity extends Activity {
 
                 mTimer.schedule(new TimerTask() {
                     public void run() {
-                        mTimer.cancel();
-                        mOutputModeManager.setBestMode(mPreviousResolution);
-                        mResolution = mPreviousResolution;
-                        Log.e(TAG, "Time over, set to = " + mResolution);
-                        alert.dismiss();
+                        mAlertHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                alert.setMessage(mResolutionMessage + Integer.toString(mResolutionCounter) + " seconds");
+                            }
+                        });
+                        mResolutionCounter--;
+
+                        if(mResolutionCounter <0) {
+                            mTimer.cancel();
+                            mAlertHandler = null;
+                            mOutputModeManager.setBestMode(mPreviousResolution);
+                            mResolution = mPreviousResolution;
+                            Log.e(TAG, "Time over, set to = " + mResolution);
+                            alert.dismiss();
+                        }
                     }
-                }, 10000);
+                }, 1500, 1000);
 
                 alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
