@@ -752,21 +752,6 @@ public class MainActivity extends Activity {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
-        try {
-            DataOutputStream stdin = new DataOutputStream(mSu.getOutputStream());
-            stdin.writeBytes("mount -o rw,remount /system\n");
-
-            if ("800x480p60hz".equals(mResolution)
-                    || "ODROID-VU7".equals(mResolution)) {
-                stdin.writeBytes("sed -i s/ro.sf.lcd_density=160/ro.sf.lcd_density=120/g /system/build.prop\n");
-            } else {
-                stdin.writeBytes("sed -i s/ro.sf.lcd_density=120/ro.sf.lcd_density=160/g /system/build.prop\n");
-            }
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
     }
 
     private void reboot() {
