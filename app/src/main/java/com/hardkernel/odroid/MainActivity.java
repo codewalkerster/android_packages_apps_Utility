@@ -31,7 +31,6 @@ import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Handler;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -102,7 +101,6 @@ public class MainActivity extends Activity {
     private static String mSystemResolution = "720p60hz";
 
     private Timer mTimer = null;
-    private Handler mAlertHandler = null;
     private String mResolutionMessage = "The display will be reset to its previous configuration in ";
     private int mResolutionCounter = 0;
 
@@ -675,8 +673,7 @@ public class MainActivity extends Activity {
 
                 mTimer = new Timer();
                 mResolutionCounter = 30;
-                mAlertHandler = new Handler();
-                
+
                 final AlertDialog.Builder dialog =
                     new AlertDialog.Builder(MainActivity.this)
                     .setCancelable(false)
@@ -686,10 +683,9 @@ public class MainActivity extends Activity {
                         @Override
                         public void onClick(DialogInterface dialog, int whichButton) {
                             mTimer.cancel();
-                            mAlertHandler = null;
                             mOutputModeManager.setBestMode(mPreviousResolution);
                             mResolution = mPreviousResolution;
-                            Log.e(TAG, "Cancled, set to = " + mResolution);
+                            Log.e(TAG, "Cancelled, set to " + mResolution);
                         }
                     })
                     .setPositiveButton("Keep this configuration", new DialogInterface.OnClickListener() {
@@ -706,7 +702,7 @@ public class MainActivity extends Activity {
 
                 mTimer.schedule(new TimerTask() {
                     public void run() {
-                        mAlertHandler.post(new Runnable() {
+                        runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 alert.setMessage(mResolutionMessage + Integer.toString(mResolutionCounter) + " seconds");
@@ -716,7 +712,6 @@ public class MainActivity extends Activity {
 
                         if(mResolutionCounter <0) {
                             mTimer.cancel();
-                            mAlertHandler = null;
                             mOutputModeManager.setBestMode(mPreviousResolution);
                             mResolution = mPreviousResolution;
                             Log.e(TAG, "Time over, set to = " + mResolution);
