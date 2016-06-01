@@ -691,7 +691,6 @@ public class MainActivity extends Activity {
                     .setPositiveButton("Keep this configuration", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            mAlertHandler = null;
                             mTimer.cancel();
                             modifyBootIni();
                         }
