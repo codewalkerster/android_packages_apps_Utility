@@ -142,6 +142,7 @@ public class MainActivity extends Activity {
 
     private LinearLayout mLLOneKeyPlay;
     private LinearLayout mLLAutoChangeLanguage;
+    private LinearLayout mLLAutoPowerOn;
 
     private RadioButton mRadio_portrait;
     private RadioButton mRadio_landscape;
@@ -763,8 +764,8 @@ public class MainActivity extends Activity {
         });
 
         mLLOneKeyPlay = (LinearLayout)findViewById(R.id.layout_one_key_play);
-
         mLLAutoChangeLanguage = (LinearLayout)findViewById(R.id.layout_auto_change_language);
+        mLLAutoPowerOn = (LinearLayout)findViewById(R.id.layout_auto_power_on);
 
         mCBCECSwitch = (CheckBox)findViewById(R.id.cb_cecswitch);
         mCBCECSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -985,6 +986,7 @@ public class MainActivity extends Activity {
             mCBCECSwitch.setEnabled(false);
             mLLOneKeyPlay.setVisibility(View.GONE);
             mLLAutoChangeLanguage.setVisibility(View.GONE);
+            mLLAutoPowerOn.setVisibility(View.GONE);
             return;
         }
 
@@ -1022,8 +1024,10 @@ public class MainActivity extends Activity {
             }
             editor.putString(SWITCH_CEC, SWITCH_ON);
             mCBCECSwitch.setChecked(true);
+
             mLLOneKeyPlay.setVisibility(View.VISIBLE);
             mLLAutoChangeLanguage.setVisibility(View.VISIBLE);
+            mLLAutoPowerOn.setVisibility(View.VISIBLE);
         } else {
             editor.putString(SWITCH_ONE_KEY_PLAY, SWITCH_OFF);
             //editor.putString(SWITCH_ONE_KEY_POWER_OFF, SWITCH_OFF);
@@ -1033,6 +1037,7 @@ public class MainActivity extends Activity {
             mCBCECSwitch.setChecked(false);
             mLLOneKeyPlay.setVisibility(View.GONE);
             mLLAutoChangeLanguage.setVisibility(View.GONE);
+            mLLAutoPowerOn.setVisibility(View.GONE);
         }
         editor.commit();
         mHdmiCecManager.setCecEnv(cec_config);
@@ -1069,10 +1074,13 @@ public class MainActivity extends Activity {
             mCBCECSwitch.setText(R.string.on);
             mLLOneKeyPlay.setVisibility(View.VISIBLE);
             mLLAutoChangeLanguage.setVisibility(View.VISIBLE);
+            mLLAutoPowerOn.setVisibility(View.VISIBLE);
+
         } else {
             mCBCECSwitch.setText(R.string.off);
             mLLOneKeyPlay.setVisibility(View.GONE);
             mLLAutoChangeLanguage.setVisibility(View.GONE);
+            mLLAutoPowerOn.setVisibility(View.GONE);
         }
     }
 
