@@ -972,28 +972,30 @@ public class MainActivity extends Activity {
         return false;
     }
 
+    // read cec config & apply it to UI
     private void initCecFun(){
         Log.e(TAG, "initCecFun()");
         mHdmiCecManager = new HdmiCecManager(this);
         mSharepreference = getSharedPreferences(PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE);
 
-        Editor editor = this.getSharedPreferences(PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE).edit();
+        Editor editor = mSharepreference.edit();
         String str = mHdmiCecManager.getCurConfig();
         Log.e(TAG, "cec config = " + str);
         if (!mHdmiCecManager.remoteSupportCec()) {
             switchCec(false);
             mCBCECSwitch.setChecked(false);
             mCBCECSwitch.setEnabled(false);
-            mLLOneKeyPlay.setVisibility(View.GONE);
-            mLLAutoChangeLanguage.setVisibility(View.GONE);
-            mLLAutoPowerOn.setVisibility(View.GONE);
             return;
         }
 
         // get rid of '0x' prefix
         int cec_config = Integer.valueOf(str.substring(2, str.length()), 16);
         Log.d(TAG, "cec config str:" + str + ", value:" + cec_config);
+
         if ((cec_config & HdmiCecManager.MASK_FUN_CEC) != 0) {
+            editor.putString(SWITCH_CEC, SWITCH_ON);
+            mCBCECSwitch.setChecked(true);
+
             if ((cec_config & HdmiCecManager.MASK_ONE_KEY_PLAY) != 0) {
                 editor.putString(SWITCH_ONE_KEY_PLAY, SWITCH_ON);
                 mCBOneKeyPlay.setChecked(true);
@@ -1001,13 +1003,7 @@ public class MainActivity extends Activity {
                 editor.putString(SWITCH_ONE_KEY_PLAY, SWITCH_OFF);
                 mCBOneKeyPlay.setChecked(false);
             }
-            /*
-            if ((cec_config & HdmiCecManager.MASK_ONE_KEY_STANDBY) != 0) {
-                editor.putString(SWITCH_ONE_KEY_POWER_OFF, SWITCH_ON);
-            } else {
-                editor.putString(SWITCH_ONE_KEY_POWER_OFF, SWITCH_OFF);
-            }
-            */
+
             if ((cec_config & HdmiCecManager.MASK_AUTO_POWER_ON) != 0) {
                 editor.putString(SWITCH_AUTO_POWER_ON, SWITCH_ON);
                 mCBAutoPowerOn.setChecked(true);
@@ -1015,6 +1011,7 @@ public class MainActivity extends Activity {
                 editor.putString(SWITCH_AUTO_POWER_ON, SWITCH_OFF);
                 mCBAutoPowerOn.setChecked(false);
             }
+
             if ((cec_config & HdmiCecManager.MASK_AUTO_CHANGE_LANGUAGE) != 0) {
                 editor.putString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_ON);
                 mCBAutoChangeLanguage.setChecked(true);
@@ -1022,19 +1019,18 @@ public class MainActivity extends Activity {
                 editor.putString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_OFF);
                 mCBAutoChangeLanguage.setChecked(false);
             }
-            editor.putString(SWITCH_CEC, SWITCH_ON);
-            mCBCECSwitch.setChecked(true);
 
             mLLOneKeyPlay.setVisibility(View.VISIBLE);
             mLLAutoChangeLanguage.setVisibility(View.VISIBLE);
             mLLAutoPowerOn.setVisibility(View.VISIBLE);
         } else {
-            editor.putString(SWITCH_ONE_KEY_PLAY, SWITCH_OFF);
-            //editor.putString(SWITCH_ONE_KEY_POWER_OFF, SWITCH_OFF);
-            editor.putString(SWITCH_AUTO_POWER_ON, SWITCH_OFF);
-            editor.putString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_OFF);
             editor.putString(SWITCH_CEC, SWITCH_OFF);
             mCBCECSwitch.setChecked(false);
+            mCBCECSwitch.setText(R.string.off);
+            editor.putString(SWITCH_ONE_KEY_PLAY, SWITCH_OFF);
+            editor.putString(SWITCH_AUTO_POWER_ON, SWITCH_OFF);
+            editor.putString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_OFF);
+
             mLLOneKeyPlay.setVisibility(View.GONE);
             mLLAutoChangeLanguage.setVisibility(View.GONE);
             mLLAutoPowerOn.setVisibility(View.GONE);
@@ -1045,31 +1041,35 @@ public class MainActivity extends Activity {
 
     private void switchCec(boolean on) {
         String isOpen = mSharepreference.getString(SWITCH_CEC, SWITCH_OFF);
+        Editor editor = mSharepreference.edit();
+
         Log.d(TAG, "switch CEC, on:" + on + ", isOpen:" + isOpen);
-        Editor editor = this.getSharedPreferences(PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE).edit();
+
         if (isOpen.equals(SWITCH_ON) && !on) {
             editor.putString(SWITCH_CEC, SWITCH_OFF);
-            editor.putString(SWITCH_ONE_KEY_PLAY, SWITCH_OFF);
-            //editor.putString(SWITCH_ONE_KEY_POWER_OFF, SWITCH_OFF);
-            editor.putString(SWITCH_AUTO_POWER_ON, SWITCH_OFF);
-            editor.putString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_OFF);
             editor.commit();
-            mHdmiCecManager.setCecSysfsValue(HdmiCecManager.FUN_CEC, HdmiCecManager.FUN_CLOSE);
+
         } else if (isOpen.equals(SWITCH_OFF) && on) {
             editor.putString(SWITCH_CEC, SWITCH_ON);
-            editor.putString(SWITCH_ONE_KEY_PLAY, SWITCH_ON);
-            //editor.putString(SWITCH_ONE_KEY_POWER_OFF, SWITCH_ON);
-            editor.putString(SWITCH_AUTO_POWER_ON, SWITCH_ON);
-            editor.putString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_ON);
             editor.commit();
+
             if (!isCecServiceRunning()) {
                 Intent serviceIntent = new Intent();
                 serviceIntent.setAction(CEC_ACTION);
                 this.startService(serviceIntent);
             }
-            mHdmiCecManager.setCecSysfsValue(HdmiCecManager.FUN_CEC, HdmiCecManager.FUN_OPEN);
-            updateCecLanguage();
         }
+
+        mHdmiCecManager.setCecSysfsValue(HdmiCecManager.FUN_CEC, on);
+        switchAutoChangeLanguage(on);
+        switchOneKeyPlay(on);
+        switchAutoPowerOn(on);
+
+        mCBOneKeyPlay.setChecked(on);
+        mCBAutoPowerOn.setChecked(on);
+        mCBAutoChangeLanguage.setChecked(on);
+
+
         if (on) {
             mCBCECSwitch.setText(R.string.on);
             mLLOneKeyPlay.setVisibility(View.VISIBLE);
@@ -1086,7 +1086,7 @@ public class MainActivity extends Activity {
 
     private void switchOneKeyPlay(boolean on) {
         String isOpen = mSharepreference.getString(SWITCH_ONE_KEY_PLAY, SWITCH_ON);
-        Editor editor = this.getSharedPreferences(PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE).edit();
+        Editor editor = mSharepreference.edit();
         if (isOpen.equals(SWITCH_ON) && !on) {
             editor.putString(SWITCH_ONE_KEY_PLAY, SWITCH_OFF);
             editor.commit();
@@ -1104,8 +1104,7 @@ public class MainActivity extends Activity {
 
     private void switchAutoPowerOn(boolean on) {
         String isOpen = mSharepreference.getString(SWITCH_AUTO_POWER_ON, SWITCH_OFF);
-        Editor editor = this.getSharedPreferences(
-                PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE).edit();
+        Editor editor = mSharepreference.edit();
         if (isOpen.equals(SWITCH_ON) && !on) {
             editor.putString(SWITCH_AUTO_POWER_ON, SWITCH_OFF);
             editor.commit();
@@ -1125,8 +1124,7 @@ public class MainActivity extends Activity {
 
     private void switchAutoChangeLanguage(boolean on) {
         String isOpen = mSharepreference.getString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_OFF);
-        Editor editor = this.getSharedPreferences(
-                PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE).edit();
+        Editor editor = mSharepreference.edit();
         if (isOpen.equals(SWITCH_ON) && !on) {
             editor.putString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_OFF);
             editor.commit();
