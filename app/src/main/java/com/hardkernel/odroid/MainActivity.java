@@ -1043,7 +1043,7 @@ public class MainActivity extends Activity {
     }
 
     private void switchCec(boolean on) {
-        String isOpen = mSharepreference.getString(SWITCH_CEC, SWITCH_OFF);
+        String isOpen = mSharepreference.getString(SWITCH_CEC, SWITCH_ON);
         Editor editor = mSharepreference.edit();
 
         Log.d(TAG, "switch CEC, on:" + on + ", isOpen:" + isOpen);
@@ -1107,7 +1107,7 @@ public class MainActivity extends Activity {
     }
 
     private void switchAutoPowerOn(boolean on) {
-        String isOpen = mSharepreference.getString(SWITCH_AUTO_POWER_ON, SWITCH_OFF);
+        String isOpen = mSharepreference.getString(SWITCH_AUTO_POWER_ON, SWITCH_ON);
         Editor editor = mSharepreference.edit();
         Log.d(TAG, "CEC Auto Power On: " + on);
 
