@@ -96,9 +96,9 @@ public class MainActivity extends Activity {
     private RadioButton mRadio_right;
 
     private Spinner mSpinner_Resolution;
-    private String mResolution = "720p60hz";
-    private String mPreviousResolution = "720p60hz";
-    private static String mSystemResolution = "720p60hz";
+    private String mResolution = "1080p60hz";
+    private String mPreviousResolution = "1080p60hz";
+    private static String mSystemResolution = "1080p60hz";
 
     private Timer mTimer = null;
     private String mResolutionMessage = "The display will be reset to its previous configuration in ";
@@ -743,8 +743,8 @@ public class MainActivity extends Activity {
                 if (mAdapterResolution.getPosition(mResolution) >= 0)
                     mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
                 else {
-                    if (mAdapterResolution.getPosition("720p60hz") >= 0) {
-                        mResolution = "720p60hz";
+                    if (mAdapterResolution.getPosition("1080p60hz") >= 0) {
+                        mResolution = "1080p60hz";
                         mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
                         mOutputModeManager.setBestMode(mResolution);
                     }
