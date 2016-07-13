@@ -72,7 +72,8 @@ public class MainActivity extends Activity {
 
     public final static String DISP_CAP = "/sys/devices/virtual/amhdmitx/amhdmitx0/disp_cap";
 
-    private final static String BOOT_INI = Environment.getExternalStorageDirectory() + "/boot.ini";
+    //private final static String BOOT_INI = Environment.getExternalStorageDirectory() + "/boot.ini";
+    private final static String BOOT_INI = "/storage/internal/boot.ini";
     private Spinner mSpinnerGovernor;
     private String mGovernorString;
 
@@ -137,7 +138,7 @@ public class MainActivity extends Activity {
 
     private static Context context;
 
-    private static final String LATEST_VERSION = "latestupdate";
+    private static final String LATEST_VERSION = "latestupdate_lollipop";
     private static final int FILE_SELECT_CODE = 0;
 
     private DownloadManager downloadManager;
@@ -779,10 +780,13 @@ public class MainActivity extends Activity {
                             stdin.writeBytes("sed -i s/ro.sf.hwrotation=0/ro.sf.hwrotation=270/g /system/build.prop\n");
                             stdin.writeBytes("sed -i s/ro.sf.hwrotation=90/ro.sf.hwrotation=270/g /system/build.prop\n");
                         }
+                        stdin.writeBytes("setprop persist.demo.hdmirotation portrait\n");
                     } else if (mRadio_landscape.isChecked()) {
                         stdin.writeBytes("sed -i s/persist.demo.hdmirotation=portrait/persist.demo.hdmirotation=landscape/g /system/build.prop\n");
                         stdin.writeBytes("sed -i s/ro.sf.hwrotation=90/ro.sf.hwrotation=0/g /system/build.prop\n");
                         stdin.writeBytes("sed -i s/ro.sf.hwrotation=270/ro.sf.hwrotation=0/g /system/build.prop\n");
+                        stdin.writeBytes("sed -i s/ro.sf.hwrotation=90/ro.sf.hwrotation=270/g /system/build.prop\n");
+                        stdin.writeBytes("setprop persist.demo.hdmirotation landscape\n");
                     }
 
                     stdin.writeBytes("mount -o ro,remount /system\n");
@@ -1008,6 +1012,8 @@ public class MainActivity extends Activity {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+
+        Log.e(TAG, "Update boot.ini");
     }
 
     private void enableOverScanButtons(boolean enable) {
@@ -1173,6 +1179,8 @@ public class MainActivity extends Activity {
 
         if (mRadio_portrait.isChecked())
             mRG_degree.setVisibility(View.VISIBLE);
+        else
+            mRG_degree.setVisibility(View.GONE);
     }
 
     protected String getCurrentGovernor() {
@@ -1431,6 +1439,7 @@ public class MainActivity extends Activity {
     }
 
     private void installPackage(final File packageFile) {
+        Log.e(TAG, "installPackage = " + packageFile.getPath());
         try {
             RecoverySystem.verifyPackage(packageFile, null, null);
 
@@ -1494,12 +1503,6 @@ public class MainActivity extends Activity {
                     String path = getRealPathFromURI(uri);
                     if (path == null)
                         return;
-                    if (path.startsWith("/document")) {
-                        Toast.makeText(context, "The file was not copied in the normal way.",
-                                Toast.LENGTH_LONG).show();
-                        return;
-                    }
-
                     installPackage(new File(path));
                 }
                 break;
@@ -1510,13 +1513,12 @@ public class MainActivity extends Activity {
     private String getRealPathFromURI(Uri uri) {
         String filePath = "";
         filePath = uri.getPath();
+        Log.e(TAG, "uri.getPath() = " + filePath);
         if (filePath.startsWith("/storage"))
             return filePath;
 
-        String wholeID = DocumentsContract.getDocumentId(uri);
-
         // Split at colon, use second item in the array
-        String id = wholeID.split(":")[1];
+        String id = filePath.substring("/document/".length(), filePath.length());
 
         Log.e(TAG, "id = " + id);
 

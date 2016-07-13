@@ -15,7 +15,7 @@ class UpdatePackage {
     private static final String HEADER = "updatepackage";
     private static final String MODEL = "odroidc";
     private static final String VARIANT = "eng";
-    private static final String BRANCH = "s805_4.4.2_master";
+    private static final String BRANCH = "s805_5.1.1_master";
 
     public static final long PACKAGE_MAXSIZE = 400 * 1024 * 1024;   /* 400MB */
 
