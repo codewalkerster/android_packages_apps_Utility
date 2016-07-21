@@ -56,8 +56,6 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.TabHost;
-import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.LinearLayout;
@@ -329,28 +327,6 @@ public class MainActivity extends Activity {
 
         mOutputModeManager = new OutputModeManager(this);
         mPlayBackManager = new PlayBackManager(this);
-
-        TabHost tabHost = (TabHost)findViewById(android.R.id.tabhost);
-        tabHost.setup();
-
-        TabSpec tab1 = tabHost.newTabSpec("CPU");
-        TabSpec tab3 = tabHost.newTabSpec("Screen");
-        TabSpec tab4 = tabHost.newTabSpec("Rotation");
-        TabSpec tab5 = tabHost.newTabSpec("HDMI-CEC");
-
-        tab1.setIndicator("CPU");
-        tab1.setContent(R.id.tab1);
-        tab3.setIndicator("Screen");
-        tab3.setContent(R.id.tab3);
-        tab4.setIndicator("Rotation");
-        tab4.setContent(R.id.tab4);
-        tab5.setIndicator("HDMI-CEC");
-        tab5.setContent(R.id.tab5);
-
-        tabHost.addTab(tab1);
-        tabHost.addTab(tab3);
-        tabHost.addTab(tab4);
-        tabHost.addTab(tab5);
 
         mSpinnerGovernor = (Spinner) findViewById(R.id.spinner_governors);
         String available_governors = getScaclingAvailableGovernor();

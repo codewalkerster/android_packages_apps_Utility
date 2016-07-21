@@ -8,16 +8,13 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-    <TabHost
-        android:id="@android:id/tabhost"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" >
-
+        android:layout_height="wrap_content">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical" >
 
             <Button
@@ -25,136 +22,272 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/apply_reboot" />
+        </LinearLayout>
 
-            <TabWidget
-                android:id="@android:id/tabs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-            </TabWidget>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <FrameLayout
-                android:id="@android:id/tabcontent"
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" >
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/cpu_title"
+                        android:textAppearance="?android:textAppearanceLarge"
+                        />
+
+                    <View
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="20dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/darker_gray"/>
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:id="@+id/tab5">
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp">
 
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                    <TextView
+                        android:id="@+id/textView1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/cpu_governor"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:text="@string/self_adaption"
-                            android:id="@+id/textView4" />
+                    <Spinner
+                        android:id="@+id/spinner_governors"
+                        android:layout_width="600dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0" />
 
-                        <CheckBox
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/on"
-                            android:id="@+id/cb_selfadaption" />
+                    <TextView
+                        android:id="@+id/textView3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/cpu_freq"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                    </LinearLayout>
+                    <Spinner
+                        android:id="@+id/spinner_freq"
+                        android:layout_width="600dp"
+                        android:layout_height="wrap_content" />
 
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="10dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:text="@string/cec_control"
-                            android:id="@+id/textView6" />
-
-                        <CheckBox
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/on"
-                            android:id="@+id/cb_cecswitch" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="20dp"
-                        android:id="@+id/layout_one_key_play">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:text="@string/one_key_play"
-                            android:id="@+id/textView7" />
-
-                        <CheckBox
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/on"
-                            android:id="@+id/cb_one_key_play" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="20dp"
-                        android:id="@+id/layout_auto_power_on">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:text="@string/auto_power_on"
-                            android:id="@+id/textView9" />
-
-                        <CheckBox
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/on"
-                            android:id="@+id/cb_auto_power_on" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="20dp"
-                        android:id="@+id/layout_auto_change_language">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:text="@string/auto_change_language"
-                            android:id="@+id/textView8" />
-
-                        <CheckBox
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/on"
-                            android:id="@+id/cb_auto_change_language" />
-
-                    </LinearLayout>
+                    <CheckBox
+                        android:id="@+id/cb_kodi"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/kodi" />
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/tab4"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/screen_title"
+                        android:textAppearance="?android:textAppearanceLarge"
+                        />
+
+                    <View
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="20dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/darker_gray"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/textView5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/resolution"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <Spinner
+                        android:id="@+id/spinner_resolution"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/show_all"
+                        android:id="@+id/cb_show_all"
+                        android:layout_marginLeft="10dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical" >
+                    android:gravity="center_horizontal|fill_vertical"
+                    android:layout_marginTop="20dp">
+
+                    <ScrollView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/scrollView">
+
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="441dp"
+                            android:layout_height="match_parent">
+
+                            <Button
+                                android:id="@+id/btn_top_decrease"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="180dp"
+                                android:text="@string/up_arrow" />
+
+                            <TextView
+                                android:id="@+id/tv_top"
+                                android:layout_width="25dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="200dp"
+                                android:gravity="center"
+                                android:text="@string/zero"
+                                android:textSize="15sp" />
+
+                            <Button
+                                android:id="@+id/btn_top_increase"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="180dp"
+                                android:text="@string/down_arrow" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" >
+
+                                <Button
+                                    android:id="@+id/btn_left_decrease"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="10dp"
+                                    android:text="@string/left_arrorw" />
+
+                                <TextView
+                                    android:id="@+id/tv_left"
+                                    android:layout_width="25dp"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="@string/zero"
+                                    android:textSize="15sp" />
+
+                                <Button
+                                    android:id="@+id/btn_left_increase"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/right_arrow" />
+
+                                <TextView
+                                    android:id="@+id/textView2"
+                                    android:layout_width="100dp"
+                                    android:layout_height="wrap_content" />
+
+                                <Button
+                                    android:id="@+id/btn_right_increase"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/left_arrorw" />
+
+                                <TextView
+                                    android:id="@+id/tv_right"
+                                    android:layout_width="25dp"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="@string/zero"
+                                    android:textSize="15sp" />
+
+                                <Button
+                                    android:id="@+id/btn_right_decrease"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/right_arrow" />
+                            </LinearLayout>
+
+                            <Button
+                                android:id="@+id/btn_bottom_increase"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="180dp"
+                                android:text="@string/up_arrow" />
+
+                            <TextView
+                                android:id="@+id/tv_bottom"
+                                android:layout_width="25dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="200dp"
+                                android:gravity="center"
+                                android:text="@string/zero"
+                                android:textSize="15sp" />
+
+                            <Button
+                                android:id="@+id/btn_bottom_decrease"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="180dp"
+                                android:text="@string/down_arrow" />
+                        </LinearLayout>
+                    </ScrollView>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/rotation_title"
+                        android:textAppearance="?android:textAppearanceLarge"
+                        />
+
+                    <View
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="20dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/darker_gray"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical">
 
                     <RadioGroup
                         android:id="@+id/radioGroup2"
@@ -193,209 +326,149 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/landscape" />
+
                     </RadioGroup>
 
                     <Button
                         android:id="@+id/button_rotation_apply"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
                         android:text="@string/apply" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/tab3"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical" >
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp" >
-
-                        <TextView
-                            android:id="@+id/textView5"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/resolution"
-                            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                        <Spinner
-                            android:id="@+id/spinner_resolution"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1" />
-
-                        <CheckBox
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/show_all"
-                            android:id="@+id/cb_show_all"
-                            android:layout_marginLeft="10dp" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <ScrollView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/scrollView" >
-
-                            <LinearLayout
-                                android:orientation="vertical"
-                                android:layout_width="441dp"
-                                android:layout_height="match_parent">
-
-                                <Button
-                                    android:id="@+id/btn_top_decrease"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginLeft="180dp"
-                                    android:text="@string/up_arrow" />
-
-                                <TextView
-                                    android:id="@+id/tv_top"
-                                    android:layout_width="25dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginLeft="200dp"
-                                    android:gravity="center"
-                                    android:text="@string/zero"
-                                    android:textSize="15sp" />
-
-                                <Button
-                                    android:id="@+id/btn_top_increase"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginLeft="180dp"
-                                    android:text="@string/down_arrow" />
-
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content" >
-
-                                    <Button
-                                        android:id="@+id/btn_left_decrease"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginLeft="10dp"
-                                        android:text="@string/left_arrorw" />
-
-                                    <TextView
-                                        android:id="@+id/tv_left"
-                                        android:layout_width="25dp"
-                                        android:layout_height="wrap_content"
-                                        android:gravity="center"
-                                        android:text="@string/zero"
-                                        android:textSize="15sp" />
-
-                                    <Button
-                                        android:id="@+id/btn_left_increase"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/right_arrow" />
-
-                                    <TextView
-                                        android:id="@+id/textView2"
-                                        android:layout_width="100dp"
-                                        android:layout_height="wrap_content" />
-
-                                    <Button
-                                        android:id="@+id/btn_right_increase"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/left_arrorw" />
-
-                                    <TextView
-                                        android:id="@+id/tv_right"
-                                        android:layout_width="25dp"
-                                        android:layout_height="wrap_content"
-                                        android:gravity="center"
-                                        android:text="@string/zero"
-                                        android:textSize="15sp" />
-
-                                    <Button
-                                        android:id="@+id/btn_right_decrease"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/right_arrow" />
-                                </LinearLayout>
-
-                                <Button
-                                    android:id="@+id/btn_bottom_increase"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginLeft="180dp"
-                                    android:text="@string/up_arrow" />
-
-                                <TextView
-                                    android:id="@+id/tv_bottom"
-                                    android:layout_width="25dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginLeft="200dp"
-                                    android:gravity="center"
-                                    android:text="@string/zero"
-                                    android:textSize="15sp" />
-
-                                <Button
-                                    android:id="@+id/btn_bottom_decrease"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginLeft="180dp"
-                                    android:text="@string/down_arrow" />
-                            </LinearLayout>
-                        </ScrollView>
-
-                    </LinearLayout>
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/tab1"
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp">
 
                     <TextView
-                        android:id="@+id/textView1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:text="@string/cpu_governor"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:text="@string/hdmi_cec_title"
+                        android:textAppearance="?android:textAppearanceLarge"
+                        />
 
-                    <Spinner
-                        android:id="@+id/spinner_governors"
-                        android:layout_width="600dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:layout_weight="0" />
-
-                    <TextView
-                        android:id="@+id/textView3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/cpu_freq"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                    <Spinner
-                        android:id="@+id/spinner_freq"
+                    <View
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="20dp"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="1dp"
+                        android:background="@android:color/darker_gray"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="@string/self_adaption"
+                        android:id="@+id/textView4" />
 
                     <CheckBox
-                        android:id="@+id/cb_kodi"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/kodi" />
+                        android:text="@string/on"
+                        android:id="@+id/cb_selfadaption" />
+
                 </LinearLayout>
 
-            </FrameLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
 
-        </LinearLayout>
-    </TabHost>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="@string/cec_control"
+                        android:id="@+id/textView6" />
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/on"
+                        android:id="@+id/cb_cecswitch" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="20dp"
+                    android:id="@+id/layout_one_key_play">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="@string/one_key_play"
+                        android:id="@+id/textView7" />
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/on"
+                        android:id="@+id/cb_one_key_play" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="20dp"
+                    android:id="@+id/layout_auto_power_on">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="@string/auto_power_on"
+                        android:id="@+id/textView9" />
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/on"
+                        android:id="@+id/cb_auto_power_on" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="20dp"
+                    android:id="@+id/layout_auto_change_language">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="@string/auto_change_language"
+                        android:id="@+id/textView8" />
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/on"
+                        android:id="@+id/cb_auto_change_language" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
 
 </RelativeLayout>
