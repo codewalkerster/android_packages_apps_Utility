@@ -42,6 +42,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/cpu_title"
+                        android:textColor="@android:color/holo_blue_dark"
                         android:textAppearance="?android:textAppearanceLarge"
                         />
 
@@ -50,7 +51,7 @@
                         android:layout_marginLeft="20dp"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@android:color/darker_gray"/>
+                        android:background="@android:color/holo_blue_dark"/>
 
                 </LinearLayout>
 
@@ -105,6 +106,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/screen_title"
+                        android:textColor="@android:color/holo_blue_dark"
                         android:textAppearance="?android:textAppearanceLarge"
                         />
 
@@ -113,7 +115,7 @@
                         android:layout_marginLeft="20dp"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@android:color/darker_gray"/>
+                        android:background="@android:color/holo_blue_dark"/>
 
                 </LinearLayout>
 
@@ -271,6 +273,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/rotation_title"
+                        android:textColor="@android:color/holo_blue_dark"
                         android:textAppearance="?android:textAppearanceLarge"
                         />
 
@@ -279,7 +282,7 @@
                         android:layout_marginLeft="20dp"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@android:color/darker_gray"/>
+                        android:background="@android:color/holo_blue_dark"/>
 
                 </LinearLayout>
 
@@ -349,6 +352,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/hdmi_cec_title"
+                        android:textColor="@android:color/holo_blue_dark"
                         android:textAppearance="?android:textAppearanceLarge"
                         />
 
@@ -357,7 +361,7 @@
                         android:layout_marginLeft="20dp"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@android:color/darker_gray"/>
+                        android:background="@android:color/holo_blue_dark"/>
 
                 </LinearLayout>
 
