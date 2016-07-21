@@ -437,22 +437,22 @@ public class MainActivity extends Activity {
                         Log.e(TAG, mResolution);
                     }
 
-                    if (line.startsWith("setenv top")) {
+                    if (line.startsWith("setenv overscan_top")) {
                         mTopDelta = Integer.parseInt(line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")));
                         Log.e(TAG, "top : " + mTopDelta);
                     }
 
-                    if (line.startsWith("setenv left")) {
+                    if (line.startsWith("setenv overscan_left")) {
                         mLeftDelta = Integer.parseInt(line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")));
                         Log.e(TAG, "left : " + mLeftDelta);
                     }
 
-                    if (line.startsWith("setenv right")) {
+                    if (line.startsWith("setenv overscan_right")) {
                         mRightDelta = Integer.parseInt(line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")));
                         Log.e(TAG, "right : " + mRightDelta);
                     }
 
-                    if (line.startsWith("setenv bottom")) {
+                    if (line.startsWith("setenv overscan_bottom")) {
                         mBottomDelta = Integer.parseInt(line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")));
                         Log.e(TAG, "bottom : " + mBottomDelta);
                     }
@@ -942,18 +942,18 @@ public class MainActivity extends Activity {
             vout_mode = "setenv vout_mode \"dvi\"";
         }
 
-
         String top, left, bottom, right;
+
         if (!mSystemResolution.equals(mResolution)) {
-            top = "setenv top \"0\"";
-            left = "setenv left \"0\"";
-            bottom = "setenv bottom \"0\"";
-            right = "setenv right \"0\"";
+            top = "setenv overscan_top \"0\"";
+            left = "setenv overscan_left \"0\"";
+            bottom = "setenv overscan_bottom \"0\"";
+            right = "setenv overscan_right \"0\"";
         } else {
-            top = "setenv top \"" + mTopDelta + "\"";
-            left = "setenv left \"" + mLeftDelta + "\"";
-            bottom = "setenv bottom \"" + mBottomDelta + "\"";
-            right = "setenv right \"" + mRightDelta + "\"";
+            top = "setenv overscan_top \"" + mTopDelta + "\"";
+            left = "setenv overscan_left \"" + mLeftDelta + "\"";
+            bottom = "setenv overscan_bottom \"" + mBottomDelta + "\"";
+            right = "setenv overscan_right \"" + mRightDelta + "\"";
         }
 
         List<String> lines = new ArrayList<String>();
@@ -974,22 +974,22 @@ public class MainActivity extends Activity {
                     Log.e(TAG, line);
                 }
 
-                if (line.startsWith("setenv top")) {
+                if (line.startsWith("setenv overscan_top")) {
                     line = top;
                     Log.e(TAG, line);
                 }
 
-                if (line.startsWith("setenv left")) {
+                if (line.startsWith("setenv overscan_left")) {
                     line = left;
                     Log.e(TAG, line);
                 }
 
-                if (line.startsWith("setenv bottom")) {
+                if (line.startsWith("setenv overscan_bottom")) {
                     line = bottom;
                     Log.e(TAG, line);
                 }
 
-                if (line.startsWith("setenv right")) {
+                if (line.startsWith("setenv overscan_right")) {
                     line = right;
                     Log.e(TAG, line);
                 }
