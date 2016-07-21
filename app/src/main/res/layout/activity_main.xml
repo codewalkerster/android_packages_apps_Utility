@@ -372,41 +372,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/tab2"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical" >
-
-                    <RadioGroup
-                        android:id="@+id/radioGroup_mouse"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginTop="20dp" >
-
-                        <RadioButton
-                            android:id="@+id/radio_left"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:checked="true"
-                            android:text="@string/left_handed" />
-
-                        <RadioButton
-                            android:id="@+id/radio_right"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/right_handed" />
-                    </RadioGroup>
-
-                    <Button
-                        android:id="@+id/button_mouse_apply"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:text="@string/apply" />
-                </LinearLayout>
-
-                <LinearLayout
                     android:id="@+id/tab1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

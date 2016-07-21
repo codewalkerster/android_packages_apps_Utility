@@ -88,9 +88,6 @@ public class MainActivity extends Activity {
 
     private CheckBox mCBKodi;
 
-    private RadioButton mRadio_left;
-    private RadioButton mRadio_right;
-
     private Spinner mSpinner_Resolution;
     private String mResolution = "1080p";
     private static String mSystemResolution = "1080p";
@@ -287,8 +284,6 @@ public class MainActivity extends Activity {
         } catch (Exception e) {
         }
 
-        mRadio_left = (RadioButton)findViewById(R.id.radio_left);
-        mRadio_right = (RadioButton)findViewById(R.id.radio_right);
         mCBEnableIR = (CheckBox)findViewById(R.id.cb_ir);
 
         InputStream inputstream = null;
@@ -307,15 +302,6 @@ public class MainActivity extends Activity {
         String line;
         try {
             while ((line = bufferedReader.readLine()) != null) {
-                if (line.contains("mouse.firstbutton")) {
-                    if (line.contains("right")) {
-                        mRadio_right.toggle();
-                        Log.e(TAG, "right");
-                    } else if (line.contains("left")) {
-                        mRadio_left.toggle();
-                        Log.e(TAG, "left");
-                    }
-                }
                 if (line.contains("persist.demo.hdmirotation")) {
                     if (line.contains("portrait")) {
                         Log.e(TAG, line);
@@ -343,7 +329,6 @@ public class MainActivity extends Activity {
         tabHost.setup();
 
         TabSpec tab1 = tabHost.newTabSpec("CPU");
-        TabSpec tab2 = tabHost.newTabSpec("Mouse");
         TabSpec tab3 = tabHost.newTabSpec("Screen");
         TabSpec tab4 = tabHost.newTabSpec("Rotation");
         TabSpec tab5 = tabHost.newTabSpec("IR Remote Control");
@@ -351,8 +336,6 @@ public class MainActivity extends Activity {
 
         tab1.setIndicator("CPU");
         tab1.setContent(R.id.tab1);
-        tab2.setIndicator("Mouse");
-        tab2.setContent(R.id.tab2);
         tab3.setIndicator("Screen");
         tab3.setContent(R.id.tab3);
         tab4.setIndicator("Rotation");
@@ -753,30 +736,9 @@ public class MainActivity extends Activity {
             }
         });
 
-        mRadio_left = (RadioButton)findViewById(R.id.radio_left);
-        mRadio_right = (RadioButton)findViewById(R.id.radio_right);
-
         mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
 
-        Button btn = (Button)findViewById(R.id.button_mouse_apply);
-        btn.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                SharedPreferences pref = getSharedPreferences("utility", MODE_PRIVATE);
-                SharedPreferences.Editor editor = pref.edit();
-                if (mRadio_left.isChecked()) {
-                    editor.putString("mouse", "left");
-                    setMouse("left");
-                } else if (mRadio_right.isChecked()) {
-                    editor.putString("mouse", "right");
-                    setMouse("right");
-                }
-                editor.commit();
-            }
-
-        });
+        Button btn;
 
         btn = (Button)findViewById(R.id.button_apply_reboot);
         btn.setOnClickListener(new OnClickListener() {
@@ -1389,24 +1351,6 @@ public class MainActivity extends Activity {
         }
     }
 
-    public static void setMouse(String handed) {
-        try {
-            OutputStream stream;
-            Process p = Runtime.getRuntime().exec("su");
-            stream = p.getOutputStream();
-            String cmd =  "setprop mouse.firstbutton " + handed;
-            stream.write(cmd.getBytes());
-            stream.flush();
-            stream.close();
-
-            Log.e(TAG, "setprop mouse.firstbutton " + handed);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-    }
-
     public static void checkBootINI() {
         File boot_ini = new File(BOOT_INI);
         if (!boot_ini.exists()) {
@@ -1477,11 +1421,6 @@ public class MainActivity extends Activity {
         enableOverScanButtons(mOrientation.equals("landscape"));
         SharedPreferences pref = getSharedPreferences("utility", Context.MODE_PRIVATE);
         mCBKodi.setChecked(pref.getBoolean("kodi", false));
-
-        if (pref.getString("mouse", "right").equals("right"))
-            mRadio_right.setChecked(true);
-        else
-            mRadio_left.setChecked(true);
 
         if (mRadio_portrait.isChecked())
             mRG_degree.setVisibility(View.VISIBLE);
