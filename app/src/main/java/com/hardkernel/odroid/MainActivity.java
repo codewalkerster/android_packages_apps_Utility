@@ -15,7 +15,10 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.os.Bundle;
@@ -229,6 +232,19 @@ public class MainActivity extends Activity {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
+        } else {
+            Log.e(TAG, "Not found " + BOOT_INI);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Not found boot.ini")
+                .setMessage("Check and Format Internal FAT storage?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(new Intent(Settings.ACTION_INTERNAL_STORAGE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", null).show();
+
         }
 
         mSpinner_Resolution = (Spinner)findViewById(R.id.spinner_resolution);
