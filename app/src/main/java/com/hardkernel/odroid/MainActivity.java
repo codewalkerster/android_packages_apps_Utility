@@ -475,6 +475,17 @@ public class MainActivity extends Activity {
         } else {
             //default value
             Log.e(TAG, "Not found " + BOOT_INI);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Not found boot.ini")
+                .setMessage("Check and Format Internal FAT storage?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(new Intent(Settings.ACTION_INTERNAL_STORAGE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", null).show();
+
         }
 
         mTextViewTopValue = (TextView)findViewById(R.id.tv_top);
