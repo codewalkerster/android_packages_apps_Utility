@@ -87,8 +87,8 @@ public class MainActivity extends Activity {
     private CheckBox mCBKodi;
 
     private Spinner mSpinner_Resolution;
-    private String mResolution = "1080p";
-    private static String mSystemResolution = "1080p";
+    private String mResolution = "720p";
+    private static String mSystemResolution = "720p";
 
     private CheckBox mShowAllResolution;
     List<String> mAvableDispList = new ArrayList<String>();
@@ -655,8 +655,8 @@ public class MainActivity extends Activity {
                 if (mAdapterResolution.getPosition(mResolution) >= 0)
                     mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
                 else {
-                    if (mAdapterResolution.getPosition("1080p") >= 0) {
-                        mResolution = "1080p";
+                    if (mAdapterResolution.getPosition("720p") >= 0) {
+                        mResolution = "720p";
                         mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
                     }
                 }
