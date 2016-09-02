@@ -74,6 +74,10 @@ public class MainActivity extends Activity {
     public final static String FREE_SCALE = "/sys/class/graphics/fb0/free_scale";
     public final static String FREE_SCALE_VALUE = "0x10001";
 
+    public final static String SYSFS_DISPLAY_AXIS = "/sys/class/display/axis";
+    public final static String SCALE_AXIS = "/sys/class/graphics/fb1/scale_axis";
+    public final static String SCALE = "/sys/class/graphics/fb1/scale";
+
     public final static String DISP_CAP = "/sys/devices/virtual/amhdmitx/amhdmitx0/disp_cap";
 
     //private final static String BOOT_INI = Environment.getExternalStorageDirectory() + "/boot.ini";
@@ -88,6 +92,8 @@ public class MainActivity extends Activity {
 
     private Spinner mSpinner_Resolution;
     private String mResolution = "720p";
+    private int mDisplayWidth = 1280;
+    private int mDisplayHeight = 720;
     private static String mSystemResolution = "720p";
 
     private CheckBox mShowAllResolution;
@@ -484,6 +490,8 @@ public class MainActivity extends Activity {
 
         }
 
+        setResolution(mResolution);
+
         mTextViewTopValue = (TextView)findViewById(R.id.tv_top);
         mTextViewTopValue.setText(Integer.toString(mTopDelta));
         mBtnTopDecrease = (Button)findViewById(R.id.btn_top_decrease);
@@ -861,6 +869,58 @@ public class MainActivity extends Activity {
         });
 
         initCecFun();
+    }
+
+    private void setResolution(String resolution) {
+        if (mResolution.equals("1080p")) {
+            mDisplayWidth = 1920;
+            mDisplayHeight = 1080;
+        } else if (mResolution.equals("vga")) {
+            mDisplayWidth = 640;
+            mDisplayHeight = 480;
+        } else if (mResolution.equals("800x600p60hz")) {
+            mDisplayWidth = 800;
+            mDisplayHeight = 600;
+        } else if (mResolution.equals("800x480p60hz")) {
+            mDisplayWidth = 800;
+            mDisplayHeight = 480;
+        } else if (mResolution.equals("1024x600p60hz")) {
+            mDisplayWidth = 1024;
+            mDisplayHeight = 600;
+        } else if (mResolution.equals("1024x768p60hz")) {
+            mDisplayWidth = 1024;
+            mDisplayHeight = 768;
+        } else if (mResolution.equals("800p")) {
+            mDisplayWidth = 1280;
+            mDisplayHeight = 800;
+        } else if (mResolution.equals("sxga")) {
+            mDisplayWidth = 1280;
+            mDisplayHeight = 1024;
+        } else if (mResolution.equals("1360x768p60hz")) {
+            mDisplayWidth = 1360;
+            mDisplayHeight = 768;
+        } else if (mResolution.equals("1366x768p60hz")) {
+            mDisplayWidth = 1366;
+            mDisplayHeight = 768;
+        } else if (mResolution.equals("1440x900p60hz")) {
+            mDisplayWidth = 1440;
+            mDisplayHeight = 900;
+        } else if (mResolution.equals("1600x900p60hz")) {
+            mDisplayWidth = 1600;
+            mDisplayHeight = 900;
+        } else if (mResolution.equals("1680x1050p60hz")) {
+            mDisplayWidth = 1680;
+            mDisplayHeight = 1050;
+        } else if (mResolution.equals("1920x1200")) {
+            mDisplayWidth = 1920;
+            mDisplayHeight = 1200;
+        } else if (mResolution.equals("480p")) {
+            mDisplayWidth = 720;
+            mDisplayHeight = 480;
+        } else if (mResolution.equals("576p")) {
+            mDisplayWidth = 720;
+            mDisplayHeight = 576;
+        }
     }
 
     private boolean isCecServiceRunning() {
@@ -1309,12 +1369,36 @@ public class MainActivity extends Activity {
                                 + (mBottomValue - mBottomDelta);
 
             Log.e(TAG, "echo " + value + " > " + WINDOW_AXIS);
-            BufferedWriter window_axis_out = new BufferedWriter(new FileWriter(WINDOW_AXIS));
-            window_axis_out.write(value);
-            window_axis_out.close();
-            BufferedWriter free_scale_out = new BufferedWriter(new FileWriter(FREE_SCALE));
-            free_scale_out.write(FREE_SCALE_VALUE);
-            free_scale_out.close();
+            BufferedWriter bw = new BufferedWriter(new FileWriter(WINDOW_AXIS));
+            bw.write(value);
+            bw.close();
+            bw = new BufferedWriter(new FileWriter(FREE_SCALE));
+            bw.write(FREE_SCALE_VALUE);
+            bw.close();
+
+            value = (mLeftValue + mLeftDelta) + " "
+                                + (mTopValue + mTopDelta) + " "
+                                + mDisplayWidth + " "
+                                + mDisplayHeight + " "
+                                + (mLeftValue + mLeftDelta) + " "
+                                + (mTopValue + mTopDelta) + " 18 18";
+            bw = new BufferedWriter(new FileWriter(SYSFS_DISPLAY_AXIS));
+            bw.write(value);
+            bw.close();
+            Log.e(TAG, "echo " + value + " > " + SYSFS_DISPLAY_AXIS);
+
+            value = mDisplayWidth + " "
+                + mDisplayHeight + " "
+                + (mDisplayWidth - (mLeftValue + mLeftDelta) - 1) + " "
+                + (mDisplayHeight - (mTopValue + mTopDelta) - 1) + " ";
+            bw = new BufferedWriter(new FileWriter(SCALE_AXIS));
+            bw.write(value);
+            bw.close();
+
+            Log.e(TAG, "echo " + value + " > " + SCALE_AXIS);
+            bw = new BufferedWriter(new FileWriter(SCALE));
+            bw.write(FREE_SCALE_VALUE);
+            bw.close();
             return true;
         } catch (IOException e) {
             Log.e(TAG, "Fail OverScan");
