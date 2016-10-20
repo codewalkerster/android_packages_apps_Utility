@@ -138,7 +138,7 @@ public class MainActivity extends Activity {
 
     private static Context context;
 
-    private static final String LATEST_VERSION = "latestupdate";
+    private static final String LATEST_VERSION = "latestupdate_kitkat";
     private static final int FILE_SELECT_CODE = 0;
 
     private DownloadManager downloadManager;
@@ -1443,6 +1443,7 @@ public class MainActivity extends Activity {
     }
 
     private void installPackage(final File packageFile) {
+        Log.e(TAG, "installPackage = " + packageFile.getPath());
         try {
             RecoverySystem.verifyPackage(packageFile, null, null);
 
@@ -1506,12 +1507,6 @@ public class MainActivity extends Activity {
                     String path = getRealPathFromURI(uri);
                     if (path == null)
                         return;
-                    if (path.startsWith("/document")) {
-                        Toast.makeText(context, "The file was not copied in the normal way.",
-                                Toast.LENGTH_LONG).show();
-                        return;
-                    }
-
                     installPackage(new File(path));
                 }
                 break;
@@ -1522,13 +1517,12 @@ public class MainActivity extends Activity {
     private String getRealPathFromURI(Uri uri) {
         String filePath = "";
         filePath = uri.getPath();
+        Log.e(TAG, "uri.getPath() = " + filePath);
         if (filePath.startsWith("/storage"))
             return filePath;
 
-        String wholeID = DocumentsContract.getDocumentId(uri);
-
         // Split at colon, use second item in the array
-        String id = wholeID.split(":")[1];
+        String id = filePath.substring("/document/".length(), filePath.length());
 
         Log.e(TAG, "id = " + id);
 
