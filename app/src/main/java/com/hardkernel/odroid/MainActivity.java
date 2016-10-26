@@ -31,6 +31,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.RecoverySystem;
 import android.os.StatFs;
+import android.os.ServiceManager;
+import android.os.IPowerManager;
+import android.os.RemoteException;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -1076,16 +1079,13 @@ public class MainActivity extends Activity {
     }
 
     private void reboot() {
-        OutputStream stream;
         try {
-            stream = mSu.getOutputStream();
-            String cmd =  "reboot";
-            stream.write(cmd.getBytes());
-            stream.flush();
-            stream.close();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            IPowerManager pm = IPowerManager.Stub.asInterface(ServiceManager
+                    .getService(Context.POWER_SERVICE));
+            pm.reboot(false, null, false);
+        } catch (RemoteException e) {
+            Log.e(TAG, "PowerManager service died!", e);
+            return;
         }
     }
 
