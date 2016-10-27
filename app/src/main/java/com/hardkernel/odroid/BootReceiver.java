@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import android.os.SystemProperties;
+
 public class BootReceiver extends BroadcastReceiver {
 
     private final static String TAG = "ODROIDUtility";
@@ -33,18 +35,7 @@ public class BootReceiver extends BroadcastReceiver {
     }
 
     private void setMouse(String handed) {
-        try {
-            OutputStream stream;
-            Process p = Runtime.getRuntime().exec("su");
-            stream = p.getOutputStream();
-            String cmd = "setprop mouse.firstbutton " + handed;
-            stream.write(cmd.getBytes());
-            stream.flush();
-            stream.close();
-
-            Log.e(TAG, "set prop mouse.firstbutton " + handed);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        SystemProperties.set("mouse.firstbutton", handed);
+        Log.e(TAG, "set prop mouse.firstbutton " + handed);
     }
 }
