@@ -107,6 +107,9 @@ public class MainActivity extends Activity {
     List<String> mAvableDispList = new ArrayList<String>();
     ArrayAdapter<CharSequence> mAdapterResolution = null;
 
+    private String blueLed = "on";
+    private CheckBox mCBBlueLed;
+
     private int mTopValue;
     private int mTopDelta = 0;
     private TextView mTextViewTopValue;
@@ -454,6 +457,12 @@ public class MainActivity extends Activity {
                         mBottomDelta = Integer.parseInt(line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")));
                         Log.e(TAG, "bottom : " + mBottomDelta);
                     }
+
+                    if (line.startsWith("setenv led_onoff")) {
+                        blueLed = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
+
+                        Log.e(TAG, "blue led : " + blueLed);
+                    }
                 }
                 bufferedReader.close();
             } catch (IOException e1) {
@@ -475,6 +484,20 @@ public class MainActivity extends Activity {
                 .setNegativeButton("No", null).show();
 
         }
+
+        mCBBlueLed = (CheckBox)findViewById(R.id.blue_led);
+        mCBBlueLed.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                blueLed = isChecked? "on": "off";
+                mCBBlueLed.setText(isChecked? R.string.on: R.string.off);
+                modifyBootIni();
+            }
+        });
+
+        mCBBlueLed.setChecked(blueLed.equals("on"));
+        mCBBlueLed.setText(blueLed.equals("on")? R.string.on: R.string.off);
+
 
         mTextViewTopValue = (TextView)findViewById(R.id.tv_top);
         mTextViewTopValue.setText(Integer.toString(mTopDelta));
@@ -1155,6 +1178,8 @@ public class MainActivity extends Activity {
             right = "setenv overscan_right \"" + mRightDelta + "\"";
         }
 
+        String Blueled = "setenv led_onoff \"" + blueLed +"\"";
+
         List<String> lines = new ArrayList<String>();
         String line = null;
 
@@ -1190,6 +1215,11 @@ public class MainActivity extends Activity {
 
                 if (line.startsWith("setenv overscan_right")) {
                     line = right;
+                    Log.e(TAG, line);
+                }
+
+                if (line.startsWith("setenv led_onoff")) {
+                    line = Blueled;
                     Log.e(TAG, line);
                 }
 

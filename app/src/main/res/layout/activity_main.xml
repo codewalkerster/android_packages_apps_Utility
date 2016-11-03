@@ -469,6 +469,50 @@
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/board_title"
+                        android:textColor="@android:color/holo_blue_dark"
+                        android:textAppearance="?android:textAppearanceLarge"
+                        />
+
+                    <View
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="20dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/holo_blue_dark"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="@string/blue_led"
+                        android:id="@+id/textView10" />
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/on"
+                        android:id="@+id/blue_led" />
+
+                </LinearLayout>
+
             </LinearLayout>
 
         </ScrollView>
