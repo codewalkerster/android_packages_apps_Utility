@@ -1300,7 +1300,6 @@ public class MainActivity extends Activity {
                 }
             });
 
-            rbOfficalServer.setChecked(true);
 
             final RadioButton rbMirrorServer =
                 (RadioButton)promptView.findViewById(R.id.rb_mirror_server);
@@ -1314,6 +1313,8 @@ public class MainActivity extends Activity {
                         TextView.BufferType.EDITABLE);
                 }
             });
+
+            rbMirrorServer.setChecked(true);
 
             alertDialogBuilder.setCancelable(false)
                 .setPositiveButton("OK",
