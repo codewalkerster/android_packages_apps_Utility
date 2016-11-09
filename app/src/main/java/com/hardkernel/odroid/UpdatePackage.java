@@ -24,7 +24,7 @@ class UpdatePackage {
     public final static String MIRROR_SERVER_URL =
         "http://www.odroid.in/mirror/dn.odroid.com/S905/Android/ODROID-C2/";
 
-    private static String mRemoteUrl = OFFICAL_SERVER_URL;
+    private static String mRemoteUrl = MIRROR_SERVER_URL;
     private int m_buildNumber = -1;
     private long m_downloadId = -1;
 
