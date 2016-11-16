@@ -435,6 +435,9 @@ public class MainActivity extends Activity {
                                 mResolution = "ODROID-VU5/7";
                             else if (mResolution.equals("1024x600p60hz"))
                                 mResolution = "ODROID-VU7 Plus";
+                            else if (mResolution.equals("1024x768p60hz"))
+                                mResolution = "ODROID-VU8";
+
                         }
                         Log.e(TAG, mResolution);
                     }
@@ -1258,7 +1261,11 @@ public class MainActivity extends Activity {
         } else if (mResolution.equals("ODROID-VU7 Plus")) {
             resolution = "setenv hdmimode \"1024x600p60hz\"  # 1024x600";
             vout_mode = "setenv vout_mode \"dvi\"";
+        } else if (mResolution.equals("ODROID-VU8")) {
+            resolution = "setenv hdmimode \"1024x768p60hz\"  # 1024x768";
+            vout_mode = "setenv vout_mode \"dvi\"";
         }
+
 
         String top, left, bottom, right;
 
