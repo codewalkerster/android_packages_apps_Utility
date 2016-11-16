@@ -638,7 +638,7 @@ public class MainActivity extends Activity {
                 x_res = "720";
                 y_res = "576";
             } else if ("800x480p60hz".equals(mResolution)
-                    || "ODROID-VU5/7".equals(mResolution)) {
+                    || "ODROID-VU7".equals(mResolution)) {
                 mResolution = "800x480p60hz";
                 x_res = "800";
                 y_res = "480";
@@ -650,7 +650,9 @@ public class MainActivity extends Activity {
                 mResolution = "1024x600p43hz";
                 x_res = "1024";
                 y_res = "600";
-            } else if ("768p60hz".equals(mResolution)) {
+            } else if ("768p60hz".equals(mResolution)
+                    || "ODROID-VU8".equals(mResolution)) {
+                mResolution = "768p60hz";
                 x_res = "1024";
                 y_res = "768";
             } else if (mResolution.contains("720p")) {
