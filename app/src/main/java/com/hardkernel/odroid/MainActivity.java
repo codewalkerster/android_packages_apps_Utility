@@ -432,7 +432,7 @@ public class MainActivity extends Activity {
                         String vout_mode = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
                         if (vout_mode.equals("dvi")) {
                             if (mResolution.equals("800x480p60hz"))
-                                mResolution = "ODROID-VU7";
+                                mResolution = "ODROID-VU5/7";
                             else if (mResolution.equals("1024x600p60hz"))
                                 mResolution = "ODROID-VU7 Plus";
                         }
@@ -1252,7 +1252,7 @@ public class MainActivity extends Activity {
             resolution = "setenv hdmimode \"1080i\"          # 1080I@60Hz";
         else if (mResolution.equals("1920x1200"))
             resolution = "setenv hdmimode \"1920x1200\"      # 1920x1200";
-        else if (mResolution.equals("ODROID-VU7")) {
+        else if (mResolution.equals("ODROID-VU5/7")) {
             resolution = "setenv hdmimode \"800x480p60hz\"   # 800x480";
             vout_mode = "setenv vout_mode \"dvi\"";
         } else if (mResolution.equals("ODROID-VU7 Plus")) {
