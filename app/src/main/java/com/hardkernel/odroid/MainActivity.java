@@ -431,7 +431,7 @@ public class MainActivity extends Activity {
                         String vout_mode = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
                         if (vout_mode.equals("dvi")) {
                             if (mResolution.equals("800x480p60hz"))
-                                mResolution = "ODROID-VU7";
+                                mResolution = "ODROID-VU5/7";
                             else if (mResolution.equals("1024x600p60hz"))
                                 mResolution = "ODROID-VU7 Plus";
                         }
@@ -653,7 +653,7 @@ public class MainActivity extends Activity {
                 }
 
                 enableOverScanButtons(mSystemResolution.equals(mResolution) && mOrientation.equals("landscape"));
-                if (mResolution.equals("ODROID-VU7"))
+                if (mResolution.equals("ODROID-VU5/7"))
                     mOutputModeManager.setBestMode("800x480p60hz");
                 else if (mResolution.equals("ODROID-VU7 Plus"))
                     mOutputModeManager.setBestMode("1024x600p60hz");
@@ -1156,7 +1156,7 @@ public class MainActivity extends Activity {
     public void modifyBootIni() {
         String resolution = "setenv hdmimode \"" + mResolution + "\"";
         String vout_mode = "setenv vout_mode \"hdmi\"";
-        if (mResolution.equals("ODROID-VU7")) {
+        if (mResolution.equals("ODROID-VU5/7")) {
             resolution = "setenv hdmimode \"800x480p60hz\"";
             vout_mode = "setenv vout_mode \"dvi\"";
         } else if (mResolution.equals("ODROID-VU7 Plus")) {
