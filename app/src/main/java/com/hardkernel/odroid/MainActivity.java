@@ -184,7 +184,7 @@ public class MainActivity extends Activity {
     private static final String SWITCH_AUTO_CHANGE_LANGUAGE = "switch_auto_change_languace";
 
     //For start service
-    private static final String CEC_SERVICE = "com.android.tv.settings.system.CecService";
+    private static final String CEC_SERVICE = "com.droidlogic.CecService";
     private static final String CEC_ACTION = "CEC_LANGUAGE_AUTO_SWITCH";
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -1010,7 +1010,7 @@ public class MainActivity extends Activity {
             editor.commit();
 
             if (!isCecServiceRunning()) {
-                Intent serviceIntent = new Intent();
+                Intent serviceIntent = new Intent("com.droidlogic.CecService");
                 serviceIntent.setAction(CEC_ACTION);
                 this.startService(serviceIntent);
             }
@@ -1090,7 +1090,7 @@ public class MainActivity extends Activity {
             editor.putString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_ON);
             editor.commit();
             if (!isCecServiceRunning()) {
-                Intent serviceIntent = new Intent();
+                Intent serviceIntent = new Intent("com.droidlogic.CecService");
                 serviceIntent.setAction(CEC_ACTION);
                 this.startService(serviceIntent);
             }
