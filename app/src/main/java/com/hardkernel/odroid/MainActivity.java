@@ -300,30 +300,8 @@ public class MainActivity extends Activity {
 
         mOrientation = "landscape";
         mDegree = 0;
-
         String line;
-        try {
-            while ((line = bufferedReader.readLine()) != null) {
-                if (line.contains("persist.demo.hdmirotation")) {
-                    if (line.contains("portrait")) {
-                        Log.e(TAG, line);
-                        mOrientation = "portrait";
-                    }
-                }
-                if (line.contains("ro.sf.hwrotation")) {
-                    if (line.contains("90"))
-                        mDegree = 90;
-                    else if (line.contains("270"))
-                        mDegree = 270;
-                    else if (line.contains("0"))
-                        mDegree = 0;
-                }
-            }
-            bufferedReader.close();
-        } catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
+
 
         mOutputModeManager = new OutputModeManager(this);
         mPlayBackManager = new PlayBackManager(this);
@@ -885,16 +863,6 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                if (mRadio_portrait.isChecked()) {
-                    if (mDegree == 90) {
-                        SystemProperties.set("ctl.start", "rotation:portrait 90");
-                    } else {
-                        SystemProperties.set("ctl.start", "rotation:portrait 270");
-                    }
-                } else if (mRadio_landscape.isChecked()) {
-                    SystemProperties.set("ctl.start", "rotation:landscape");
-                }
-
                 if (mDegree == 0) {
                     android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
                     android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 0);
