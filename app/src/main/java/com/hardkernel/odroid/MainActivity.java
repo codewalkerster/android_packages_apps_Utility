@@ -48,6 +48,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Display;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -298,10 +299,11 @@ public class MainActivity extends Activity {
         BufferedReader bufferedReader = new BufferedReader(
                   new InputStreamReader(inputstream));
 
-        mOrientation = "landscape";
-        mDegree = 0;
         String line;
 
+        Display display = getWindowManager().getDefaultDisplay();
+        mDegree = display.getRotation() * 90;
+        mOrientation = mDegree == 0 ? "landscape" : "portrait";
 
         mOutputModeManager = new OutputModeManager(this);
         mPlayBackManager = new PlayBackManager(this);
