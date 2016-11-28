@@ -374,14 +374,9 @@ public class MainActivity extends Activity {
             public void onItemSelected(AdapterView<?> parent, View view,
                     int position, long id) {
                 // TODO Auto-generated method stub
-                String freq = parent.getItemAtPosition(position).toString();
-                Log.e(TAG, "freq");
-                setScalingMaxFreq(freq);
-
-                SharedPreferences pref = getSharedPreferences("utility", MODE_PRIVATE);
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putString("freq", freq);
-                editor.commit();
+                mScalingMaxFreq = parent.getItemAtPosition(position).toString();
+                Log.e(TAG, "scaling_max_freq = " + mScalingMaxFreq);
+                setScalingMaxFreq(mScalingMaxFreq);
             }
 
             @Override
@@ -940,7 +935,6 @@ public class MainActivity extends Activity {
             vout_mode = "setenv vout_mode \"dvi\"";
         }
 
-
         String top, left, bottom, right;
         if (!mSystemResolution.equals(mResolution)) {
             top = "setenv top \"0\"";
@@ -964,33 +958,34 @@ public class MainActivity extends Activity {
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("setenv hdmimode")) {
                     line = resolution;
-                    Log.e(TAG, line);
+                }
+
+                if (line.startsWith("setenv max_freq")) {
+                    int freq = Integer.parseInt(mScalingMaxFreq) / 1000;
+                    line = "setenv max_freq \"" + freq + "\"";
                 }
 
                 if (line.startsWith("setenv vout_mode")) {
                     line = vout_mode;
-                    Log.e(TAG, line);
                 }
 
                 if (line.startsWith("setenv top")) {
                     line = top;
-                    Log.e(TAG, line);
                 }
 
                 if (line.startsWith("setenv left")) {
                     line = left;
-                    Log.e(TAG, line);
                 }
 
                 if (line.startsWith("setenv bottom")) {
                     line = bottom;
-                    Log.e(TAG, line);
                 }
 
                 if (line.startsWith("setenv right")) {
                     line = right;
-                    Log.e(TAG, line);
                 }
+
+                Log.e(TAG, line);
 
                 lines.add(line + "\n");
             }
