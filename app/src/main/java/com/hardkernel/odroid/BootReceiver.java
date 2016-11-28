@@ -21,8 +21,6 @@ public class BootReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         if (action.equals(Intent.ACTION_BOOT_COMPLETED)) {
             SharedPreferences pref = context.getSharedPreferences("utility", Context.MODE_PRIVATE);
-            MainActivity.setGovernor(pref.getString("governor", "performance"));
-            MainActivity.setScalingMaxFreq(pref.getString("freq", "1488000"));
             setMouse(pref.getString("mouse", "right"));
 
             /* Auto start application on boot */
