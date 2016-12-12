@@ -75,7 +75,6 @@ public class MainActivity extends Activity {
     public final static String GOVERNOR_NODE = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor";
     public final static String SCALING_AVAILABLE_GOVERNORS = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors";
 
-    public final static String SCALING_AVAILABLE_FREQUESIES = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies";
     public final static String SCALING_MAX_FREQ = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq";
 
     public final static String WINDOW_AXIS = "/sys/class/graphics/fb0/window_axis";
@@ -345,10 +344,9 @@ public class MainActivity extends Activity {
 
         mSpinnerFreq = (Spinner) findViewById(R.id.spinner_freq);
 
-        String available_freq = getScaclingAvailableFrequensies();
-        String[] freq_array = available_freq.split(" ");
-        ArrayAdapter<String> freqAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, freq_array);
-        freqAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> freqAdapter =
+            ArrayAdapter.createFromResource(this, R.array.available_freq_array,
+                    android.R.layout.simple_spinner_dropdown_item);
         mSpinnerFreq.setAdapter(freqAdapter);
 
         mSpinnerFreq.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -357,14 +355,9 @@ public class MainActivity extends Activity {
             public void onItemSelected(AdapterView<?> parent, View view,
                     int position, long id) {
                 // TODO Auto-generated method stub
-                String freq = parent.getItemAtPosition(position).toString();
-                Log.e(TAG, "freq");
-                setScalingMaxFreq(freq);
-
-                SharedPreferences pref = getSharedPreferences("utility", MODE_PRIVATE);
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putString("freq", freq);
-                editor.commit();
+                mScalingMaxFreq = parent.getItemAtPosition(position).toString();
+                Log.e(TAG, "scaling_max_freq = " + mScalingMaxFreq);
+                setScalingMaxFreq(mScalingMaxFreq);
             }
 
             @Override
@@ -1167,38 +1160,38 @@ public class MainActivity extends Activity {
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("setenv hdmimode")) {
                     line = resolution;
-                    Log.e(TAG, line);
+                }
+
+                if (line.startsWith("setenv max_freq")) {
+                    int freq = Integer.parseInt(mScalingMaxFreq) / 1000;
+                    line = "setenv max_freq \"" + freq + "\"";
                 }
 
                 if (line.startsWith("setenv vout_mode")) {
                     line = vout_mode;
-                    Log.e(TAG, line);
                 }
 
                 if (line.startsWith("setenv overscan_top")) {
                     line = top;
-                    Log.e(TAG, line);
                 }
 
                 if (line.startsWith("setenv overscan_left")) {
                     line = left;
-                    Log.e(TAG, line);
                 }
 
                 if (line.startsWith("setenv overscan_bottom")) {
                     line = bottom;
-                    Log.e(TAG, line);
                 }
 
                 if (line.startsWith("setenv overscan_right")) {
                     line = right;
-                    Log.e(TAG, line);
                 }
 
                 if (line.startsWith("setenv led_onoff")) {
                     line = Blueled;
-                    Log.e(TAG, line);
                 }
+
+                Log.e(TAG, line);
 
                 lines.add(line + "\n");
             }
@@ -1405,23 +1398,6 @@ public class MainActivity extends Activity {
         }
 
         return available_governors;
-    }
-
-
-    protected String getScaclingAvailableFrequensies() {
-        String available_freq = null;
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(SCALING_AVAILABLE_FREQUESIES));
-            available_freq = bufferedReader.readLine();
-            bufferedReader.close();
-            Log.e(TAG, available_freq);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return available_freq;
     }
 
     @Override
