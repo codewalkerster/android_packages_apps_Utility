@@ -2,6 +2,8 @@
 <resources>
 
     <string name="app_name">ODROID Utility</string><string name="action_settings">Settings</string>
+
+    <string name="shortcut_title">SHORTCUT</string>
     
     <string name="cpu">CPU</string>
     <string name="screen">Screen</string>
@@ -61,4 +63,9 @@
     <string name="disable_ir">Disable IR Remote Control</string>
     <string name="offical_server">Offical Server</string>
     <string name="mirror_server">Mirror Server</string>
+
+    <string name="shortcut_f7">F7</string>
+    <string name="shortcut_f8">F8</string>
+    <string name="shortcut_f9">F9</string>
+    <string name="shortcut_f10">F10</string>
 </resources>
