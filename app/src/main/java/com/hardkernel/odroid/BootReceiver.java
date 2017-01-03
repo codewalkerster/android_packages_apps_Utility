@@ -1,10 +1,16 @@
 package com.hardkernel.odroid;
 
+import java.util.List;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Debug;
 import android.util.Log;
+
+import android.view.KeyEvent;
+import android.view.WindowManager;
 
 public class BootReceiver extends BroadcastReceiver {
 
@@ -19,6 +25,23 @@ public class BootReceiver extends BroadcastReceiver {
 	        MainActivity.setGovernor(pref.getString("governor", "ondemand"));
 	        MainActivity.setMouse(pref.getString("mouse", "right"));
 		}
-	}
+
+        SharedPreferences pref = context.getSharedPreferences("utility", Context.MODE_PRIVATE);
+
+        String pkg[] =  new String[4];
+        for(int i=0; i<4;  i++)
+            pkg[i]  = pref.getString("shortcut_f" + (i+7), null);
+
+        List<Intent> appList = MainActivity.getAvailableAppList(context);
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+
+        for (int i=0;  i<4;  i++) {
+            for (Intent app : appList) {
+                if (app.getPackage().equals(pkg[i])) {
+                    wm.setApplicationShortcut(KeyEvent.KEYCODE_F7 + i, app);
+                }
+            }
+        }
+    }
 
 }

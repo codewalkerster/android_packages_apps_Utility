@@ -3,6 +3,8 @@
 
     <string name="app_name">ODROID Utility</string><string name="action_settings">Settings</string>
 
+    <string name="shortcut_title">SHORTCUT</string>
+    
     <string name="cpu">CPU</string>
     <string name="screen">Screen</string>
     <string name="cpu_governor">CPU Governor</string>
@@ -44,4 +46,8 @@
     <string name="save">Save</string>
     <string name="get_pwm_duty">Get PWM duty</string>
 
+    <string name="shortcut_f7">F7</string>
+    <string name="shortcut_f8">F8</string>
+    <string name="shortcut_f9">F9</string>
+    <string name="shortcut_f10">F10</string>
 </resources>
