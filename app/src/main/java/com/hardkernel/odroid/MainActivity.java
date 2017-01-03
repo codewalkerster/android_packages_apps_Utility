@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -20,6 +21,7 @@ import android.app.Activity;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.app.Application;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -28,6 +30,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
@@ -44,11 +48,14 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -152,6 +159,11 @@ public class MainActivity extends Activity {
     private RadioButton mRadio_270;
 
     private RadioGroup mRG_degree;
+
+    private Spinner shortcut_f7;
+    private Spinner shortcut_f8;
+    private Spinner shortcut_f9;
+    private Spinner shortcut_f10;
 
     private String mOrientation;
     private int mDegree;
@@ -900,6 +912,7 @@ public class MainActivity extends Activity {
                 }
             }
         });
+        shortcutActivity();
         initCecFun();
     }
 
@@ -1719,4 +1732,101 @@ public class MainActivity extends Activity {
         return filePath;
     }
 
+    private static List<ApplicationInfo> appList = null;
+    public static List<Intent> getAvailableAppList(Context context) {
+        final PackageManager pm = context.getPackageManager();
+        appList = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+        List<Intent> launchApps = new ArrayList<Intent>();
+        for (ApplicationInfo appInfo: appList) {
+            Intent launchApp = pm.getLaunchIntentForPackage(appInfo.packageName);
+            if (launchApp != null)
+                launchApps.add(launchApp);
+        }
+
+        return launchApps;
+    }
+
+    private void shortcutActivity () {
+        final SharedPreferences pref = getSharedPreferences("utility", Context.MODE_PRIVATE);
+        final WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+
+        String pkg_f7 = pref.getString("shortcut_f7", null);
+        String pkg_f8 = pref.getString("shortcut_f8", null);
+        String pkg_f9 = pref.getString("shortcut_f9", null);
+        String pkg_f10 = pref.getString("shortcut_f10", null);
+
+        shortcut_f7 = (Spinner) findViewById(R.id.shortcut_f7);
+        shortcut_f8 = (Spinner) findViewById(R.id.shortcut_f8);
+        shortcut_f9 = (Spinner) findViewById(R.id.shortcut_f9);
+        shortcut_f10 = (Spinner) findViewById(R.id.shortcut_f10);
+
+        final List<Intent> appIntentList = getAvailableAppList(context);
+        final ArrayList<String> appTitles = new ArrayList<String>();
+
+        appTitles.add("No shortcut");
+        for(Intent intent: appIntentList) {
+            appTitles.add(intent.getPackage());
+        }
+
+        ApplicationAdapter adapter = new ApplicationAdapter(this, R.layout.applist_dropdown_item_1line, appTitles, appList);
+        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+
+        shortcut_f7.setAdapter(adapter);
+        shortcut_f8.setAdapter(adapter);
+        shortcut_f9.setAdapter(adapter);
+        shortcut_f10.setAdapter(adapter);
+
+        shortcut_f7.setSelection(appTitles.indexOf(pkg_f7));
+        shortcut_f8.setSelection(appTitles.indexOf(pkg_f8));
+        shortcut_f9.setSelection(appTitles.indexOf(pkg_f9));
+        shortcut_f10.setSelection(appTitles.indexOf(pkg_f10));
+
+        OnItemSelectedListener listner = new OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> spinner, View view, int position, long arg3) {
+                Editor edit = pref.edit();
+                int keycode = 0;
+
+                switch (spinner.getId()) {
+                    case R.id.shortcut_f7:
+                        keycode = KeyEvent.KEYCODE_F7;
+                        break;
+                    case R.id.shortcut_f8:
+                        keycode = KeyEvent.KEYCODE_F8;
+                        break;
+                    case R.id.shortcut_f9:
+                        keycode = KeyEvent.KEYCODE_F9;
+                        break;
+                    case R.id.shortcut_f10:
+                        keycode = KeyEvent.KEYCODE_F10;
+                        break;
+                }
+
+                String shortcut_pref =
+                        "shortcut_f" + ((keycode - KeyEvent.KEYCODE_F1)  + 1);
+
+                if (position == 0) {
+                    wm.setApplicationShortcut(keycode, null);
+                    edit.putString(shortcut_pref, "No shortcut");
+                }
+                else{
+                    wm.setApplicationShortcut(keycode, appIntentList.get(position - 1));
+                    edit.putString(shortcut_pref, appIntentList.get(position - 1).getPackage());
+                }
+                edit.commit();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+
+            }
+        };
+
+        shortcut_f7.setOnItemSelectedListener(listner);
+        shortcut_f8.setOnItemSelectedListener(listner);
+        shortcut_f9.setOnItemSelectedListener(listner);
+        shortcut_f10.setOnItemSelectedListener(listner);
+
+    }
 }
