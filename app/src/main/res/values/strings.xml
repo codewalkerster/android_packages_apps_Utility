@@ -8,6 +8,7 @@
     <string name="rotation_title">ROTATION</string>
     <string name="hdmi_cec_title">HDMI-CEC</string>
     <string name="board_title">BOARD</string>
+    <string name="shortcut_title">SHORTCUT</string>
     
     <string name="cpu">CPU</string>
     <string name="screen">Screen</string>
@@ -73,4 +74,9 @@
     <string name="mirror_server">Mirror Server</string>
     <string name="auto_power_on">Auto power on</string>
     <string name="blue_led">Blue LED</string>
+
+    <string name="shortcut_f7">F7</string>
+    <string name="shortcut_f8">F8</string>
+    <string name="shortcut_f9">F9</string>
+    <string name="shortcut_f10">F10</string>
 </resources>
