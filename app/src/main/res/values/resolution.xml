@@ -34,6 +34,6 @@
         <item >ODROID-VU5/7</item>
         <item >ODROID-VU7 Plus</item>
         <item >ODROID-VU8</item>
-        <item >custombuilt</item>
+        <item >autodetect</item>
     </string-array>
 </resources>
