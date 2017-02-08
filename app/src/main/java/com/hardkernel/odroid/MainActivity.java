@@ -106,6 +106,8 @@ public class MainActivity extends Activity {
     private String mPreviousResolution = "1080p60hz";
     private static String mSystemResolution = "1080p60hz";
 
+    private boolean mDisplayAutoDetect = true;
+
     private Timer mTimer = null;
     private String mResolutionMessage = "The display will be reset to its previous configuration in ";
     private int mResolutionCounter = 0;
@@ -425,6 +427,15 @@ public class MainActivity extends Activity {
                         Log.e(TAG, mResolution);
                     }
 
+                    if (line.startsWith("setenv display_autodetect")) {
+                        Log.e(TAG, line);
+                        String display_autodetect = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
+                        if (display_autodetect.equals("true"))
+                            mDisplayAutoDetect = true;
+                        else
+                            mDisplayAutoDetect = false;
+                    }
+
                     if (line.startsWith("setenv overscan_top")) {
                         mTopDelta = Integer.parseInt(line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")));
                         Log.e(TAG, "top : " + mTopDelta);
@@ -634,7 +645,11 @@ public class MainActivity extends Activity {
                 Log.e(TAG, "Selected resolution = " + resolution);
                 if (mResolution.equals(resolution))
                     return;
-                else {
+                else if (resolution.equals("autodetect")) {
+                    mDisplayAutoDetect = true;
+                    return;
+                } else {
+                    mDisplayAutoDetect = false;
                     mPreviousResolution = mResolution;
                     mResolution = resolution;
                 }
@@ -784,7 +799,10 @@ public class MainActivity extends Activity {
             }
         });
 
-        mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
+        if (mDisplayAutoDetect)
+            mSpinner_Resolution.setSelection(mAdapterResolution.getPosition("autodetect"));
+        else
+            mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
 
         Button btn;
 
@@ -1136,6 +1154,7 @@ public class MainActivity extends Activity {
     public void modifyBootIni() {
         String resolution = "setenv hdmimode \"" + mResolution + "\"";
         String vout_mode = "setenv vout_mode \"hdmi\"";
+        String display_autodetect = "setenv display_autodetect \"false\"";
         if (mResolution.equals("ODROID-VU5/7")) {
             resolution = "setenv hdmimode \"800x480p60hz\"";
             vout_mode = "setenv vout_mode \"dvi\"";
@@ -1145,6 +1164,10 @@ public class MainActivity extends Activity {
         } else if (mResolution.equals("ODROID-VU8")) {
             resolution = "setenv hdmimode \"1024x768p60hz\"";
             vout_mode = "setenv vout_mode \"dvi\"";
+        }
+
+        if (mDisplayAutoDetect) {
+            display_autodetect = "setenv display_autodetect \"true\"";
         }
 
         String top, left, bottom, right;
@@ -1202,6 +1225,10 @@ public class MainActivity extends Activity {
 
                 if (line.startsWith("setenv led_onoff")) {
                     line = Blueled;
+                }
+
+                if (line.startsWith("setenv display_autodetect")) {
+                    line = display_autodetect;
                 }
 
                 Log.e(TAG, line);
