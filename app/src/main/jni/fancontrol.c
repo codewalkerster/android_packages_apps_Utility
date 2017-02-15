@@ -8,23 +8,36 @@
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <linux/ioctl.h>
+#include <dirent.h>
 
 #define LOG_TAG "fancontrol"
 #define LOGE(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
-
-#define FAN_NODE    "/sys/devices/odroid_fan.14/"
 
 #define AUTO        1
 #define MANUAL      0
 #define ENABLE      1
 #define DIASABLE    0
 
+char fan_node[32];
+
 jstring Java_com_hardkernel_odroid_MainActivity_readFanMode(JNIEnv* env, jobject obj) {
-    FILE *fp;
+    DIR *dp = NULL;
+    FILE *fp = NULL;
     char buf[32] = {'\0',};
-    if ((fp = fopen(FAN_NODE "fan_mode", "r")) == NULL) {
-        LOGE(FAN_NODE "fan_mode not found");
-        return NULL;
+    struct dirent *ep = NULL;
+    char fullpath[64] = {'\0',};
+    dp = opendir("/sys/devices/");
+    if (dp != NULL) {
+        while (ep = readdir(dp)) {
+            if (strncmp(ep->d_name, "odroid_fan.", 11) == 0) {
+                strcpy(fan_node, ep->d_name);
+                sprintf(fullpath, "/sys/devices/%s/fan_mode", fan_node);
+                if ((fp = fopen(fullpath, "r")) == NULL) {
+                    LOGE("%s not found", fullpath);
+                    return NULL;
+                }
+            }
+        }
     }
 
     fread(buf, 1, 32, fp);
@@ -34,10 +47,12 @@ jstring Java_com_hardkernel_odroid_MainActivity_readFanMode(JNIEnv* env, jobject
 }
 
 void Java_com_hardkernel_odroid_MainActivity_setFanMode(JNIEnv* env, jobject obj, jint auto_manual) {
-    FILE *fp;
+    FILE *fp = NULL;
+    char fullpath[64] = {'\0',};
+    sprintf(fullpath, "/sys/devices/%s/fan_mode", fan_node);
 
-    if ((fp = fopen(FAN_NODE "fan_mode", "w")) == NULL) {
-        LOGE(FAN_NODE "fan_mode not found");
+    if ((fp = fopen(fullpath, "w")) == NULL) {
+        LOGE("%s not found", fullpath);
         return;
     }
 
@@ -52,12 +67,14 @@ void Java_com_hardkernel_odroid_MainActivity_setFanMode(JNIEnv* env, jobject obj
     fclose(fp);
 }
 
-
 jstring Java_com_hardkernel_odroid_MainActivity_readFanSpeeds(JNIEnv* env, jobject obj) {
-    FILE *fp;
+    FILE *fp = NULL;
     char buf[16] = {'\0',};
-    if ((fp = fopen(FAN_NODE "fan_speeds", "r")) == NULL) {
-        LOGE(FAN_NODE "fan_speeds not found");
+    char fullpath[64] = {'\0',};
+    sprintf(fullpath, "/sys/devices/%s/fan_speeds", fan_node);
+
+    if ((fp = fopen(fullpath, "r")) == NULL) {
+        LOGE("%s not found", fullpath);
         return NULL;
     }
 
@@ -68,10 +85,12 @@ jstring Java_com_hardkernel_odroid_MainActivity_readFanSpeeds(JNIEnv* env, jobje
 }
 
 void Java_com_hardkernel_odroid_MainActivity_setFanSpeeds(JNIEnv* env, jobject obj, jstring values) {
-    FILE *fp;
+    FILE *fp = NULL;
+    char fullpath[64] = {'\0',};
+    sprintf(fullpath, "/sys/devices/%s/fan_speeds", fan_node);
 
-    if ((fp = fopen(FAN_NODE "fan_speeds", "w")) == NULL) {
-        LOGE(FAN_NODE "fan_speeds not found");
+    if ((fp = fopen(fullpath, "w")) == NULL) {
+        LOGE("%s not found", fullpath);
         return;
     }
 
@@ -87,10 +106,13 @@ void Java_com_hardkernel_odroid_MainActivity_setFanSpeeds(JNIEnv* env, jobject o
 }
 
 jstring Java_com_hardkernel_odroid_MainActivity_readPWMDuty(JNIEnv* env, jobject obj) {
-    FILE *fp;
+    FILE *fp = NULL;
     char buf[16] = {'\0',};
-    if ((fp = fopen(FAN_NODE "pwm_duty", "r")) == NULL) {
-        LOGE(FAN_NODE "pwm_duty not found");
+    char fullpath[64] = {'\0',};
+    sprintf(fullpath, "/sys/devices/%s/pwm_duty", fan_node);
+
+    if ((fp = fopen(fullpath, "r")) == NULL) {
+        LOGE("%s not found", fullpath);
         return NULL;
     }
 
@@ -101,10 +123,12 @@ jstring Java_com_hardkernel_odroid_MainActivity_readPWMDuty(JNIEnv* env, jobject
 }
 
 void Java_com_hardkernel_odroid_MainActivity_setPWMDuty(JNIEnv* env, jobject obj, jstring values) {
-    FILE *fp;
+    FILE *fp = NULL;
+    char fullpath[64] = {'\0',};
+    sprintf(fullpath, "/sys/devices/%s/pwm_duty", fan_node);
 
-    if ((fp = fopen(FAN_NODE "pwm_duty", "w")) == NULL) {
-        LOGE(FAN_NODE "pwm_duty not found");
+    if ((fp = fopen(fullpath, "w")) == NULL) {
+        LOGE("%s not found", fullpath);
         return;
     }
 
@@ -120,10 +144,13 @@ void Java_com_hardkernel_odroid_MainActivity_setPWMDuty(JNIEnv* env, jobject obj
 }
 
 jstring Java_com_hardkernel_odroid_MainActivity_readPWMEnable(JNIEnv* env, jobject obj) {
-    FILE *fp;
+    FILE *fp = NULL;
     char buf[16] = {'\0',};
-    if ((fp = fopen(FAN_NODE "pwm_enable", "r")) == NULL) {
-        LOGE(FAN_NODE "pwm_enable not found");
+    char fullpath[64] = {'\0',};
+    sprintf(fullpath, "/sys/devices/%s/pwm_enable", fan_node);
+
+    if ((fp = fopen(fullpath, "r")) == NULL) {
+        LOGE("%s not found", fullpath);
         return NULL;
     }
 
@@ -134,10 +161,12 @@ jstring Java_com_hardkernel_odroid_MainActivity_readPWMEnable(JNIEnv* env, jobje
 }
 
 void Java_com_hardkernel_odroid_MainActivity_setPWMEnable(JNIEnv* env, jobject obj, jint enable) {
-    FILE *fp;
+    FILE *fp = NULL;
+    char fullpath[64] = {'\0',};
+    sprintf(fullpath, "/sys/devices/%s/pwm_enable", fan_node);
 
-    if ((fp = fopen(FAN_NODE "pwm_enable", "w")) == NULL) {
-        LOGE(FAN_NODE "pwm_enable not found");
+    if ((fp = fopen(fullpath, "w")) == NULL) {
+        LOGE("%s not found", fullpath);
         return;
     }
 
@@ -153,10 +182,13 @@ void Java_com_hardkernel_odroid_MainActivity_setPWMEnable(JNIEnv* env, jobject o
 }
 
 jstring Java_com_hardkernel_odroid_MainActivity_readTempLevels(JNIEnv* env, jobject obj) {
-    FILE *fp;
+    FILE *fp = NULL;
     char buf[16] = {'\0',};
-    if ((fp = fopen(FAN_NODE "temp_levels", "r")) == NULL) {
-        LOGE(FAN_NODE "temp_levels not found");
+    char fullpath[64] = {'\0',};
+    sprintf(fullpath, "/sys/devices/%s/temp_levels", fan_node);
+
+    if ((fp = fopen(fullpath, "r")) == NULL) {
+        LOGE("%s not found", fullpath);
         return NULL;
     }
 
@@ -166,12 +198,13 @@ jstring Java_com_hardkernel_odroid_MainActivity_readTempLevels(JNIEnv* env, jobj
     return (*env)->NewStringUTF(env, buf);
 }
 
-
 void Java_com_hardkernel_odroid_MainActivity_setTempLevels(JNIEnv* env, jobject obj, jstring values) {
-    FILE *fp;
+    FILE *fp = NULL;
+    char fullpath[64] = {'\0',};
+    sprintf(fullpath, "/sys/devices/%s/temp_levels", fan_node);
 
-    if ((fp = fopen(FAN_NODE "temp_levels", "w")) == NULL) {
-        LOGE(FAN_NODE "temp_levels not found");
+    if ((fp = fopen(fullpath, "w")) == NULL) {
+        LOGE("%s not found", fullpath);
         return;
     }
 

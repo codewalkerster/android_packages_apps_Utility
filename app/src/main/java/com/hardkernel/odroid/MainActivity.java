@@ -597,11 +597,16 @@ public class MainActivity extends Activity {
             }
         });
 
-        getFanValues();
+        if (!getFanValues())
+            tabHost.getTabWidget().getChildAt(2).setVisibility(View.GONE);
     }
 
-    private void getFanValues() {
+    private boolean getFanValues() {
         String value = readFanMode();
+
+        if (value == null)
+            return false;
+
         Log.e(TAG, value);
 
         if (value.contains("auto")) {
@@ -639,6 +644,8 @@ public class MainActivity extends Activity {
             token = token.trim();
             mEditTextTempLevels[i++].setText(token);
         }
+
+        return true;
     }
 
     public void saveBootIni() {
