@@ -34,14 +34,14 @@ public class ApplicationAdapter extends ArrayAdapter {
                 image.setImageResource(android.R.drawable.ic_delete);
                 viewTitle.setText("No shortcut");
 
-                return layout;
-            }
-            if (app.packageName.equals(title.get(position))) {
+            } else if (title.get(position).equals("home")) {
+                image.setImageResource(android.R.drawable.sym_def_app_icon);
+                viewTitle.setText("Home");
+
+            } else if (app.packageName.equals(title.get(position))) {
                 PackageManager pm = this.getContext().getPackageManager();
                 image.setImageDrawable(app.loadIcon(pm));
                 viewTitle.setText(app.loadLabel(pm));
-
-                return layout;
             }
         }
 
