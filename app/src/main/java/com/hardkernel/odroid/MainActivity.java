@@ -1770,6 +1770,10 @@ public class MainActivity extends Activity {
                 launchApps.add(launchApp);
         }
 
+        Intent home = new Intent(Intent.ACTION_MAIN);
+        home.setPackage("home");
+        launchApps.add(home);
+
         return launchApps;
     }
 
