@@ -1023,6 +1023,7 @@ public class MainActivity extends Activity {
             mCBOneKeyPlay.setChecked(on);
             mCBAutoPowerOn.setChecked(on);
             mCBAutoChangeLanguage.setChecked(on);
+            mCBOneKeyShutdown.setChecked(on);
 
         } else if (isOpen.equals(SWITCH_OFF) && on) {
             editor.putString(SWITCH_CEC, SWITCH_ON);
@@ -1036,8 +1037,6 @@ public class MainActivity extends Activity {
             mHdmiCecManager.setCecSysfsValue(HdmiCecManager.FUN_CEC, on);
             mCBOneKeyPlay.setChecked(on);
             mCBAutoPowerOn.setChecked(on);
-            mCBAutoChangeLanguage.setChecked(on);
-            mCBOneKeyShutdown.setChecked(on);
         }
 
         if (on) {
