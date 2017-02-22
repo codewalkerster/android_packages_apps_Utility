@@ -150,10 +150,12 @@ public class MainActivity extends Activity {
     private CheckBox mCBOneKeyPlay;
     private CheckBox mCBAutoPowerOn;
     private CheckBox mCBAutoChangeLanguage;
+    private CheckBox mCBOneKeyShutdown;
 
     private LinearLayout mLLOneKeyPlay;
     private LinearLayout mLLAutoChangeLanguage;
     private LinearLayout mLLAutoPowerOn;
+    private LinearLayout mLLOneKeyShutdown;
 
     private RadioButton mRadio_portrait;
     private RadioButton mRadio_landscape;
@@ -196,6 +198,7 @@ public class MainActivity extends Activity {
     //private static final String SWITCH_ONE_KEY_POWER_OFF = "switch_one_key_power_off";
     private static final String SWITCH_AUTO_POWER_ON = "switch_auto_power_on";
     private static final String SWITCH_AUTO_CHANGE_LANGUAGE = "switch_auto_change_languace";
+    private static final String SWITCH_ONE_KEY_SHUTDOWN = "switch_one_key_shutdown";
 
     //For start service
     private static final String CEC_SERVICE = "com.droidlogic.CecService";
@@ -758,6 +761,7 @@ public class MainActivity extends Activity {
         mLLOneKeyPlay = (LinearLayout)findViewById(R.id.layout_one_key_play);
         mLLAutoChangeLanguage = (LinearLayout)findViewById(R.id.layout_auto_change_language);
         mLLAutoPowerOn = (LinearLayout)findViewById(R.id.layout_auto_power_on);
+        mLLOneKeyShutdown= (LinearLayout)findViewById(R.id.layout_one_key_shutdown);
 
         mCBCECSwitch = (CheckBox)findViewById(R.id.cb_cecswitch);
         mCBCECSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -796,6 +800,15 @@ public class MainActivity extends Activity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // TODO Auto-generated method stub
                 switchAutoChangeLanguage(isChecked);
+            }
+        });
+
+        mCBOneKeyShutdown = (CheckBox) findViewById(R.id.cb_one_key_shutdown);
+        mCBOneKeyShutdown.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                switchOneKeyShutdown(isChecked);
             }
         });
 
@@ -965,9 +978,19 @@ public class MainActivity extends Activity {
                 mCBAutoChangeLanguage.setText(R.string.off);
             }
 
+            if ((cec_config & HdmiCecManager.MASK_ONE_KEY_SHUTDOWN) != 0) {
+                editor.putString(SWITCH_ONE_KEY_SHUTDOWN, SWITCH_ON);
+                mCBOneKeyShutdown.setChecked(true);
+            } else {
+                editor.putString(SWITCH_ONE_KEY_SHUTDOWN, SWITCH_OFF);
+                mCBOneKeyShutdown.setChecked(false);
+                mCBOneKeyShutdown.setText(R.string.off);
+            }
+
             mLLOneKeyPlay.setVisibility(View.VISIBLE);
             mLLAutoChangeLanguage.setVisibility(View.VISIBLE);
             mLLAutoPowerOn.setVisibility(View.VISIBLE);
+            mLLOneKeyShutdown.setVisibility(View.VISIBLE);
         } else {
             editor.putString(SWITCH_CEC, SWITCH_OFF);
             mCBCECSwitch.setChecked(false);
@@ -975,10 +998,12 @@ public class MainActivity extends Activity {
             editor.putString(SWITCH_ONE_KEY_PLAY, SWITCH_OFF);
             editor.putString(SWITCH_AUTO_POWER_ON, SWITCH_OFF);
             editor.putString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_OFF);
+            editor.putString(SWITCH_ONE_KEY_SHUTDOWN, SWITCH_OFF);
 
             mLLOneKeyPlay.setVisibility(View.GONE);
             mLLAutoChangeLanguage.setVisibility(View.GONE);
             mLLAutoPowerOn.setVisibility(View.GONE);
+            mLLOneKeyShutdown.setVisibility(View.GONE);
         }
         editor.commit();
         mHdmiCecManager.setCecEnv(cec_config);
@@ -1012,6 +1037,7 @@ public class MainActivity extends Activity {
             mCBOneKeyPlay.setChecked(on);
             mCBAutoPowerOn.setChecked(on);
             mCBAutoChangeLanguage.setChecked(on);
+            mCBOneKeyShutdown.setChecked(on);
         }
 
         if (on) {
@@ -1019,12 +1045,14 @@ public class MainActivity extends Activity {
             mLLOneKeyPlay.setVisibility(View.VISIBLE);
             mLLAutoChangeLanguage.setVisibility(View.VISIBLE);
             mLLAutoPowerOn.setVisibility(View.VISIBLE);
+            mLLOneKeyShutdown.setVisibility(View.VISIBLE);
 
         } else {
             mCBCECSwitch.setText(R.string.off);
             mLLOneKeyPlay.setVisibility(View.GONE);
             mLLAutoChangeLanguage.setVisibility(View.GONE);
             mLLAutoPowerOn.setVisibility(View.GONE);
+            mLLOneKeyShutdown.setVisibility(View.GONE);
         }
     }
 
@@ -1109,6 +1137,28 @@ public class MainActivity extends Activity {
         String[] country_list = getResources().getStringArray(R.array.country);
         mHdmiCecManager.setLanguageList(cec_language_list, language_list, country_list);
         mHdmiCecManager.doUpdateCECLanguage(curLanguage);
+    }
+
+    private void switchOneKeyShutdown(boolean on) {
+        String isOpen = mSharepreference.getString(SWITCH_ONE_KEY_SHUTDOWN, SWITCH_ON);
+        Editor editor = mSharepreference.edit();
+        Log.d(TAG, "CEC One Key Shutdown: " + on);
+
+        if (isOpen.equals(SWITCH_ON) && !on) {
+            editor.putString(SWITCH_ONE_KEY_SHUTDOWN, SWITCH_OFF);
+            editor.commit();
+            mHdmiCecManager.setCecSysfsValue(
+                    HdmiCecManager.FUN_ONE_KEY_SHUTDOWN, HdmiCecManager.FUN_CLOSE);
+        } else if (isOpen.equals(SWITCH_OFF) && on) {
+            editor.putString(SWITCH_ONE_KEY_SHUTDOWN, SWITCH_ON);
+            editor.commit();
+            mHdmiCecManager.setCecSysfsValue(
+                    HdmiCecManager.FUN_ONE_KEY_SHUTDOWN, HdmiCecManager.FUN_OPEN);
+        }
+        if (on)
+            mCBOneKeyShutdown.setText(R.string.on);
+        else
+            mCBOneKeyShutdown.setText(R.string.off);
     }
 
     @Override
