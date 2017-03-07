@@ -905,7 +905,10 @@ public class MainActivity extends Activity {
             resolution = "setenv hdmimode \"576i\"           # 720x576";
         else if (mResolution.equals("800x480p60hz"))
             resolution = "setenv hdmimode \"800x480p60hz\"   # 800x480";
-        else if (mResolution.equals("800x600p60hz"))
+        else if (mResolution.equals("480x800p60hz")) {
+            resolution = "setenv hdmimode \"480x800p60hz\"   # 480x800";
+            vout_mode = "setenv vout_mode \"dvi\"";
+        } else if (mResolution.equals("800x600p60hz"))
             resolution = "setenv hdmimode \"800x600p60hz\"   # 800x600";
         else if (mResolution.equals("1024x600p60hz"))
             resolution = "setenv hdmimode \"1024x600p60hz\"  # 1024x600";
