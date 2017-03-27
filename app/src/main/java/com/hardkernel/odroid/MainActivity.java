@@ -666,9 +666,9 @@ public class MainActivity extends Activity {
                 // TODO Auto-generated method stub
                 String resolution = arg0.getItemAtPosition(arg2).toString();
                 Log.e(TAG, "Selected resolution = " + resolution);
-                if (mResolution.equals(resolution))
+                if (mResolution.equals(resolution) && !mDisplayAutoDetect) {
                     return;
-                else if (resolution.equals("autodetect")) {
+                } else if (resolution.equals("autodetect")) {
                     mDisplayAutoDetect = true;
                     return;
                 } else {
