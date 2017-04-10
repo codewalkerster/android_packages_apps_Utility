@@ -671,6 +671,9 @@ public class MainActivity extends Activity {
             } else if ("576p50hz".equals(mResolution)) {
                 x_res = "720";
                 y_res = "576";
+            } else if ("480x800p60hz".equals(mResolution)) {
+                x_res = "480";
+                y_res = "800";
             } else if ("800x480p60hz".equals(mResolution)
                     || "ODROID-VU7".equals(mResolution)) {
                 mResolution = "800x480p60hz";
@@ -704,9 +707,21 @@ public class MainActivity extends Activity {
             } else if ("1024p60hz".equals(mResolution)) {
                 x_res = "1280";
                 y_res = "1024";
+            } else if ("1360x768p60hz".equals(mResolution)) {
+                x_res = "1360";
+                y_res = "768";
+            } else if ("1600x900p60hz".equals(mResolution)) {
+                x_res = "1600";
+                y_res = "900";
+            } else if ("1600x1200p60hz".equals(mResolution)) {
+                x_res = "1600";
+                y_res = "1200";
             } else if (mResolution.contains("1080")) {
                 x_res = "1920";
                 y_res = "1080";
+            } else if ("1920x1200p60hz".equals(mResolution)) {
+                x_res = "1920";
+                y_res = "1200";
             }
 
             writer.println("# setenv fb_x_res \"640\"");
@@ -720,6 +735,10 @@ public class MainActivity extends Activity {
             writer.println("# setenv fb_x_res \"720\"");
             writer.println("# setenv fb_y_res \"576\"");
             writer.println("# setenv hdmi_phy_res \"576p50hz\"\n");
+
+            writer.println("# setenv fb_x_res \"480\"");
+            writer.println("# setenv fb_y_res \"800\"");
+            writer.println("# setenv hdmi_phy_res \"480x800p60hz\"\n");
 
             writer.println("# setenv fb_x_res \"800\"");
             writer.println("# setenv fb_y_res \"480\"");
@@ -765,6 +784,18 @@ public class MainActivity extends Activity {
             writer.println("# setenv fb_y_res \"1024\"");
             writer.println("# setenv hdmi_phy_res \"1024p60hz\"\n");
 
+            writer.println("# setenv fb_x_res \"1360\"");
+            writer.println("# setenv fb_y_res \"768\"");
+            writer.println("# setenv hdmi_phy_res \"1360x768p60hz\"\n");
+
+            writer.println("# setenv fb_x_res \"1600\"");
+            writer.println("# setenv fb_y_res \"900\"");
+            writer.println("# setenv hdmi_phy_res \"1600x900p60hz\"\n");
+
+            writer.println("# setenv fb_x_res \"1600\"");
+            writer.println("# setenv fb_y_res \"1200\"");
+            writer.println("# setenv hdmi_phy_res \"1600x1200p60hz\"\n");
+
             writer.println("# setenv fb_x_res \"1920\"");
             writer.println("# setenv fb_y_res \"1080\"");
             writer.println("# setenv hdmi_phy_res \"1080i50hz\"\n");
@@ -784,6 +815,10 @@ public class MainActivity extends Activity {
             writer.println("# setenv fb_x_res \"1920\"");
             writer.println("# setenv fb_y_res \"1080\"");
             writer.println("# setenv hdmi_phy_res \"1080p60hz\"\n");
+
+            writer.println("# setenv fb_x_res \"1920\"");
+            writer.println("# setenv fb_y_res \"1200\"");
+            writer.println("# setenv hdmi_phy_res \"1920x1200p60hz\"\n");
 
             writer.println("setenv fb_x_res \"" + x_res +"\"");
             writer.println("setenv fb_y_res \"" + y_res +"\"");
