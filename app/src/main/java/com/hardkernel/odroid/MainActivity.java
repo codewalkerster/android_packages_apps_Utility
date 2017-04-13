@@ -729,7 +729,7 @@ public class MainActivity extends Activity {
             writer.println("# setenv hdmi_phy_res \"480p60hz\"\n");
 
             writer.println("# setenv fb_x_res \"720\"");
-            writer.println("# setenv fb_y_res \"489\"");
+            writer.println("# setenv fb_y_res \"480\"");
             writer.println("# setenv hdmi_phy_res \"480p59.94\"\n");
 
             writer.println("# setenv fb_x_res \"720\"");
