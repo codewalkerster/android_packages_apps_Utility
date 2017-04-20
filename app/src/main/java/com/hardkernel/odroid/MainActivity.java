@@ -675,7 +675,7 @@ public class MainActivity extends Activity {
                 x_res = "480";
                 y_res = "800";
             } else if ("800x480p60hz".equals(mResolution)
-                    || "ODROID-VU7".equals(mResolution)) {
+                    || "ODROID-VU5/7".equals(mResolution)) {
                 mResolution = "800x480p60hz";
                 x_res = "800";
                 y_res = "480";
