@@ -20,9 +20,9 @@ class UpdatePackage {
     public static final long PACKAGE_MAXSIZE = 400 * 1024 * 1024;   /* 400MB */
 
     public final static String OFFICAL_SERVER_URL =
-        "http://dn.odroid.com/S905/Android/ODROID-C2/";
+        "https://dn.odroid.com/S905/Android/ODROID-C2/";
     public final static String MIRROR_SERVER_URL =
-        "http://www.odroid.in/mirror/dn.odroid.com/S905/Android/ODROID-C2/";
+        "https://www.odroid.in/mirror/dn.odroid.com/S905/Android/ODROID-C2/";
 
     private static String mRemoteUrl = MIRROR_SERVER_URL;
     private int m_buildNumber = -1;
