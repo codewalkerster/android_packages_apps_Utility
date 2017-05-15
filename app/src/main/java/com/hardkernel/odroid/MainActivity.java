@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -61,11 +62,21 @@ public class MainActivity extends Activity {
 
     private final static String TAG = "ODROIDUtility";
     public final static String GOVERNOR_NODE = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor";
-
+    public final static String SCALING_AVAILABLE_GOVERNORS = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors";
+    public final static String DRAM_SCALING_AVAILABLE_GOVERNORS = "/sys/class/devfreq/exynos5-devfreq-mif/available_governors";
+    public final static String DRAM_SCALING_AVAILABLE_FREQUENCY = "/sys/class/devfreq/exynos5-devfreq-mif/available_frequencies";
+    public final static String DRAM_GOVERNOR_NODE = "/sys/class/devfreq/exynos5-devfreq-mif/governor";
+    public final static String DRAM_FREQUENCY_NODE = "/sys/class/devfreq/exynos5-devfreq-mif/max_freq";
     private final static String BOOT_INI = Environment.getExternalStorageDirectory() + "/boot.ini";
 
     private Spinner mSpinnerGovernor;
     private String mGovernorString;
+
+    private Spinner mSpinnerDRAMGovernor;
+    private String mDRAMGovernorString;
+
+    private Spinner mSpinnerDRAMFreqeuncy;
+    private String mDRAMFreqeuncyString;
 
     private RadioButton mRadio_left;
     private RadioButton mRadio_right;
@@ -182,7 +193,7 @@ public class MainActivity extends Activity {
         TabSpec tab5 = tabHost.newTabSpec("Fan");
         TabSpec tab6 = tabHost.newTabSpec("Shortcut");
 
-        tab1.setIndicator("CPU");
+        tab1.setIndicator("CPU and DRAM");
         tab1.setContent(R.id.tab1);
         tab2.setIndicator("Mouse");
         tab2.setContent(R.id.tab2);
@@ -195,7 +206,7 @@ public class MainActivity extends Activity {
         tab6.setIndicator("Shortcut");
         tab6.setContent(R.id.tab6);
 
-        //tabHost.addTab(tab1);
+        tabHost.addTab(tab1);
         //tabHost.addTab(tab2);
         tabHost.addTab(tab3);
         tabHost.addTab(tab4);
@@ -203,11 +214,9 @@ public class MainActivity extends Activity {
         tabHost.addTab(tab6);
 
         mSpinnerGovernor = (Spinner) findViewById(R.id.spinner_governors);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> mAdapterGovenor = ArrayAdapter.createFromResource(this,
-                R.array.governor_array, android.R.layout.simple_spinner_item);
-        mAdapterGovenor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSpinnerGovernor.setAdapter(mAdapterGovenor);
+        String[] array = getFromNode(SCALING_AVAILABLE_GOVERNORS).split(" ");
+        ArrayAdapter<String> governorAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, array);
+        mSpinnerGovernor.setAdapter(governorAdapter);
 
         mSpinnerGovernor.setOnItemSelectedListener(new OnItemSelectedListener() {
 
@@ -215,13 +224,49 @@ public class MainActivity extends Activity {
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                     int arg2, long arg3) {
                 // TODO Auto-generated method stub
-                String governor = arg0.getItemAtPosition(arg2).toString();
-                Log.e(TAG, "governor = " + governor);
-                setGovernor(governor);
+                String value = arg0.getItemAtPosition(arg2).toString();
+                Log.e(TAG, "governor = " + value);
+                setValueToNode(value, GOVERNOR_NODE);
 
                 SharedPreferences pref = getSharedPreferences("utility", MODE_PRIVATE);
                 SharedPreferences.Editor editor = pref.edit();
-                editor.putString("governor", governor);
+                editor.putString("governor", value);
+                editor.commit();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
+            }
+
+        });
+
+        mGovernorString = getFromNode(GOVERNOR_NODE);
+
+        Log.e(TAG, "mGovernorString = " + mGovernorString);
+
+        if (mGovernorString != null) {
+            mSpinnerGovernor.setSelection(governorAdapter.getPosition(mGovernorString));
+        }
+
+        mSpinnerDRAMGovernor = (Spinner) findViewById(R.id.spinner_dram_governors);
+        array = getFromNode(DRAM_SCALING_AVAILABLE_GOVERNORS).split(" ");
+        ArrayAdapter<String> DRAMgovernorAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, array);
+        mSpinnerDRAMGovernor.setAdapter(DRAMgovernorAdapter);
+
+        mSpinnerDRAMGovernor.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1,
+                    int arg2, long arg3) {
+                // TODO Auto-generated method stub
+                String value = arg0.getItemAtPosition(arg2).toString();
+                Log.e(TAG, "DRAM governor = " + value);
+                setValueToNode(value, DRAM_GOVERNOR_NODE);
+
+                SharedPreferences pref = getSharedPreferences("utility", MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("DRAM governor", value);
                 editor.commit();
             }
 
@@ -233,10 +278,50 @@ public class MainActivity extends Activity {
 
         });
 
-        mGovernorString = getCurrentGovernor();
+        mDRAMGovernorString = getFromNode(DRAM_GOVERNOR_NODE);
 
-        if (mGovernorString != null) {
-            mSpinnerGovernor.setSelection(mAdapterGovenor.getPosition(mGovernorString));
+        Log.e(TAG, "mDRAMGovernorString = " + mDRAMGovernorString);
+
+        if (mDRAMGovernorString != null) {
+            mSpinnerDRAMGovernor.setSelection(DRAMgovernorAdapter.getPosition(mDRAMGovernorString));
+        }
+
+        mSpinnerDRAMFreqeuncy = (Spinner) findViewById(R.id.spinner_dram_freq);
+        String[] buf = getFromNode(DRAM_SCALING_AVAILABLE_FREQUENCY).split(" ");
+        array = Arrays.copyOfRange(buf, buf.length - 4, buf.length);
+        ArrayAdapter<String> DRAMFrequencyAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, array);
+        mSpinnerDRAMFreqeuncy.setAdapter(DRAMFrequencyAdapter);
+
+        mSpinnerDRAMFreqeuncy.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1,
+                    int arg2, long arg3) {
+                // TODO Auto-generated method stub
+                String value = arg0.getItemAtPosition(arg2).toString();
+                Log.e(TAG, "DRAM freq = " + value);
+                setValueToNode(value, DRAM_FREQUENCY_NODE);
+
+                SharedPreferences pref = getSharedPreferences("utility", MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("DRAM freq", value);
+                editor.commit();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
+
+            }
+
+        });
+
+        mDRAMFreqeuncyString = getFromNode(DRAM_FREQUENCY_NODE);
+
+        Log.e(TAG, "mDRAMFreqeuncyString = " + mDRAMFreqeuncyString);
+
+        if (mDRAMFreqeuncyString != null) {
+            mSpinnerDRAMFreqeuncy.setSelection(DRAMFrequencyAdapter.getPosition(mDRAMFreqeuncyString));
         }
 
         File boot_ini = new File(BOOT_INI);
@@ -336,24 +421,13 @@ public class MainActivity extends Activity {
 
         });
 
-        btn = (Button)findViewById(R.id.button_screen_apply);
-        btn.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View arg0) {
-                // TODO Auto-generated method stub
-                saveBootIni();
-            }
-
-        });
-
         btn = (Button)findViewById(R.id.button_apply_reboot);
         btn.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-
+                saveBootIni();
                 reboot();
             }
 
@@ -870,28 +944,14 @@ public class MainActivity extends Activity {
 
     }
 
-    public static void setGovernor(String governor) {
-        BufferedWriter out;
-        try {
-            out = new BufferedWriter(new FileWriter(GOVERNOR_NODE));
-            out.write(governor);
-            out.newLine();
-            out.close();
-            Log.e(TAG, "set governor : " + governor);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    public static void setClock(String clock, String node) {
+    public static void setValueToNode(String value, String node) {
         BufferedWriter out;
         try {
             out = new BufferedWriter(new FileWriter(node));
-            out.write(clock);
+            out.write(value);
             out.newLine();
             out.close();
-            Log.e(TAG, "set clock : " + clock + " , " + node);
+            Log.e(TAG, "set value : " + value);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -905,13 +965,13 @@ public class MainActivity extends Activity {
 
     }
 
-    protected String getCurrentGovernor() {
-        String governor = null;
+    protected String getFromNode(String node) {
+        String value = null;
         try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(GOVERNOR_NODE));
-            governor = bufferedReader.readLine();
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(node));
+            value = bufferedReader.readLine();
             bufferedReader.close();
-            Log.e(TAG, governor);
+            Log.e(TAG, node + ", " + value);
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -920,7 +980,7 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
 
-        return governor;
+        return value;
     }
 
     @Override
@@ -928,6 +988,54 @@ public class MainActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    protected String getScaclingAvailableGovernor() {
+        String value = null;
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(SCALING_AVAILABLE_GOVERNORS));
+            value = bufferedReader.readLine();
+            bufferedReader.close();
+            Log.e(TAG, value);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return value;
+    }
+
+    protected String getDRAMScaclingAvailableGovernor() {
+        String value = null;
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(DRAM_SCALING_AVAILABLE_GOVERNORS));
+            value = bufferedReader.readLine();
+            bufferedReader.close();
+            Log.e(TAG, value);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return value;
+    }
+
+    protected String getDRAMScaclingAvailableFrequency() {
+        String value = null;
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(DRAM_SCALING_AVAILABLE_FREQUENCY));
+            value = bufferedReader.readLine();
+            bufferedReader.close();
+            Log.e(TAG, value);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return value;
     }
 
     public native static String readFanMode();

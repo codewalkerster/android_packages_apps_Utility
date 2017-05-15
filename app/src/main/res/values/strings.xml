@@ -4,12 +4,14 @@
     <string name="app_name">ODROID Utility</string><string name="action_settings">Settings</string>
 
     <string name="shortcut_title">SHORTCUT</string>
-    
+
     <string name="cpu">CPU</string>
     <string name="screen">Screen</string>
     <string name="cpu_governor">CPU Governor</string>
     <string name="cpu_max_freq">CPU Max Frequency</string>
     <string name="cpu_min_freq">CPU Min Frequency</string>
+    <string name="dram_governor">DRAM Governor</string>
+    <string name="dram_max_freq">DRAM Max Frequency</string>
     <string name="buttons">Buttons</string>
     <string name="left_handed">Left-handed</string>
     <string name="right_handed">Right-handed</string>
@@ -23,7 +25,7 @@
     <string name="r1280x800">1280 x 800 (ODROID-VU)</string>
     <string name="r1920x1080">1920 x 1080</string>
     <string name="r1280x720">1280 x 720</string>
-    <string name="apply_reboot">Apply and Reboot</string>
+    <string name="apply_reboot">Reboot</string>
     <string name="hdmi_phy">HDMI phy</string>
     <string name="fake_fb">LCD Mode ( for ODROID-X/X2 LCD Kit)</string>
     <string name="fb_true">True</string>

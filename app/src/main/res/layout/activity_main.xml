@@ -50,7 +50,7 @@
 
                     <Spinner
                         android:id="@+id/shortcut_f7"
-                        android:layout_width="600dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="0" />
 
@@ -62,7 +62,7 @@
 
                     <Spinner
                         android:id="@+id/shortcut_f8"
-                        android:layout_width="600dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="0" />
 
@@ -74,7 +74,7 @@
 
                     <Spinner
                         android:id="@+id/shortcut_f9"
-                        android:layout_width="600dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="0" />
 
@@ -86,7 +86,7 @@
 
                     <Spinner
                         android:id="@+id/shortcut_f10"
-                        android:layout_width="600dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="0" />
 
@@ -396,29 +396,23 @@
 
                     <Spinner
                         android:id="@+id/spinner_resolution"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
-                    <Button
-                        android:id="@+id/button_screen_apply"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:text="@string/apply" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/tab2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical" >
+                    android:orientation="vertical">
 
                     <RadioGroup
                         android:id="@+id/radioGroup_mouse"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="20dp"
-                        android:layout_marginTop="20dp" >
+                        android:layout_marginTop="20dp">
 
                         <RadioButton
                             android:id="@+id/radio_left"
@@ -440,13 +434,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
                         android:text="@string/apply" />
+
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/tab1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical" >
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/textView1"
@@ -458,14 +453,42 @@
 
                     <Spinner
                         android:id="@+id/spinner_governors"
-                        android:layout_width="600dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:layout_weight="0" />
+
+                    <TextView
+                        android:id="@+id/textView14"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="@string/dram_governor"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <Spinner
+                        android:id="@+id/spinner_dram_governors"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/textView15"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="@string/dram_max_freq"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <Spinner
+                        android:id="@+id/spinner_dram_freq"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
                 </LinearLayout>
 
-        </FrameLayout>
-    </LinearLayout>
+            </FrameLayout>
+
+        </LinearLayout>
 </TabHost>
 
 </RelativeLayout>
