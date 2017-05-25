@@ -22,7 +22,8 @@ public class BootReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         SharedPreferences pref = context.getSharedPreferences("utility", Context.MODE_PRIVATE);
         if (action.equals(Intent.ACTION_BOOT_COMPLETED)) {
-            MainActivity.setValueToNode(pref.getString("governor", "ondemand"), MainActivity.GOVERNOR_NODE);
+            MainActivity.setValueToNode(pref.getString("governor", "ondemand"), MainActivity.LITTLE_CORE_GOVERNOR_NODE);
+            MainActivity.setValueToNode(pref.getString("governor", "ondemand"), MainActivity.BIG_CORE_GOVERNOR_NODE);
             MainActivity.setValueToNode(pref.getString("DRAM governor", "simple_exynos"), MainActivity.DRAM_GOVERNOR_NODE);
             MainActivity.setValueToNode(pref.getString("DRAM freq", "825000"), MainActivity.DRAM_FREQUENCY_NODE);
             MainActivity.setMouse(pref.getString("mouse", "right"));

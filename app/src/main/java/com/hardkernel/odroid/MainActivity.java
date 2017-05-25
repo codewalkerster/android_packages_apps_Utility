@@ -61,7 +61,8 @@ import static java.lang.System.*;
 public class MainActivity extends Activity {
 
     private final static String TAG = "ODROIDUtility";
-    public final static String GOVERNOR_NODE = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor";
+    public final static String LITTLE_CORE_GOVERNOR_NODE = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor";
+    public final static String BIG_CORE_GOVERNOR_NODE = "/sys/devices/system/cpu/cpu4/cpufreq/scaling_governor";
     public final static String SCALING_AVAILABLE_GOVERNORS = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors";
     public final static String DRAM_SCALING_AVAILABLE_GOVERNORS = "/sys/class/devfreq/exynos5-devfreq-mif/available_governors";
     public final static String DRAM_SCALING_AVAILABLE_FREQUENCY = "/sys/class/devfreq/exynos5-devfreq-mif/available_frequencies";
@@ -226,7 +227,8 @@ public class MainActivity extends Activity {
                 // TODO Auto-generated method stub
                 String value = arg0.getItemAtPosition(arg2).toString();
                 Log.e(TAG, "governor = " + value);
-                setValueToNode(value, GOVERNOR_NODE);
+                setValueToNode(value, LITTLE_CORE_GOVERNOR_NODE);
+                setValueToNode(value, BIG_CORE_GOVERNOR_NODE);
 
                 SharedPreferences pref = getSharedPreferences("utility", MODE_PRIVATE);
                 SharedPreferences.Editor editor = pref.edit();
@@ -241,7 +243,7 @@ public class MainActivity extends Activity {
 
         });
 
-        mGovernorString = getFromNode(GOVERNOR_NODE);
+        mGovernorString = getFromNode(LITTLE_CORE_GOVERNOR_NODE);
 
         Log.e(TAG, "mGovernorString = " + mGovernorString);
 
