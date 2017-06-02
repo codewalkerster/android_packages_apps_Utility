@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.os.ServiceManager;
 import android.os.IPowerManager;
 import android.os.RemoteException;
+import android.os.SystemProperties;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -122,18 +123,12 @@ public class MainActivity extends Activity {
     private EditText mEditTextTempLevel3;
     private Button mBtnTempLevelsApply;
 
-    private Process mSu;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         context = getApplicationContext();
-        try {
-            mSu = Runtime.getRuntime().exec("su");
-        } catch (Exception e) {
-        }
 
         mRadio_left = (RadioButton)findViewById(R.id.radio_left);
         mRadio_right = (RadioButton)findViewById(R.id.radio_right);
@@ -508,42 +503,27 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                try {
-                    DataOutputStream stdin = new DataOutputStream(mSu.getOutputStream());
-                    stdin.writeBytes("mount -o rw,remount /system\n");
 
-                    if (mRadio_portrait.isChecked()) {
-                        stdin.writeBytes("sed -i s/persist.demo.hdmirotation=landscape/persist.demo.hdmirotation=portrait/g /system/build.prop\n");
-                        if (mDegree == 90) {
-                            stdin.writeBytes("sed -i s/ro.sf.hwrotation=0/ro.sf.hwrotation=90/g /system/build.prop\n");
-                            stdin.writeBytes("sed -i s/ro.sf.hwrotation=270/ro.sf.hwrotation=90/g /system/build.prop\n");
-                        } else {
-                            stdin.writeBytes("sed -i s/ro.sf.hwrotation=0/ro.sf.hwrotation=270/g /system/build.prop\n");
-                            stdin.writeBytes("sed -i s/ro.sf.hwrotation=90/ro.sf.hwrotation=270/g /system/build.prop\n");
-                        }
-                    } else if (mRadio_landscape.isChecked()) {
-                        stdin.writeBytes("sed -i s/persist.demo.hdmirotation=portrait/persist.demo.hdmirotation=landscape/g /system/build.prop\n");
-                        stdin.writeBytes("sed -i s/ro.sf.hwrotation=90/ro.sf.hwrotation=0/g /system/build.prop\n");
-                        stdin.writeBytes("sed -i s/ro.sf.hwrotation=270/ro.sf.hwrotation=0/g /system/build.prop\n");
+                if (mRadio_portrait.isChecked()) {
+                    if (mDegree == 90) {
+                        SystemProperties.set("ctl.start", "rotation:portrait 90");
+                    } else {
+                        SystemProperties.set("ctl.start", "rotation:portrait 270");
                     }
-
-                    stdin.writeBytes("mount -o ro,remount /system\n");
-                    if (mDegree == 0) {
-                        android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
-                        android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 0);
-                    } else if (mDegree == 90) {
-                        android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
-                        android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 1);
-                    } else if (mDegree == 270) {
-                        android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
-                        android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 3);
-                    }
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                } else if (mRadio_landscape.isChecked()) {
+                    SystemProperties.set("ctl.start", "rotation:landscape");
                 }
 
-                saveBootIni();
+                if (mDegree == 0) {
+                    android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
+                    android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 0);
+                } else if (mDegree == 90) {
+                    android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
+                    android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 1);
+                } else if (mDegree == 270) {
+                    android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
+                    android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 3);
+                }
             }
 
         });
@@ -929,21 +909,8 @@ public class MainActivity extends Activity {
     }
 
     public static void setMouse(String handed) {
-        try {
-            OutputStream stream;
-            Process p = Runtime.getRuntime().exec("su");
-            stream = p.getOutputStream();
-            String cmd =  "setprop mouse.firstbutton " + handed;
-            stream.write(cmd.getBytes());
-            stream.flush();
-            stream.close();
-
-            Log.e(TAG, "setprop mouse.firstbutton " + handed);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
+        SystemProperties.set("mouse.firstbutton", handed);
+        Log.e(TAG, "setprop mouse.firstbutton " + handed);
     }
 
     public static void setValueToNode(String value, String node) {
