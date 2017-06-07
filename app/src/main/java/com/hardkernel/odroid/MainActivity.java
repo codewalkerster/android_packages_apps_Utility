@@ -1234,15 +1234,19 @@ public class MainActivity extends Activity {
         String resolution = "setenv hdmimode \"" + mResolution + "\"";
         String vout_mode = "setenv vout_mode \"hdmi\"";
         String display_autodetect = "setenv display_autodetect \"false\"";
+        String backlight_pwm = "setenv backlight_pwm \"no\"";
         if (mResolution.equals("ODROID-VU5/7")) {
             resolution = "setenv hdmimode \"800x480p60hz\"";
             vout_mode = "setenv vout_mode \"dvi\"";
+            backlight_pwm = "setenv backlight_pwm \"yes\"";
         } else if (mResolution.equals("ODROID-VU7 Plus")) {
             resolution = "setenv hdmimode \"1024x600p60hz\"";
             vout_mode = "setenv vout_mode \"dvi\"";
+            backlight_pwm = "setenv backlight_pwm \"yes\"";
         } else if (mResolution.equals("ODROID-VU8")) {
             resolution = "setenv hdmimode \"1024x768p60hz\"";
             vout_mode = "setenv vout_mode \"dvi\"";
+            backlight_pwm = "setenv backlight_pwm \"invert\"";
         }
 
         if (mDisplayAutoDetect) {
@@ -1308,6 +1312,10 @@ public class MainActivity extends Activity {
 
                 if (line.startsWith("setenv display_autodetect")) {
                     line = display_autodetect;
+                }
+
+                if (line.startsWith("setenv backlight_pwm")) {
+                    line = backlight_pwm;
                 }
 
                 Log.e(TAG, line);
