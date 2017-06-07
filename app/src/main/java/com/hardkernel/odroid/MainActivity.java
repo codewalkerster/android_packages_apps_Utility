@@ -893,6 +893,7 @@ public class MainActivity extends Activity {
     public void modifyBootIni() {
         String vout_mode = "setenv vout_mode \"hdmi\"";
         String resolution = "setenv hdmimode \"720p\"           # 720p 1280x720";
+        String backlight_pwm = "setenv backlight_pwm \"no\"";
         if (mResolution.equals("vga"))
             resolution = "setenv hdmimode \"vga\"            # 640x480";
         else if (mResolution.equals("480i"))
@@ -947,12 +948,15 @@ public class MainActivity extends Activity {
         else if (mResolution.equals("ODROID-VU5/7")) {
             resolution = "setenv hdmimode \"800x480p60hz\"   # 800x480";
             vout_mode = "setenv vout_mode \"dvi\"";
+            backlight_pwm = "setenv backlight_pwm \"yes\"";
         } else if (mResolution.equals("ODROID-VU7 Plus")) {
             resolution = "setenv hdmimode \"1024x600p60hz\"  # 1024x600";
             vout_mode = "setenv vout_mode \"dvi\"";
+            backlight_pwm = "setenv backlight_pwm \"yes\"";
         } else if (mResolution.equals("ODROID-VU8")) {
             resolution = "setenv hdmimode \"1024x768p60hz\"  # 1024x768";
             vout_mode = "setenv vout_mode \"dvi\"";
+            backlight_pwm = "setenv backlight_pwm \"invert\"";
         }
 
         String top, left, bottom, right;
@@ -1003,6 +1007,10 @@ public class MainActivity extends Activity {
 
                 if (line.startsWith("setenv right")) {
                     line = right;
+                }
+
+                if (line.startsWith("setenv backlight_pwm")) {
+                    line = backlight_pwm;
                 }
 
                 Log.e(TAG, line);
