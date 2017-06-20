@@ -6,18 +6,24 @@
         <item >576p50hz</item>
         <item >480x800p60hz</item>
         <item >800x480p60hz</item>
+        <item >848x480p60hz</item>
         <item >600p60hz</item>
-        <item >1024x600p43hz</item>
+        <item >1024x600p60hz</item>
         <item >768p60hz</item>
         <item >720p50hz</item>
         <item >720p60hz</item>
+        <item >1280x768p60hz</item>
+        <item >1152x864p75hz</item>
         <item >800p59hz</item>
         <item >960p60hz</item>
         <item >900p60hz</item>
         <item >1024p60hz</item>
+        <item >1400x1050p60hz</item>
         <item >1360x768p60hz</item>
         <item >1600x900p60hz</item>
         <item >1600x1200p60hz</item>
+        <item >1920x800p60hz</item>
+        <item >1792x1344p60hz</item>
         <item >1080i50hz</item>
         <item >1080i60hz</item>
         <item >1080p30hz</item>
