@@ -705,238 +705,127 @@ public class MainActivity extends Activity {
     }
 
     public void saveBootIni() {
-        File boot_ini = new File(BOOT_INI);
-        if (boot_ini.exists()) {
-            boot_ini.delete();
+        String x_res = "1280";
+        String y_res = "720";
+        if ("480p60hz".equals(mResolution)) {
+            x_res = "640";
+            y_res = "480";
+        } else if ("480p59.94hz".equals(mResolution)) {
+            x_res = "720";
+            y_res = "480";
+        } else if ("576p50hz".equals(mResolution)) {
+            x_res = "720";
+            y_res = "576";
+        } else if ("480x800p60hz".equals(mResolution)) {
+            x_res = "480";
+            y_res = "800";
+        } else if ("800x480p60hz".equals(mResolution)
+                || "ODROID-VU5/7".equals(mResolution)) {
+            mResolution = "800x480p60hz";
+            x_res = "800";
+            y_res = "480";
+        } else if ("848x480p60hz".equals(mResolution)) {
+            x_res = "848";
+            y_res = "480";
+        } else if ("600p60hz".equals(mResolution)) {
+            x_res = "800";
+            y_res = "600";
+        } else if ("1024x600p60hz".equals(mResolution)
+                || "ODROID-VU7 Plus".equals(mResolution)) {
+            mResolution = "1024x600p60hz";
+            x_res = "1024";
+            y_res = "600";
+        } else if ("768p60hz".equals(mResolution)
+                || "ODROID-VU8".equals(mResolution)) {
+            mResolution = "768p60hz";
+            x_res = "1024";
+            y_res = "768";
+        } else if (mResolution.contains("720p")) {
+            x_res = "1280";
+            y_res = "720";
+        } else if ("1280x768p60hz".equals(mResolution)) {
+            x_res = "1280";
+            y_res = "768";
+        } else if ("1152x864p75hz".equals(mResolution)) {
+            x_res = "1152";
+            y_res = "864";
+        } else if ("800p59hz".equals(mResolution)) {
+            x_res = "1280";
+            y_res = "800";
+        } else if ("960p60hz".equals(mResolution)) {
+            x_res = "1280";
+            y_res = "960";
+        } else if ("900p60hz".equals(mResolution)) {
+            x_res = "1440";
+            y_res = "900";
+        } else if ("1024p60hz".equals(mResolution)) {
+            x_res = "1280";
+            y_res = "1024";
+        } else if ("1400x1050p60hz".equals(mResolution)) {
+            x_res = "1400";
+            y_res = "1050";
+        } else if ("1360x768p60hz".equals(mResolution)) {
+            x_res = "1360";
+            y_res = "768";
+        } else if ("1600x900p60hz".equals(mResolution)) {
+            x_res = "1600";
+            y_res = "900";
+        } else if ("1600x1200p60hz".equals(mResolution)) {
+            x_res = "1600";
+            y_res = "1200";
+        } else if ("1920x800p60hz".equals(mResolution)) {
+            x_res = "1920";
+            y_res = "800";
+        } else if ("1792x1344p60hz".equals(mResolution)) {
+            x_res = "1792";
+            y_res = "1244";
+        } else if (mResolution.contains("1080")) {
+            x_res = "1920";
+            y_res = "1080";
+        } else if ("1920x1200p60hz".equals(mResolution)) {
+            x_res = "1920";
+            y_res = "1200";
         }
 
-        PrintWriter writer;
         try {
-            writer = new PrintWriter(BOOT_INI, "UTF-8");
+            File f1 = new File(BOOT_INI);
+            FileReader fr = new FileReader(f1);
+            BufferedReader br = new BufferedReader(fr);
+            List<String> lines = new ArrayList<String>();
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith("setenv fb_x_res")) {
+                    int width = Integer.parseInt(x_res);
+                    line = "setenv fb_x_res \"" + width + "\"";
+                }
 
-            writer.println("ODROIDXU-UBOOT-CONFIG\n");
+                if (line.startsWith("setenv fb_y_res")) {
+                    int height = Integer.parseInt(y_res);
+                    line = "setenv fb_y_res \"" + height + "\"";
+                }
 
-            String x_res = "1280";
-            String y_res = "720";
-            if ("480p60hz".equals(mResolution)) {
-                x_res = "640";
-                y_res = "480";
-            } else if ("480p59.94hz".equals(mResolution)) {
-                x_res = "720";
-                y_res = "480";
-            } else if ("576p50hz".equals(mResolution)) {
-                x_res = "720";
-                y_res = "576";
-            } else if ("480x800p60hz".equals(mResolution)) {
-                x_res = "480";
-                y_res = "800";
-            } else if ("800x480p60hz".equals(mResolution)
-                    || "ODROID-VU5/7".equals(mResolution)) {
-                mResolution = "800x480p60hz";
-                x_res = "800";
-                y_res = "480";
-            } else if ("848x480p60hz".equals(mResolution)) {
-                x_res = "848";
-                y_res = "480";
-            } else if ("600p60hz".equals(mResolution)) {
-                x_res = "800";
-                y_res = "600";
-            } else if ("1024x600p60hz".equals(mResolution)
-                    || "ODROID-VU7 Plus".equals(mResolution)) {
-                mResolution = "1024x600p60hz";
-                x_res = "1024";
-                y_res = "600";
-            } else if ("768p60hz".equals(mResolution)
-                    || "ODROID-VU8".equals(mResolution)) {
-                mResolution = "768p60hz";
-                x_res = "1024";
-                y_res = "768";
-            } else if (mResolution.contains("720p")) {
-                x_res = "1280";
-                y_res = "720";
-            } else if ("1280x768p60hz".equals(mResolution)) {
-                x_res = "1280";
-                y_res = "768";
-            } else if ("1152x864p75hz".equals(mResolution)) {
-                x_res = "1152";
-                y_res = "864";
-            } else if ("800p59hz".equals(mResolution)) {
-                x_res = "1280";
-                y_res = "800";
-            } else if ("960p60hz".equals(mResolution)) {
-                x_res = "1280";
-                y_res = "960";
-            } else if ("900p60hz".equals(mResolution)) {
-                x_res = "1440";
-                y_res = "900";
-            } else if ("1024p60hz".equals(mResolution)) {
-                x_res = "1280";
-                y_res = "1024";
-            } else if ("1400x1050p60hz".equals(mResolution)) {
-                x_res = "1400";
-                y_res = "1050";
-            } else if ("1360x768p60hz".equals(mResolution)) {
-                x_res = "1360";
-                y_res = "768";
-            } else if ("1600x900p60hz".equals(mResolution)) {
-                x_res = "1600";
-                y_res = "900";
-            } else if ("1600x1200p60hz".equals(mResolution)) {
-                x_res = "1600";
-                y_res = "1200";
-            } else if ("1920x800p60hz".equals(mResolution)) {
-                x_res = "1920";
-                y_res = "800";
-            } else if ("1792x1344p60hz".equals(mResolution)) {
-                x_res = "1792";
-                y_res = "1244";
-            } else if (mResolution.contains("1080")) {
-                x_res = "1920";
-                y_res = "1080";
-            } else if ("1920x1200p60hz".equals(mResolution)) {
-                x_res = "1920";
-                y_res = "1200";
+                if (line.startsWith("setenv hdmi_phy_res")) {
+                    line = "setenv hdmi_phy_res \"" + mResolution + "\"";
+                }
+
+                Log.e(TAG, line);
+
+                lines.add(line + "\n");
             }
+            fr.close();
+            br.close();
 
-            writer.println("# setenv fb_x_res \"640\"");
-            writer.println("# setenv fb_y_res \"480\"");
-            writer.println("# setenv hdmi_phy_res \"480p60hz\"\n");
-
-            writer.println("# setenv fb_x_res \"720\"");
-            writer.println("# setenv fb_y_res \"480\"");
-            writer.println("# setenv hdmi_phy_res \"480p59.94\"\n");
-
-            writer.println("# setenv fb_x_res \"720\"");
-            writer.println("# setenv fb_y_res \"576\"");
-            writer.println("# setenv hdmi_phy_res \"576p50hz\"\n");
-
-            writer.println("# setenv fb_x_res \"480\"");
-            writer.println("# setenv fb_y_res \"800\"");
-            writer.println("# setenv hdmi_phy_res \"480x800p60hz\"\n");
-
-            writer.println("# setenv fb_x_res \"800\"");
-            writer.println("# setenv fb_y_res \"480\"");
-            writer.println("# setenv hdmi_phy_res \"800x480p60hz\"\n");
-
-            writer.println("# setenv fb_x_res \"848\"");
-            writer.println("# setenv fb_y_res \"480\"");
-            writer.println("# setenv hdmi_phy_res \"848x480p60hz\"\n");
-
-            writer.println("# setenv fb_x_res \"800\"");
-            writer.println("# setenv fb_y_res \"600\"");
-            writer.println("# setenv hdmi_phy_res \"600p60hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1024\"");
-            writer.println("# setenv fb_y_res \"600\"");
-            writer.println("# setenv hdmi_phy_res \"1024x600p60hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1024\"");
-            writer.println("# setenv fb_y_res \"768\"");
-            writer.println("# setenv hdmi_phy_res \"768p60hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1280\"");
-            writer.println("# setenv fb_y_res \"720\"");
-            writer.println("# setenv hdmi_phy_res \"720p50hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1280\"");
-            writer.println("# setenv fb_y_res \"720\"");
-            writer.println("# setenv hdmi_phy_res \"720p60hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1280\"");
-            writer.println("# setenv fb_y_res \"768\"");
-            writer.println("# setenv hdmi_phy_res \"1280x768p60hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1152\"");
-            writer.println("# setenv fb_y_res \"864\"");
-            writer.println("# setenv hdmi_phy_res \"1152x864p75hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1280\"");
-            writer.println("# setenv fb_y_res \"800\"");
-            writer.println("# setenv hdmi_phy_res \"800p59hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1280\"");
-            writer.println("# setenv fb_y_res \"960\"");
-            writer.println("# setenv hdmi_phy_res \"960p60hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1440\"");
-            writer.println("# setenv fb_y_res \"900\"");
-            writer.println("# setenv hdmi_phy_res \"900p60hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1440\"");
-            writer.println("# setenv fb_y_res \"900\"");
-            writer.println("# setenv hdmi_phy_res \"900p60hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1280\"");
-            writer.println("# setenv fb_y_res \"1024\"");
-            writer.println("# setenv hdmi_phy_res \"1024p60hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1400\"");
-            writer.println("# setenv fb_y_res \"1050\"");
-            writer.println("# setenv hdmi_phy_res \"1400x1050p60hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1360\"");
-            writer.println("# setenv fb_y_res \"768\"");
-            writer.println("# setenv hdmi_phy_res \"1360x768p60hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1600\"");
-            writer.println("# setenv fb_y_res \"900\"");
-            writer.println("# setenv hdmi_phy_res \"1600x900p60hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1600\"");
-            writer.println("# setenv fb_y_res \"1200\"");
-            writer.println("# setenv hdmi_phy_res \"1600x1200p60hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1920\"");
-            writer.println("# setenv fb_y_res \"800\"");
-            writer.println("# setenv hdmi_phy_res \"1920x800p60hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1792\"");
-            writer.println("# setenv fb_y_res \"1344\"");
-            writer.println("# setenv hdmi_phy_res \"1792x1344p60hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1920\"");
-            writer.println("# setenv fb_y_res \"1080\"");
-            writer.println("# setenv hdmi_phy_res \"1080i50hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1920\"");
-            writer.println("# setenv fb_y_res \"1080\"");
-            writer.println("# setenv hdmi_phy_res \"1080i60hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1920\"");
-            writer.println("# setenv fb_y_res \"1080\"");
-            writer.println("# setenv hdmi_phy_res \"1080p30hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1920\"");
-            writer.println("# setenv fb_y_res \"1080\"");
-            writer.println("# setenv hdmi_phy_res \"1080p50hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1920\"");
-            writer.println("# setenv fb_y_res \"1080\"");
-            writer.println("# setenv hdmi_phy_res \"1080p60hz\"\n");
-
-            writer.println("# setenv fb_x_res \"1920\"");
-            writer.println("# setenv fb_y_res \"1200\"");
-            writer.println("# setenv hdmi_phy_res \"1920x1200p60hz\"\n");
-
-            writer.println("setenv fb_x_res \"" + x_res +"\"");
-            writer.println("setenv fb_y_res \"" + y_res +"\"");
-            writer.println("setenv hdmi_phy_res \"" + mResolution +"\"\n");
-
-            writer.println("setenv edid \"0\"\n");
-            writer.println("setenv hpd \"1\"\n");
-            writer.println("setenv led_blink        \"1\"\n");
-            writer.println("setenv bootcmd      \"movi read kernel 0 40008000;bootz 40008000\"\n");
-            writer.println("setenv bootargs     \"fb_x_res=${fb_x_res} fb_y_res=${fb_y_res} hdmi_phy_res=${hdmi_phy_res} edid=${edid} hpd=${hpd} led_blink=${led_blink}\"");
-
-            writer.println("boot");
-            writer.close();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            FileWriter fw = new FileWriter(f1);
+            BufferedWriter out = new BufferedWriter(fw);
+            for(String s : lines)
+                out.write(s);
+            out.flush();
+            out.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
+
+        Log.e(TAG, "Update boot.ini");
     }
 
     private void reboot() {
