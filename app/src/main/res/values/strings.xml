@@ -4,12 +4,14 @@
     <string name="app_name">ODROID Utility</string><string name="action_settings">Settings</string>
 
     <string name="cpu_title">CPU</string>
+    <string name="ddr_title">DDR</string>
     <string name="screen_title">SCREEN</string>
     <string name="rotation_title">ROTATION</string>
     <string name="hdmi_cec_title">HDMI-CEC</string>
     <string name="board_title">BOARD</string>
     <string name="shortcut_title">SHORTCUT</string>
-    
+
+    <string name="ddr_info">Please update boot.ini to display DDR clock.</string>
     <string name="cpu">CPU</string>
     <string name="screen">Screen</string>
     <string name="cpu_governor">CPU Governor</string>
