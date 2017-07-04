@@ -305,18 +305,6 @@ public class MainActivity extends Activity {
         registerReceiver(mReceiver,
                 new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
-        InputStream inputstream = null;
-        try {
-            inputstream = Runtime.getRuntime().exec("getprop")
-                    .getInputStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        BufferedReader bufferedReader = new BufferedReader(
-                  new InputStreamReader(inputstream));
-
-        String line;
-
         Display display = getWindowManager().getDefaultDisplay();
         mDegree = display.getRotation() * 90;
         mOrientation = mDegree == 0 ? "landscape" : "portrait";
@@ -404,7 +392,8 @@ public class MainActivity extends Activity {
         File boot_ini = new File(BOOT_INI);
         if (boot_ini.exists()) {
             try {
-                bufferedReader = new BufferedReader(new FileReader(BOOT_INI));
+                String line;
+                BufferedReader bufferedReader = new BufferedReader(new FileReader(BOOT_INI));
                 while ((line = bufferedReader.readLine()) != null) {
                     if (line.startsWith("setenv bootargs"))
                         break;
