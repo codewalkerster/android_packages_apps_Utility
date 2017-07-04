@@ -100,6 +100,8 @@ public class MainActivity extends Activity {
 
     private CheckBox mCBKodi;
 
+    private TextView mTextViewDDRClock;
+
     private Spinner mSpinner_Resolution;
     private String mResolution = "1080p60hz";
     private String mPreviousResolution = "1080p60hz";
@@ -420,6 +422,13 @@ public class MainActivity extends Activity {
                 editor.commit();
             }
         });
+
+        mTextViewDDRClock = (TextView)findViewById(R.id.tv_ddrclk);
+        String temp = SystemProperties.get("ro.ddr.clock");
+        if (temp.length() > 1) {
+            String[] result = temp.split("=");
+            mTextViewDDRClock.setText(result[1] + " MHz");
+        }
 
         File boot_ini = new File(BOOT_INI);
         if (boot_ini.exists()) {
