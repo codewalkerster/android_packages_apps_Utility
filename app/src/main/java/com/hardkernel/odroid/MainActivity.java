@@ -72,9 +72,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.LinearLayout;
 
-import com.droidlogic.app.OutputModeManager;
-import com.droidlogic.app.PlayBackManager;
-import com.droidlogic.app.HdmiCecManager;
 
 public class MainActivity extends Activity {
 
@@ -185,10 +182,6 @@ public class MainActivity extends Activity {
 
     private UpdatePackage m_updatePackage = null;
 
-    private OutputModeManager mOutputModeManager;
-    private PlayBackManager mPlayBackManager;
-    private HdmiCecManager mHdmiCecManager;
-
     private SharedPreferences mSharepreference = null;
 
     //For sharedPreferences
@@ -203,7 +196,6 @@ public class MainActivity extends Activity {
     private static final String SWITCH_ONE_KEY_SHUTDOWN = "switch_one_key_shutdown";
 
     //For start service
-    private static final String CEC_SERVICE = "com.droidlogic.CecService";
     private static final String CEC_ACTION = "CEC_LANGUAGE_AUTO_SWITCH";
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -310,9 +302,6 @@ public class MainActivity extends Activity {
         Display display = getWindowManager().getDefaultDisplay();
         mDegree = display.getRotation() * 90;
         mOrientation = mDegree == 0 ? "landscape" : "portrait";
-
-        mOutputModeManager = new OutputModeManager(this);
-        mPlayBackManager = new PlayBackManager(this);
 
         mSpinnerGovernor = (Spinner) findViewById(R.id.spinner_governors);
         String available_governors = getScaclingAvailableGovernor();
@@ -470,6 +459,7 @@ public class MainActivity extends Activity {
             }
         } else {
             //default value
+            /*
             Log.e(TAG, "Not found " + BOOT_INI);
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Not found boot.ini")
@@ -481,7 +471,7 @@ public class MainActivity extends Activity {
                     }
                 })
                 .setNegativeButton("No", null).show();
-
+                */
         }
 
         mCBBlueLed = (CheckBox)findViewById(R.id.blue_led);
@@ -490,7 +480,7 @@ public class MainActivity extends Activity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 blueLed = isChecked? "on": "off";
                 mCBBlueLed.setText(isChecked? R.string.on: R.string.off);
-                modifyBootIni();
+                //modifyBootIni();
             }
         });
 
@@ -509,8 +499,6 @@ public class MainActivity extends Activity {
                 if (mTopDelta == 0)
                     return;
                 mTopDelta--;
-                if (!setOverScan())
-                    mTopDelta++;
                 mTextViewTopValue.setText(Integer.toString(mTopDelta));
             }
         });
@@ -521,8 +509,6 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 mTopDelta++;
-                if (!setOverScan())
-                    mTopDelta--;
                 mTextViewTopValue.setText(Integer.toString(mTopDelta));
             }
         });
@@ -538,8 +524,6 @@ public class MainActivity extends Activity {
                 if (mLeftDelta == 0)
                     return;
                 mLeftDelta--;
-                if (!setOverScan())
-                    mLeftDelta++;
                 mTextViewLeftValue.setText(Integer.toString(mLeftDelta));
             }
         });
@@ -552,8 +536,6 @@ public class MainActivity extends Activity {
                 if (mLeftValue == mRightValue)
                     return;
                 mLeftDelta++;
-                if (!setOverScan())
-                    mLeftDelta--;
                 mTextViewLeftValue.setText(Integer.toString(mLeftDelta));
             }
         });
@@ -569,8 +551,6 @@ public class MainActivity extends Activity {
                 if (mRightValue == mLeftValue)
                     return;
                 mRightDelta++;
-                if (!setOverScan())
-                    mRightDelta--;
                 mTextViewRightValue.setText(Integer.toString(mRightDelta));
             }
         });
@@ -583,8 +563,6 @@ public class MainActivity extends Activity {
                 if (mRightDelta == 0)
                     return;
                 mRightDelta--;
-                if (!setOverScan())
-                    mRightDelta++;
                 mTextViewRightValue.setText(Integer.toString(mRightDelta));
             }
         });
@@ -600,8 +578,6 @@ public class MainActivity extends Activity {
                 if (mBottomValue == mTopValue)
                     return;
                 mBottomDelta++;
-                if (!setOverScan())
-                    mBottomDelta--;
                 mTextViewBottomValue.setText(Integer.toString(mBottomDelta));
             }
         });
@@ -614,8 +590,6 @@ public class MainActivity extends Activity {
                 if (mBottomDelta == 0)
                     return;
                 mBottomDelta--;
-                if (!setOverScan())
-                    mBottomDelta++;
                 mTextViewBottomValue.setText(Integer.toString(mBottomDelta));
             }
         });
@@ -656,14 +630,6 @@ public class MainActivity extends Activity {
                 }
 
                 enableOverScanButtons(mSystemResolution.equals(mResolution) && mOrientation.equals("landscape"));
-                if (mResolution.equals("ODROID-VU5/7"))
-                    mOutputModeManager.setBestMode("800x480p60hz");
-                else if (mResolution.equals("ODROID-VU7 Plus"))
-                    mOutputModeManager.setBestMode("1024x600p60hz");
-                else if (mResolution.equals("ODROID-VU8"))
-                    mOutputModeManager.setBestMode("1024x768p60hz");
-                else
-                    mOutputModeManager.setBestMode(mResolution);
 
                 mTimer = new Timer();
                 mResolutionCounter = 30;
@@ -677,7 +643,6 @@ public class MainActivity extends Activity {
                         @Override
                         public void onClick(DialogInterface dialog, int whichButton) {
                             mTimer.cancel();
-                            mOutputModeManager.setBestMode(mPreviousResolution);
                             mResolution = mPreviousResolution;
                             Log.e(TAG, "Cancelled, set to " + mResolution);
                         }
@@ -686,7 +651,7 @@ public class MainActivity extends Activity {
                         @Override
                         public void onClick(DialogInterface dialog, int whichButton) {
                             mTimer.cancel();
-                            modifyBootIni();
+                            //modifyBootIni();
                         }
                     });
 
@@ -705,7 +670,6 @@ public class MainActivity extends Activity {
 
                         if(mResolutionCounter <0) {
                             mTimer.cancel();
-                            mOutputModeManager.setBestMode(mPreviousResolution);
                             mResolution = mPreviousResolution;
                             Log.e(TAG, "Time over, set to = " + mResolution);
                             alert.dismiss();
@@ -739,7 +703,6 @@ public class MainActivity extends Activity {
                     if (mAdapterResolution.getPosition("1080p60hz") >= 0) {
                         mResolution = "1080p60hz";
                         mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
-                        mOutputModeManager.setBestMode(mResolution);
                     }
                 }
             }
@@ -751,7 +714,6 @@ public class MainActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // TODO Auto-generated method stub
-                mPlayBackManager.setHdmiSelfadaption(isChecked);
                 updateHDMISelfAdaption();
             }
         });
@@ -767,7 +729,6 @@ public class MainActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // TODO Auto-generated method stub
-                switchCec(isChecked);
             }
         });
 
@@ -777,7 +738,6 @@ public class MainActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // TODO Auto-generated method stub
-                switchOneKeyPlay(isChecked);
             }
         });
 
@@ -787,7 +747,6 @@ public class MainActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // TODO Auto-generated method stub
-                switchAutoPowerOn(isChecked);
             }
         });
 
@@ -797,7 +756,6 @@ public class MainActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // TODO Auto-generated method stub
-                switchAutoChangeLanguage(isChecked);
             }
         });
 
@@ -806,7 +764,6 @@ public class MainActivity extends Activity {
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                switchOneKeyShutdown(isChecked);
             }
         });
 
@@ -823,7 +780,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                modifyBootIni();
+                //modifyBootIni();
                 reboot();
             }
 
@@ -912,250 +869,6 @@ public class MainActivity extends Activity {
             }
         });
         shortcutActivity();
-        initCecFun();
-    }
-
-    private boolean isCecServiceRunning() {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (CEC_SERVICE.equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // read cec config & apply it to UI
-    private void initCecFun(){
-        Log.e(TAG, "initCecFun()");
-        mHdmiCecManager = new HdmiCecManager(this);
-        mSharepreference = getSharedPreferences(PREFERENCE_BOX_SETTING, Context.MODE_PRIVATE);
-
-        Editor editor = mSharepreference.edit();
-        String str = mHdmiCecManager.getCurConfig();
-        Log.e(TAG, "cec config = " + str);
-        if (!mHdmiCecManager.remoteSupportCec()) {
-            switchCec(false);
-            mCBCECSwitch.setChecked(false);
-            mCBCECSwitch.setEnabled(false);
-            return;
-        }
-
-        // get rid of '0x' prefix
-        int cec_config = Integer.valueOf(str.substring(2, str.length()), 16);
-        Log.d(TAG, "cec config str:" + str + ", value:" + cec_config);
-
-        if ((cec_config & HdmiCecManager.MASK_FUN_CEC) != 0) {
-            editor.putString(SWITCH_CEC, SWITCH_ON);
-            mCBCECSwitch.setChecked(true);
-
-            if ((cec_config & HdmiCecManager.MASK_ONE_KEY_PLAY) != 0) {
-                editor.putString(SWITCH_ONE_KEY_PLAY, SWITCH_ON);
-                mCBOneKeyPlay.setChecked(true);
-            } else {
-                editor.putString(SWITCH_ONE_KEY_PLAY, SWITCH_OFF);
-                mCBOneKeyPlay.setChecked(false);
-                mCBOneKeyPlay.setText(R.string.off);
-            }
-
-            if ((cec_config & HdmiCecManager.MASK_AUTO_POWER_ON) != 0) {
-                editor.putString(SWITCH_AUTO_POWER_ON, SWITCH_ON);
-                mCBAutoPowerOn.setChecked(true);
-            } else {
-                editor.putString(SWITCH_AUTO_POWER_ON, SWITCH_OFF);
-                mCBAutoPowerOn.setChecked(false);
-                mCBAutoPowerOn.setText(R.string.off);
-            }
-
-            if ((cec_config & HdmiCecManager.MASK_AUTO_CHANGE_LANGUAGE) != 0) {
-                editor.putString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_ON);
-                mCBAutoChangeLanguage.setChecked(true);
-            } else {
-                editor.putString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_OFF);
-                mCBAutoChangeLanguage.setChecked(false);
-                mCBAutoChangeLanguage.setText(R.string.off);
-            }
-
-            if ((cec_config & HdmiCecManager.MASK_ONE_KEY_SHUTDOWN) != 0) {
-                editor.putString(SWITCH_ONE_KEY_SHUTDOWN, SWITCH_ON);
-                mCBOneKeyShutdown.setChecked(true);
-            } else {
-                editor.putString(SWITCH_ONE_KEY_SHUTDOWN, SWITCH_OFF);
-                mCBOneKeyShutdown.setChecked(false);
-                mCBOneKeyShutdown.setText(R.string.off);
-            }
-
-            mLLOneKeyPlay.setVisibility(View.VISIBLE);
-            mLLAutoChangeLanguage.setVisibility(View.VISIBLE);
-            mLLAutoPowerOn.setVisibility(View.VISIBLE);
-            mLLOneKeyShutdown.setVisibility(View.VISIBLE);
-        } else {
-            editor.putString(SWITCH_CEC, SWITCH_OFF);
-            mCBCECSwitch.setChecked(false);
-            mCBCECSwitch.setText(R.string.off);
-            editor.putString(SWITCH_ONE_KEY_PLAY, SWITCH_OFF);
-            editor.putString(SWITCH_AUTO_POWER_ON, SWITCH_OFF);
-            editor.putString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_OFF);
-            editor.putString(SWITCH_ONE_KEY_SHUTDOWN, SWITCH_OFF);
-
-            mLLOneKeyPlay.setVisibility(View.GONE);
-            mLLAutoChangeLanguage.setVisibility(View.GONE);
-            mLLAutoPowerOn.setVisibility(View.GONE);
-            mLLOneKeyShutdown.setVisibility(View.GONE);
-        }
-        editor.commit();
-        mHdmiCecManager.setCecEnv(cec_config);
-    }
-
-    private void switchCec(boolean on) {
-        String isOpen = mSharepreference.getString(SWITCH_CEC, SWITCH_ON);
-        Editor editor = mSharepreference.edit();
-
-        Log.d(TAG, "switch CEC, on:" + on + ", isOpen:" + isOpen);
-
-        if (isOpen.equals(SWITCH_ON) && !on) {
-            editor.putString(SWITCH_CEC, SWITCH_OFF);
-            editor.commit();
-
-            mHdmiCecManager.setCecSysfsValue(HdmiCecManager.FUN_CEC, on);
-            mCBOneKeyPlay.setChecked(on);
-            mCBAutoPowerOn.setChecked(on);
-            mCBAutoChangeLanguage.setChecked(on);
-            mCBOneKeyShutdown.setChecked(on);
-
-        } else if (isOpen.equals(SWITCH_OFF) && on) {
-            editor.putString(SWITCH_CEC, SWITCH_ON);
-            editor.commit();
-
-            if (!isCecServiceRunning()) {
-                Intent serviceIntent = new Intent("com.droidlogic.CecService");
-                serviceIntent.setAction(CEC_ACTION);
-                this.startService(serviceIntent);
-            }
-            mHdmiCecManager.setCecSysfsValue(HdmiCecManager.FUN_CEC, on);
-            mCBOneKeyPlay.setChecked(on);
-            mCBAutoPowerOn.setChecked(on);
-        }
-
-        if (on) {
-            mCBCECSwitch.setText(R.string.on);
-            mLLOneKeyPlay.setVisibility(View.VISIBLE);
-            mLLAutoChangeLanguage.setVisibility(View.VISIBLE);
-            mLLAutoPowerOn.setVisibility(View.VISIBLE);
-            mLLOneKeyShutdown.setVisibility(View.VISIBLE);
-
-        } else {
-            mCBCECSwitch.setText(R.string.off);
-            mLLOneKeyPlay.setVisibility(View.GONE);
-            mLLAutoChangeLanguage.setVisibility(View.GONE);
-            mLLAutoPowerOn.setVisibility(View.GONE);
-            mLLOneKeyShutdown.setVisibility(View.GONE);
-        }
-    }
-
-    private void switchOneKeyPlay(boolean on) {
-        String isOpen = mSharepreference.getString(SWITCH_ONE_KEY_PLAY, SWITCH_ON);
-        Editor editor = mSharepreference.edit();
-
-        Log.d(TAG, "CEC One Kye Play: " + on);
-        if (isOpen.equals(SWITCH_ON) && !on) {
-            editor.putString(SWITCH_ONE_KEY_PLAY, SWITCH_OFF);
-            editor.commit();
-            mHdmiCecManager.setCecSysfsValue(HdmiCecManager.FUN_ONE_KEY_PLAY, HdmiCecManager.FUN_CLOSE);
-        } else if (isOpen.equals(SWITCH_OFF) && on) {
-            editor.putString(SWITCH_ONE_KEY_PLAY, SWITCH_ON);
-            editor.commit();
-            mHdmiCecManager.setCecSysfsValue(HdmiCecManager.FUN_ONE_KEY_PLAY, HdmiCecManager.FUN_OPEN);
-        }
-        if (on)
-            mCBOneKeyPlay.setText(R.string.on);
-        else
-            mCBOneKeyPlay.setText(R.string.off);
-    }
-
-    private void switchAutoPowerOn(boolean on) {
-        String isOpen = mSharepreference.getString(SWITCH_AUTO_POWER_ON, SWITCH_ON);
-        Editor editor = mSharepreference.edit();
-        Log.d(TAG, "CEC Auto Power On: " + on);
-
-        if (isOpen.equals(SWITCH_ON) && !on) {
-            editor.putString(SWITCH_AUTO_POWER_ON, SWITCH_OFF);
-            editor.commit();
-            mHdmiCecManager.setCecSysfsValue(
-                    HdmiCecManager.FUN_AUTO_POWER_ON, HdmiCecManager.FUN_CLOSE);
-        } else if (isOpen.equals(SWITCH_OFF) && on) {
-            editor.putString(SWITCH_AUTO_POWER_ON, SWITCH_ON);
-            editor.commit();
-            mHdmiCecManager.setCecSysfsValue(
-                    HdmiCecManager.FUN_AUTO_POWER_ON, HdmiCecManager.FUN_OPEN);
-        }
-        if (on)
-            mCBAutoPowerOn.setText(R.string.on);
-        else
-            mCBAutoPowerOn.setText(R.string.off);
-    }
-
-    private void switchAutoChangeLanguage(boolean on) {
-        String isOpen = mSharepreference.getString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_OFF);
-        Editor editor = mSharepreference.edit();
-        Log.d(TAG, "CEC Auto Change Language: " + on);
-
-        if (isOpen.equals(SWITCH_ON) && !on) {
-            editor.putString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_OFF);
-            editor.commit();
-            mHdmiCecManager.setCecSysfsValue(
-                    HdmiCecManager.FUN_AUTO_CHANGE_LANGUAGE, HdmiCecManager.FUN_CLOSE);
-        } else if (isOpen.equals(SWITCH_OFF) && on) {
-            editor.putString(SWITCH_AUTO_CHANGE_LANGUAGE, SWITCH_ON);
-            editor.commit();
-            if (!isCecServiceRunning()) {
-                Intent serviceIntent = new Intent("com.droidlogic.CecService");
-                serviceIntent.setAction(CEC_ACTION);
-                this.startService(serviceIntent);
-            }
-            mHdmiCecManager.setCecSysfsValue(
-                    HdmiCecManager.FUN_AUTO_CHANGE_LANGUAGE, HdmiCecManager.FUN_OPEN);
-            updateCecLanguage();
-        }
-        if (on)
-            mCBAutoChangeLanguage.setText(R.string.on);
-        else
-            mCBAutoChangeLanguage.setText(R.string.off);
-    }
-
-    private void updateCecLanguage(){
-        String curLanguage = mHdmiCecManager.getCurLanguage();
-        Log.d(TAG,"update curLanguage:" + curLanguage);
-        if (curLanguage == null)
-            return;
-
-        String[] cec_language_list = getResources().getStringArray(R.array.cec_language);
-        String[] language_list = getResources().getStringArray(R.array.language);
-        String[] country_list = getResources().getStringArray(R.array.country);
-        mHdmiCecManager.setLanguageList(cec_language_list, language_list, country_list);
-        mHdmiCecManager.doUpdateCECLanguage(curLanguage);
-    }
-
-    private void switchOneKeyShutdown(boolean on) {
-        String isOpen = mSharepreference.getString(SWITCH_ONE_KEY_SHUTDOWN, SWITCH_ON);
-        Editor editor = mSharepreference.edit();
-        Log.d(TAG, "CEC One Key Shutdown: " + on);
-
-        if (isOpen.equals(SWITCH_ON) && !on) {
-            editor.putString(SWITCH_ONE_KEY_SHUTDOWN, SWITCH_OFF);
-            editor.commit();
-            mHdmiCecManager.setCecSysfsValue(
-                    HdmiCecManager.FUN_ONE_KEY_SHUTDOWN, HdmiCecManager.FUN_CLOSE);
-        } else if (isOpen.equals(SWITCH_OFF) && on) {
-            editor.putString(SWITCH_ONE_KEY_SHUTDOWN, SWITCH_ON);
-            editor.commit();
-            mHdmiCecManager.setCecSysfsValue(
-                    HdmiCecManager.FUN_ONE_KEY_SHUTDOWN, HdmiCecManager.FUN_OPEN);
-        }
-        if (on)
-            mCBOneKeyShutdown.setText(R.string.on);
-        else
-            mCBOneKeyShutdown.setText(R.string.off);
     }
 
     @Override
@@ -1311,54 +1024,6 @@ public class MainActivity extends Activity {
             btn.setEnabled(enable);
     }
 
-    private void setOverScanRange() {
-        String line = "";
-        try {
-            BufferedReader r = new BufferedReader(
-                    new FileReader(FREE_SCALE_AXIS));
-            line = r.readLine();
-            r.close();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        String[] axis = line.split(" ");
-        mLeftValue = new Integer(axis[0]);
-        mTopValue = new Integer(axis[1]);
-        mRightValue = new Integer(axis[2]);
-        mBottomValue = new Integer(axis[3]);
-        Log.e(TAG, "left : " + mLeftValue
-                + ", top : " + mTopValue
-                + ", right : " + mRightValue
-                + ", bottom : " + mBottomValue);
-    }
-
-    public boolean setOverScan() {
-        try {
-            String value = (mLeftValue + mLeftDelta) + " "
-                                + (mTopValue + mTopDelta) + " "
-                                + (mRightValue - mRightDelta) + " "
-                                + (mBottomValue - mBottomDelta);
-
-            Log.e(TAG, "echo " + value + " > " + WINDOW_AXIS);
-            BufferedWriter window_axis_out = new BufferedWriter(new FileWriter(WINDOW_AXIS));
-            window_axis_out.write(value);
-            window_axis_out.close();
-            BufferedWriter free_scale_out = new BufferedWriter(new FileWriter(FREE_SCALE));
-            free_scale_out.write(FREE_SCALE_VALUE);
-            free_scale_out.close();
-            return true;
-        } catch (IOException e) {
-            Log.e(TAG, "Fail OverScan");
-            enableOverScanButtons(false);
-            return false;
-        }
-    }
-
     private void reboot() {
         try {
             IPowerManager pm = IPowerManager.Stub.asInterface(ServiceManager
@@ -1373,7 +1038,7 @@ public class MainActivity extends Activity {
     public static void checkBootINI() {
         File boot_ini = new File(BOOT_INI);
         if (!boot_ini.exists()) {
-            SystemProperties.set("ctl.start", "makebootini");
+            //SystemProperties.set("ctl.start", "makebootini");
         }
     }
 
@@ -1423,8 +1088,6 @@ public class MainActivity extends Activity {
         // TODO Auto-generated method stub
         super.onResume();
 
-        setOverScanRange();
-
         enableOverScanButtons(mOrientation.equals("landscape"));
         SharedPreferences pref = getSharedPreferences("utility", Context.MODE_PRIVATE);
         mCBKodi.setChecked(pref.getBoolean("kodi", false));
@@ -1438,7 +1101,6 @@ public class MainActivity extends Activity {
     }
 
     private void updateHDMISelfAdaption() {
-        mCBSelfAdaption.setChecked(mPlayBackManager.isHdmiSelfadaptionOn());
         if (mCBSelfAdaption.isChecked())
             mCBSelfAdaption.setText(R.string.on);
         else
@@ -1863,11 +1525,11 @@ public class MainActivity extends Activity {
                         "shortcut_f" + ((keycode - KeyEvent.KEYCODE_F1)  + 1);
 
                 if (position == 0) {
-                    wm.setApplicationShortcut(keycode, null);
+                    //wm.setApplicationShortcut(keycode, null);
                     edit.putString(shortcut_pref, "No shortcut");
                 }
                 else{
-                    wm.setApplicationShortcut(keycode, appIntentList.get(position - 1));
+                    //wm.setApplicationShortcut(keycode, appIntentList.get(position - 1));
                     edit.putString(shortcut_pref, appIntentList.get(position - 1).getPackage());
                 }
                 edit.commit();
