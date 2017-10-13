@@ -72,7 +72,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.LinearLayout;
 
-
 public class MainActivity extends Activity {
 
     private final static String TAG = "ODROIDUtility";
@@ -99,21 +98,6 @@ public class MainActivity extends Activity {
     private CheckBox mCBKodi;
 
     private TextView mTextViewDDRClock;
-
-    private Spinner mSpinner_Resolution;
-    private String mResolution = "1080p60hz";
-    private String mPreviousResolution = "1080p60hz";
-    private static String mSystemResolution = "1080p60hz";
-
-    private boolean mDisplayAutoDetect = true;
-
-    private Timer mTimer = null;
-    private String mResolutionMessage = "The display will be reset to its previous configuration in ";
-    private int mResolutionCounter = 0;
-
-    private CheckBox mShowAllResolution;
-    List<String> mAvableDispList = new ArrayList<String>();
-    ArrayAdapter<CharSequence> mAdapterResolution = null;
 
     private String blueLed = "on";
     private CheckBox mCBBlueLed;
@@ -396,32 +380,11 @@ public class MainActivity extends Activity {
 
                     if (line.startsWith("setenv hdmimode")) {
                         Log.e(TAG, line);
-                        mResolution = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
-                        mSystemResolution = mResolution;
-                        Log.e(TAG, mResolution);
                     }
 
                     if (line.startsWith("setenv vout_mode")) {
                         Log.e(TAG, line);
                         String vout_mode = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
-                        if (vout_mode.equals("dvi")) {
-                            if (mResolution.equals("800x480p60hz"))
-                                mResolution = "ODROID-VU5/7";
-                            else if (mResolution.equals("1024x600p60hz"))
-                                mResolution = "ODROID-VU7 Plus";
-                            else if (mResolution.equals("1024x768p60hz"))
-                                mResolution = "ODROID-VU8";
-                        }
-                        Log.e(TAG, mResolution);
-                    }
-
-                    if (line.startsWith("setenv display_autodetect")) {
-                        Log.e(TAG, line);
-                        String display_autodetect = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
-                        if (display_autodetect.equals("true"))
-                            mDisplayAutoDetect = true;
-                        else
-                            mDisplayAutoDetect = false;
                     }
 
                     if (line.startsWith("setenv led_onoff")) {
@@ -464,108 +427,6 @@ public class MainActivity extends Activity {
 
         mCBBlueLed.setChecked(blueLed.equals("on"));
         mCBBlueLed.setText(blueLed.equals("on")? R.string.on: R.string.off);
-
-        mSpinner_Resolution = (Spinner)findViewById(R.id.spinner_resolution);
-        mShowAllResolution = (CheckBox)findViewById(R.id.cb_show_all);
-        mShowAllResolution.setChecked(true);
-
-        mAdapterResolution = fillResolutionTable(true, mAvableDispList, mSpinner_Resolution);
-
-        mSpinner_Resolution.setAdapter(mAdapterResolution);
-
-        mSpinner_Resolution.setOnItemSelectedListener(new OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                // TODO Auto-generated method stub
-                String resolution = arg0.getItemAtPosition(arg2).toString();
-                Log.e(TAG, "Selected resolution = " + resolution);
-                if (mResolution.equals(resolution))
-                    return;
-                else if (resolution.equals("autodetect")) {
-                    mDisplayAutoDetect = true;
-                    return;
-                } else {
-                    mDisplayAutoDetect = false;
-                    mPreviousResolution = mResolution;
-                    mResolution = resolution;
-                }
-
-                mTimer = new Timer();
-                mResolutionCounter = 30;
-
-                final AlertDialog.Builder dialog =
-                    new AlertDialog.Builder(MainActivity.this)
-                    .setCancelable(false)
-                    .setTitle("Does the display look OK?")
-                    .setMessage(mResolutionMessage + Integer.toString(mResolutionCounter) + " seconds")
-                    .setNegativeButton("Restore Previous Configuration", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            mTimer.cancel();
-                            mResolution = mPreviousResolution;
-                            Log.e(TAG, "Cancelled, set to " + mResolution);
-                        }
-                    })
-                    .setPositiveButton("Keep this configuration", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            mTimer.cancel();
-                            //modifyBootIni();
-                        }
-                    });
-
-                final AlertDialog alert = dialog.create();
-                alert.show();
-
-                mTimer.schedule(new TimerTask() {
-                    public void run() {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                alert.setMessage(mResolutionMessage + Integer.toString(mResolutionCounter) + " seconds");
-                            }
-                        });
-                        mResolutionCounter--;
-
-                        if(mResolutionCounter <0) {
-                            mTimer.cancel();
-                            mResolution = mPreviousResolution;
-                            Log.e(TAG, "Time over, set to = " + mResolution);
-                            alert.dismiss();
-                        }
-                    }
-                }, 1500, 1000);
-
-                alert.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
-                    }
-                });
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
-                // TODO Auto-generated method stub
-
-            }
-
-        });
-
-        mShowAllResolution.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mAdapterResolution = fillResolutionTable(isChecked, mAvableDispList, mSpinner_Resolution);
-                if (mAdapterResolution.getPosition(mResolution) >= 0)
-                    mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
-                else {
-                    if (mAdapterResolution.getPosition("1080p60hz") >= 0) {
-                        mResolution = "1080p60hz";
-                        mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
-                    }
-                }
-            }
-        });
 
         mCBSelfAdaption = (CheckBox)findViewById(R.id.cb_selfadaption);
         mCBSelfAdaption.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -625,11 +486,6 @@ public class MainActivity extends Activity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             }
         });
-
-        if (mDisplayAutoDetect)
-            mSpinner_Resolution.setSelection(mAdapterResolution.getPosition("autodetect"));
-        else
-            mSpinner_Resolution.setSelection(mAdapterResolution.getPosition(mResolution));
 
         Button btn;
 
@@ -737,61 +593,9 @@ public class MainActivity extends Activity {
         unregisterReceiver(mReceiver);
     }
 
-    private ArrayAdapter<CharSequence> fillResolutionTable(boolean all, List<String> list, Spinner spinner) {
-        list.clear();
-        ArrayAdapter<CharSequence> adapter = null;
-        if (all) {
-            adapter = ArrayAdapter.createFromResource(this,
-            R.array.resolution_array, android.R.layout.simple_spinner_dropdown_item);
-        } else {
-            File disp_cap = new File(DISP_CAP);
-            try {
-                FileReader fr = new FileReader(disp_cap);
-                BufferedReader br = new BufferedReader(fr);
-                String line;
-                while ((line = br.readLine()) != null) {
-                    if (!line.equals("null edid")) {
-                        Log.e(TAG, line);
-                        if (line.indexOf('*') != -1)
-                            line = line.substring(0, line.indexOf('*'));
-                        list.add(line);
-                    }
-                }
-                fr.close();
-                br.close();
-            } catch (Exception e) {
-            }
-
-            adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,
-                    list);
-        }
-
-        spinner.setAdapter(adapter);
-        return adapter;
-    }
-
     public void modifyBootIni() {
-        String resolution = "setenv hdmimode \"" + mResolution + "\"";
         String vout_mode = "setenv vout_mode \"hdmi\"";
-        String display_autodetect = "setenv display_autodetect \"false\"";
         String backlight_pwm = "setenv backlight_pwm \"no\"";
-        if (mResolution.equals("ODROID-VU5/7")) {
-            resolution = "setenv hdmimode \"800x480p60hz\"";
-            vout_mode = "setenv vout_mode \"dvi\"";
-            backlight_pwm = "setenv backlight_pwm \"yes\"";
-        } else if (mResolution.equals("ODROID-VU7 Plus")) {
-            resolution = "setenv hdmimode \"1024x600p60hz\"";
-            vout_mode = "setenv vout_mode \"dvi\"";
-            backlight_pwm = "setenv backlight_pwm \"yes\"";
-        } else if (mResolution.equals("ODROID-VU8")) {
-            resolution = "setenv hdmimode \"1024x768p60hz\"";
-            vout_mode = "setenv vout_mode \"dvi\"";
-            backlight_pwm = "setenv backlight_pwm \"invert\"";
-        }
-
-        if (mDisplayAutoDetect) {
-            display_autodetect = "setenv display_autodetect \"true\"";
-        }
 
         String Blueled = "setenv led_onoff \"" + blueLed +"\"";
 
@@ -803,10 +607,6 @@ public class MainActivity extends Activity {
             FileReader fr = new FileReader(f1);
             BufferedReader br = new BufferedReader(fr);
             while ((line = br.readLine()) != null) {
-                if (line.startsWith("setenv hdmimode")) {
-                    line = resolution;
-                }
-
                 if (line.startsWith("setenv max_freq")) {
                     int freq = Integer.parseInt(mScalingMaxFreq) / 1000;
                     line = "setenv max_freq \"" + freq + "\"";
@@ -818,10 +618,6 @@ public class MainActivity extends Activity {
 
                 if (line.startsWith("setenv led_onoff")) {
                     line = Blueled;
-                }
-
-                if (line.startsWith("setenv display_autodetect")) {
-                    line = display_autodetect;
                 }
 
                 if (line.startsWith("setenv backlight_pwm")) {

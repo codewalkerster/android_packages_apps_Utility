@@ -5,7 +5,6 @@
 
     <string name="cpu_title">CPU</string>
     <string name="ddr_title">DDR</string>
-    <string name="screen_title">SCREEN</string>
     <string name="rotation_title">ROTATION</string>
     <string name="hdmi_cec_title">HDMI-CEC</string>
     <string name="board_title">BOARD</string>
@@ -13,7 +12,6 @@
 
     <string name="ddr_info">Please update boot.ini to display DDR clock.</string>
     <string name="cpu">CPU</string>
-    <string name="screen">Screen</string>
     <string name="cpu_governor">CPU Governor</string>
     <string name="cpu_max_freq">CPU Max Frequency</string>
     <string name="cpu_min_freq">CPU Min Frequency</string>
@@ -26,7 +24,6 @@
     <string name="vout_mode">vout mode</string>
     <string name="hdmi">HDMI</string>
     <string name="dvi">DVI</string>
-    <string name="resolution">Resolution</string>
     <string name="r1280x800_lcd">1280 x 800 (LCD)</string>
     <string name="r1280x800">1280 x 800 (ODROID-VU)</string>
     <string name="r1920x1080">1920 x 1080</string>
@@ -55,7 +52,6 @@
     <string name="degree_270">270°</string>
     <string name="zero">0</string>
     <string name="kodi">Auto start KODI on boot.</string>
-    <string name="show_all">Show all resolutions.</string>
 
     <string name="enter_url">Please enter your Android update server URL properly</string>
     <string name="self_adaption">HDMI self-adaption</string>
