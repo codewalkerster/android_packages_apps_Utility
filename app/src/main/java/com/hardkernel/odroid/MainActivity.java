@@ -142,8 +142,6 @@ public class MainActivity extends Activity {
     private Button mBtnBottomIncrease;
     private Button mBtnBottomDecrease;
 
-    private ArrayList<Button> mBtnOverScanList;
-
     private CheckBox mCBSelfAdaption;
     private CheckBox mCBCECSwitch;
     private CheckBox mCBOneKeyPlay;
@@ -426,26 +424,6 @@ public class MainActivity extends Activity {
                             mDisplayAutoDetect = false;
                     }
 
-                    if (line.startsWith("setenv overscan_top")) {
-                        mTopDelta = Integer.parseInt(line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")));
-                        Log.e(TAG, "top : " + mTopDelta);
-                    }
-
-                    if (line.startsWith("setenv overscan_left")) {
-                        mLeftDelta = Integer.parseInt(line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")));
-                        Log.e(TAG, "left : " + mLeftDelta);
-                    }
-
-                    if (line.startsWith("setenv overscan_right")) {
-                        mRightDelta = Integer.parseInt(line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")));
-                        Log.e(TAG, "right : " + mRightDelta);
-                    }
-
-                    if (line.startsWith("setenv overscan_bottom")) {
-                        mBottomDelta = Integer.parseInt(line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\"")));
-                        Log.e(TAG, "bottom : " + mBottomDelta);
-                    }
-
                     if (line.startsWith("setenv led_onoff")) {
                         blueLed = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
 
@@ -487,123 +465,6 @@ public class MainActivity extends Activity {
         mCBBlueLed.setChecked(blueLed.equals("on"));
         mCBBlueLed.setText(blueLed.equals("on")? R.string.on: R.string.off);
 
-
-        mTextViewTopValue = (TextView)findViewById(R.id.tv_top);
-        mTextViewTopValue.setText(Integer.toString(mTopDelta));
-        mBtnTopDecrease = (Button)findViewById(R.id.btn_top_decrease);
-        mBtnTopDecrease.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                if (mTopDelta == 0)
-                    return;
-                mTopDelta--;
-                mTextViewTopValue.setText(Integer.toString(mTopDelta));
-            }
-        });
-        mBtnTopIncrease = (Button)findViewById(R.id.btn_top_increase);
-        mBtnTopIncrease.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                mTopDelta++;
-                mTextViewTopValue.setText(Integer.toString(mTopDelta));
-            }
-        });
-
-        mTextViewLeftValue = (TextView)findViewById(R.id.tv_left);
-        mTextViewLeftValue.setText(Integer.toString(mLeftDelta));
-        mBtnLeftDecrease = (Button)findViewById(R.id.btn_left_decrease);
-        mBtnLeftDecrease.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                if (mLeftDelta == 0)
-                    return;
-                mLeftDelta--;
-                mTextViewLeftValue.setText(Integer.toString(mLeftDelta));
-            }
-        });
-        mBtnLeftIncrease = (Button)findViewById(R.id.btn_left_increase);
-        mBtnLeftIncrease.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                if (mLeftValue == mRightValue)
-                    return;
-                mLeftDelta++;
-                mTextViewLeftValue.setText(Integer.toString(mLeftDelta));
-            }
-        });
-
-        mTextViewRightValue = (TextView)findViewById(R.id.tv_right);
-        mTextViewRightValue.setText(Integer.toString(mRightDelta));
-        mBtnRightIncrease = (Button)findViewById(R.id.btn_right_increase);
-        mBtnRightIncrease.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                if (mRightValue == mLeftValue)
-                    return;
-                mRightDelta++;
-                mTextViewRightValue.setText(Integer.toString(mRightDelta));
-            }
-        });
-        mBtnRightDecrease = (Button)findViewById(R.id.btn_right_decrease);
-        mBtnRightDecrease.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                if (mRightDelta == 0)
-                    return;
-                mRightDelta--;
-                mTextViewRightValue.setText(Integer.toString(mRightDelta));
-            }
-        });
-
-        mTextViewBottomValue = (TextView)findViewById(R.id.tv_bottom);
-        mTextViewBottomValue.setText(Integer.toString(mBottomDelta));
-        mBtnBottomIncrease = (Button)findViewById(R.id.btn_bottom_increase);
-        mBtnBottomIncrease.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                if (mBottomValue == mTopValue)
-                    return;
-                mBottomDelta++;
-                mTextViewBottomValue.setText(Integer.toString(mBottomDelta));
-            }
-        });
-        mBtnBottomDecrease = (Button)findViewById(R.id.btn_bottom_decrease);
-        mBtnBottomDecrease.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                if (mBottomDelta == 0)
-                    return;
-                mBottomDelta--;
-                mTextViewBottomValue.setText(Integer.toString(mBottomDelta));
-            }
-        });
-
-        mBtnOverScanList = new ArrayList<Button>();
-        mBtnOverScanList.add(mBtnTopDecrease);
-        mBtnOverScanList.add(mBtnTopIncrease);
-        mBtnOverScanList.add(mBtnLeftDecrease);
-        mBtnOverScanList.add(mBtnLeftIncrease);
-        mBtnOverScanList.add(mBtnRightIncrease);
-        mBtnOverScanList.add(mBtnRightDecrease);
-        mBtnOverScanList.add(mBtnBottomIncrease);
-        mBtnOverScanList.add(mBtnBottomDecrease);
-
         mSpinner_Resolution = (Spinner)findViewById(R.id.spinner_resolution);
         mShowAllResolution = (CheckBox)findViewById(R.id.cb_show_all);
         mShowAllResolution.setChecked(true);
@@ -628,8 +489,6 @@ public class MainActivity extends Activity {
                     mPreviousResolution = mResolution;
                     mResolution = resolution;
                 }
-
-                enableOverScanButtons(mSystemResolution.equals(mResolution) && mOrientation.equals("landscape"));
 
                 mTimer = new Timer();
                 mResolutionCounter = 30;
@@ -934,20 +793,6 @@ public class MainActivity extends Activity {
             display_autodetect = "setenv display_autodetect \"true\"";
         }
 
-        String top, left, bottom, right;
-
-        if (!mSystemResolution.equals(mResolution)) {
-            top = "setenv overscan_top \"0\"";
-            left = "setenv overscan_left \"0\"";
-            bottom = "setenv overscan_bottom \"0\"";
-            right = "setenv overscan_right \"0\"";
-        } else {
-            top = "setenv overscan_top \"" + mTopDelta + "\"";
-            left = "setenv overscan_left \"" + mLeftDelta + "\"";
-            bottom = "setenv overscan_bottom \"" + mBottomDelta + "\"";
-            right = "setenv overscan_right \"" + mRightDelta + "\"";
-        }
-
         String Blueled = "setenv led_onoff \"" + blueLed +"\"";
 
         List<String> lines = new ArrayList<String>();
@@ -969,22 +814,6 @@ public class MainActivity extends Activity {
 
                 if (line.startsWith("setenv vout_mode")) {
                     line = vout_mode;
-                }
-
-                if (line.startsWith("setenv overscan_top")) {
-                    line = top;
-                }
-
-                if (line.startsWith("setenv overscan_left")) {
-                    line = left;
-                }
-
-                if (line.startsWith("setenv overscan_bottom")) {
-                    line = bottom;
-                }
-
-                if (line.startsWith("setenv overscan_right")) {
-                    line = right;
                 }
 
                 if (line.startsWith("setenv led_onoff")) {
@@ -1017,11 +846,6 @@ public class MainActivity extends Activity {
         }
 
         Log.e(TAG, "Update boot.ini");
-    }
-
-    private void enableOverScanButtons(boolean enable) {
-        for (Button btn : mBtnOverScanList)
-            btn.setEnabled(enable);
     }
 
     private void reboot() {
@@ -1088,7 +912,6 @@ public class MainActivity extends Activity {
         // TODO Auto-generated method stub
         super.onResume();
 
-        enableOverScanButtons(mOrientation.equals("landscape"));
         SharedPreferences pref = getSharedPreferences("utility", Context.MODE_PRIVATE);
         mCBKodi.setChecked(pref.getBoolean("kodi", false));
 
