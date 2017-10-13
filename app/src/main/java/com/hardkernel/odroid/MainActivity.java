@@ -1144,11 +1144,11 @@ public class MainActivity extends Activity {
                         "shortcut_f" + ((keycode - KeyEvent.KEYCODE_F1)  + 1);
 
                 if (position == 0) {
-                    //wm.setApplicationShortcut(keycode, null);
+                    wm.setApplicationShortcut(keycode, null);
                     edit.putString(shortcut_pref, "No shortcut");
                 }
                 else{
-                    //wm.setApplicationShortcut(keycode, appIntentList.get(position - 1));
+                    wm.setApplicationShortcut(keycode, appIntentList.get(position - 1));
                     edit.putString(shortcut_pref, appIntentList.get(position - 1).getPackage());
                 }
                 edit.commit();

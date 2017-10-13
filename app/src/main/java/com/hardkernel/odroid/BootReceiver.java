@@ -48,7 +48,7 @@ public class BootReceiver extends BroadcastReceiver {
         for (int i=0;  i<4;  i++) {
             for (Intent app : appList) {
                 if (app.getPackage().equals(pkg[i])) {
-                    //wm.setApplicationShortcut(KeyEvent.KEYCODE_F7 + i, app);
+                    wm.setApplicationShortcut(KeyEvent.KEYCODE_F7 + i, app);
                 }
             }
         }
