@@ -75,10 +75,6 @@ import android.widget.LinearLayout;
 public class MainActivity extends Activity {
 
     private final static String TAG = "ODROIDUtility";
-    public final static String GOVERNOR_NODE = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor";
-    public final static String SCALING_AVAILABLE_GOVERNORS = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors";
-
-    public final static String SCALING_MAX_FREQ = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq";
 
     public final static String WINDOW_AXIS = "/sys/class/graphics/fb0/window_axis";
     public final static String FREE_SCALE_AXIS = "/sys/class/graphics/fb0/free_scale_axis";
@@ -89,11 +85,6 @@ public class MainActivity extends Activity {
 
     //private final static String BOOT_INI = Environment.getExternalStorageDirectory() + "/boot.ini";
     private final static String BOOT_INI = "/storage/internal/boot.ini";
-    private Spinner mSpinnerGovernor;
-    private String mGovernorString;
-
-    private Spinner mSpinnerFreq;
-    private String mScalingMaxFreq;
 
     private CheckBox mCBKodi;
 
@@ -177,6 +168,8 @@ public class MainActivity extends Activity {
 
     //For start service
     private static final String CEC_ACTION = "CEC_LANGUAGE_AUTO_SWITCH";
+
+    private static CpuActivity cpuActivity;
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -283,69 +276,8 @@ public class MainActivity extends Activity {
         mDegree = display.getRotation() * 90;
         mOrientation = mDegree == 0 ? "landscape" : "portrait";
 
-        mSpinnerGovernor = (Spinner) findViewById(R.id.spinner_governors);
-        String available_governors = getScaclingAvailableGovernor();
-        String[] governor_array = available_governors.split(" ");
-        ArrayAdapter<String> governorAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, governor_array);
-        governorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSpinnerGovernor.setAdapter(governorAdapter);
-
-        mSpinnerGovernor.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> arg0, View arg1,
-                    int arg2, long arg3) {
-                // TODO Auto-generated method stub
-                String governor = arg0.getItemAtPosition(arg2).toString();
-                Log.e(TAG, "governor = " + governor);
-                setGovernor(governor);
-
-                SharedPreferences pref = getSharedPreferences("utility", MODE_PRIVATE);
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putString("governor", governor);
-                editor.commit();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> arg0) {
-                // TODO Auto-generated method stub
-            }
-
-        });
-
-        mGovernorString = getCurrentGovernor();
-
-        if (mGovernorString != null)
-            mSpinnerGovernor.setSelection(governorAdapter.getPosition(mGovernorString));
-
-        mSpinnerFreq = (Spinner) findViewById(R.id.spinner_freq);
-
-        ArrayAdapter<CharSequence> freqAdapter =
-            ArrayAdapter.createFromResource(this, R.array.available_freq_array,
-                    android.R.layout.simple_spinner_dropdown_item);
-        mSpinnerFreq.setAdapter(freqAdapter);
-
-        mSpinnerFreq.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view,
-                    int position, long id) {
-                // TODO Auto-generated method stub
-                mScalingMaxFreq = parent.getItemAtPosition(position).toString();
-                Log.e(TAG, "scaling_max_freq = " + mScalingMaxFreq);
-                setScalingMaxFreq(mScalingMaxFreq);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // TODO Auto-generated method stub
-            }
-        });
-
-        mScalingMaxFreq = getScaclingCurFreq();
-
-        if (mScalingMaxFreq != null)
-            mSpinnerFreq.setSelection(freqAdapter.getPosition(mScalingMaxFreq));
+        cpuActivity = new CpuActivity(this, TAG);
+        cpuActivity.onCreate();
 
         mCBKodi = (CheckBox)findViewById(R.id.cb_kodi);
         mCBKodi.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -598,11 +530,6 @@ public class MainActivity extends Activity {
             FileReader fr = new FileReader(f1);
             BufferedReader br = new BufferedReader(fr);
             while ((line = br.readLine()) != null) {
-                if (line.startsWith("setenv max_freq")) {
-                    int freq = Integer.parseInt(mScalingMaxFreq) / 1000;
-                    line = "setenv max_freq \"" + freq + "\"";
-                }
-
                 if (line.startsWith("setenv vout_mode")) {
                     line = vout_mode;
                 }
@@ -653,52 +580,12 @@ public class MainActivity extends Activity {
         }
     }
 
-    public static void setGovernor(String governor) {
-        BufferedWriter out;
-        try {
-            out = new BufferedWriter(new FileWriter(GOVERNOR_NODE));
-            out.write(governor);
-            out.newLine();
-            out.close();
-            Log.e(TAG, "set governor : " + governor);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    public static void setScalingMaxFreq(String freq) {
-        BufferedWriter out;
-        try {
-            out = new BufferedWriter(new FileWriter(SCALING_MAX_FREQ));
-            out.write(freq);
-            out.newLine();
-            out.close();
-            Log.e(TAG, "set freq : " + freq);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void setClock(String clock, String node) {
-        BufferedWriter out;
-        try {
-            out = new BufferedWriter(new FileWriter(node));
-            out.write(clock);
-            out.newLine();
-            out.close();
-            Log.e(TAG, "set clock : " + clock + " , " + node);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
     @Override
     protected void onResume() {
         // TODO Auto-generated method stub
         super.onResume();
 
+        cpuActivity.onResume();
         SharedPreferences pref = getSharedPreferences("utility", Context.MODE_PRIVATE);
         mCBKodi.setChecked(pref.getBoolean("kodi", false));
 
@@ -715,56 +602,6 @@ public class MainActivity extends Activity {
             mCBSelfAdaption.setText(R.string.on);
         else
             mCBSelfAdaption.setText(R.string.off);
-    }
-
-    protected String getCurrentGovernor() {
-        String governor = null;
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(GOVERNOR_NODE));
-            governor = bufferedReader.readLine();
-            bufferedReader.close();
-            Log.e(TAG, governor);
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        return governor;
-    }
-
-    protected String getScaclingCurFreq() {
-        String freq = null;
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(SCALING_MAX_FREQ));
-            freq = bufferedReader.readLine();
-            bufferedReader.close();
-            Log.e(TAG, freq);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return freq;
-    }
-
-    protected String getScaclingAvailableGovernor() {
-        String available_governors = null;
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(SCALING_AVAILABLE_GOVERNORS));
-            available_governors = bufferedReader.readLine();
-            bufferedReader.close();
-            Log.e(TAG, available_governors);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return available_governors;
     }
 
     @Override

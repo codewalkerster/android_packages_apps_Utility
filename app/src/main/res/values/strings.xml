@@ -10,6 +10,8 @@
     <string name="shortcut_title">SHORTCUT</string>
 
     <string name="cpu">CPU</string>
+    <string name="big_cluster">Big Cluster</string>
+    <string name="little_cluster">Little Cluster</string>
     <string name="cpu_governor">CPU Governor</string>
     <string name="cpu_max_freq">CPU Max Frequency</string>
     <string name="cpu_min_freq">CPU Min Frequency</string>
