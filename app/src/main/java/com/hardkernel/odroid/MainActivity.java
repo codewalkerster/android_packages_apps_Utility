@@ -91,30 +91,6 @@ public class MainActivity extends Activity {
     private String blueLed = "on";
     private CheckBox mCBBlueLed;
 
-    private int mTopValue;
-    private int mTopDelta = 0;
-    private TextView mTextViewTopValue;
-    private Button mBtnTopDecrease;
-    private Button mBtnTopIncrease;
-
-    private int mLeftValue;
-    private int mLeftDelta = 0;
-    private TextView mTextViewLeftValue;
-    private Button mBtnLeftDecrease;
-    private Button mBtnLeftIncrease;
-
-    private int mRightValue;
-    private int mRightDelta = 0;
-    private TextView mTextViewRightValue;
-    private Button mBtnRightIncrease;
-    private Button mBtnRightDecrease;
-
-    private int mBottomValue;
-    private int mBottomDelta = 0;
-    private TextView mTextViewBottomValue;
-    private Button mBtnBottomIncrease;
-    private Button mBtnBottomDecrease;
-
     private CheckBox mCBSelfAdaption;
     private CheckBox mCBCECSwitch;
     private CheckBox mCBOneKeyPlay;
