@@ -299,7 +299,6 @@ public class MainActivity extends Activity {
             }
         } else {
             //default value
-            /*
             Log.e(TAG, "Not found " + BOOT_INI);
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Not found boot.ini")
@@ -311,7 +310,6 @@ public class MainActivity extends Activity {
                     }
                 })
                 .setNegativeButton("No", null).show();
-                */
         }
 
         mCBBlueLed = (CheckBox)findViewById(R.id.blue_led);
@@ -320,7 +318,7 @@ public class MainActivity extends Activity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 blueLed = isChecked? "on": "off";
                 mCBBlueLed.setText(isChecked? R.string.on: R.string.off);
-                //modifyBootIni();
+                modifyBootIni();
             }
         });
 
@@ -394,7 +392,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                //modifyBootIni();
+                modifyBootIni();
                 reboot();
             }
 
