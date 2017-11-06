@@ -19,7 +19,6 @@
     <uses-permission android:name="android.permission.RECOVERY"/>
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
-    <uses-permission android:name="droidlogic.permission.SYSTEM_CONTROL" />
 
     <application
         android:allowBackup="true"
