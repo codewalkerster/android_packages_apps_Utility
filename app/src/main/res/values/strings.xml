@@ -70,4 +70,5 @@
     <string name="shortcut_f8">F8</string>
     <string name="shortcut_f9">F9</string>
     <string name="shortcut_f10">F10</string>
+    <string name="custom_server">Custom Server</string>
 </resources>

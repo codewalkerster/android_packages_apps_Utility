@@ -647,7 +647,7 @@ public class MainActivity extends Activity {
             }
         }
     }
-
+    static boolean checkCustomServer = false;
     public void editServerUrl() {
             // get prompts.xml view
             LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
@@ -668,7 +668,9 @@ public class MainActivity extends Activity {
                 public void onClick(View v) {
                     // TODO Auto-generated method stub
                     editText.setText(UpdatePackage.OFFICAL_SERVER_URL,
-                        TextView.BufferType.EDITABLE);
+                        TextView.BufferType.NORMAL);
+                    checkCustomServer = false;
+                    editText.setEnabled(false);
                 }
             });
 
@@ -681,18 +683,49 @@ public class MainActivity extends Activity {
                 public void onClick(View v) {
                     // TODO Auto-generated method stub
                     editText.setText(UpdatePackage.MIRROR_SERVER_URL,
-                        TextView.BufferType.EDITABLE);
+                        TextView.BufferType.NORMAL);
+                    checkCustomServer = false;
+                    editText.setEnabled(false);
                 }
             });
 
-            rbMirrorServer.setChecked(true);
+            final RadioButton rbCustomServer =
+                    (RadioButton) promptView.findViewById(R.id.rb_custom_server);
+
+            rbCustomServer.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SharedPreferences pref = getSharedPreferences("utility", MODE_PRIVATE);
+                    editText.setText(pref.getString("custom_server",
+                            UpdatePackage.MIRROR_SERVER_URL),
+                            TextView.BufferType.EDITABLE);
+
+                    checkCustomServer = true;
+                    editText.setEnabled(true);
+                }
+            });
+
+            if (checkCustomServer) {
+                rbCustomServer.setChecked(true);
+            } else {
+                rbMirrorServer.setChecked(true);
+                editText.setEnabled(false);
+            }
 
             alertDialogBuilder.setCancelable(false)
                 .setPositiveButton("OK",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            ServerInfo.write(editText.getText().toString());
-                            UpdatePackage.setRemoteUrl(editText.getText().toString());
+                            String url = editText.getText().toString();
+                            ServerInfo.write(url);
+                            UpdatePackage.setRemoteUrl(url);
+
+                            if (checkCustomServer) {
+                                SharedPreferences pref = getSharedPreferences("utility", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = pref.edit();
+                                editor.putString("custom_server", url);
+                                editor.commit();
+                            }
                         }
                     })
                 .setNegativeButton("Cancel",

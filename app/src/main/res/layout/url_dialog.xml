@@ -29,11 +29,18 @@
                     android:layout_height="wrap_content"
                     android:text="@string/mirror_server"
                     android:id="@+id/rb_mirror_server" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/custom_server"
+                    android:id="@+id/rb_custom_server" />
         </RadioGroup>
 
         <EditText
                 android:id="@+id/edittext"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:editable="false"
                 android:padding="10dp" />
 </LinearLayout>
