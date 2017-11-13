@@ -121,7 +121,7 @@ public class MainActivity extends Activity {
 
     private static Context context;
 
-    private static final String LATEST_VERSION = "latestupdate_marshmallow";
+    private static final String LATEST_VERSION = "latestupdate_nougat";
     private static final int FILE_SELECT_CODE = 0;
 
     private DownloadManager downloadManager;
