@@ -56,76 +56,87 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
                     android:layout_marginTop="20dp"
-                    android:layout_marginBottom="20dp">
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/text_big"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/big_cluster"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                        android:layout_weight=".50"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:id="@+id/text_big"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/big_cluster"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/cpu_governor"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                        <Spinner
+                            android:id="@+id/spinner_big_governors"
+                            android:layout_width="300dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/cpu_freq"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                        <Spinner
+                            android:id="@+id/spinner_big_freq"
+                            android:layout_width="300dp"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/cpu_governor"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:layout_weight="0.50"
+                        android:orientation="vertical">
 
-                    <Spinner
-                        android:id="@+id/spinner_big_governors"
-                        android:layout_width="600dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0" />
+                        <TextView
+                            android:id="@+id/text_little"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/little_cluster"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/cpu_freq"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/cpu_governor"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                    <Spinner
-                        android:id="@+id/spinner_big_freq"
-                        android:layout_width="600dp"
-                        android:layout_height="wrap_content" />
+                        <Spinner
+                            android:id="@+id/spinner_little_governors"
+                            android:layout_width="300dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0" />
 
-                    <TextView
-                        android:id="@+id/text_little"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/little_cluster"
-                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/cpu_freq"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/cpu_governor"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        <Spinner
+                            android:id="@+id/spinner_little_freq"
+                            android:layout_width="300dp"
+                            android:layout_height="wrap_content" />
 
-                    <Spinner
-                        android:id="@+id/spinner_little_governors"
-                        android:layout_width="600dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/cpu_freq"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                    <Spinner
-                        android:id="@+id/spinner_little_freq"
-                        android:layout_width="600dp"
-                        android:layout_height="wrap_content" />
-                    <CheckBox
-                        android:id="@+id/cb_kodi"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/kodi" />
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -383,22 +394,42 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="@string/blue_led"
-                        android:id="@+id/textView10" />
+                        android:orientation="horizontal">
 
-                    <CheckBox
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:id="@+id/textView10"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/blue_led"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                        <CheckBox
+                            android:id="@+id/blue_led"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/on" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/on"
-                        android:id="@+id/blue_led" />
+                        android:orientation="horizontal">
+
+                        <CheckBox
+                            android:id="@+id/cb_kodi"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/kodi" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
