@@ -49,9 +49,6 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Display;
 import android.view.View.OnClickListener;
@@ -146,6 +143,7 @@ public class MainActivity extends Activity {
     private static final String CEC_ACTION = "CEC_LANGUAGE_AUTO_SWITCH";
 
     private static CpuActivity cpuActivity;
+    private static UpdateActivity updateActivity;
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -398,6 +396,25 @@ public class MainActivity extends Activity {
 
         });
 
+        btn = (Button)findViewById(R.id.button_check_online_update);
+        btn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkLatestVersion();
+            }
+        });
+
+        btn = (Button)findViewById(R.id.button_package_install_from_storage);
+        btn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updatePackageFromStorage();
+            }
+        });
+
+        updateActivity = new UpdateActivity(this, TAG);
+        updateActivity.onCreate();
+
         mRadio_portrait = (RadioButton)findViewById(R.id.radio_portrait);
         mRadio_landscape = (RadioButton)findViewById(R.id.radio_landscape);
         mRadio_90 = (RadioButton)findViewById(R.id.radio_90);
@@ -578,32 +595,6 @@ public class MainActivity extends Activity {
             mCBSelfAdaption.setText(R.string.off);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.server_setting:
-                editServerUrl();
-                return true;
-
-            case R.id.check_online_update:
-                checkLatestVersion();
-                return true;
-
-            case R.id.update_from_file:
-                updatePackageFromStorage();
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     static class ServerInfo {
         private static File file;
         private static final String FILENAME = "server.cfg";
@@ -646,97 +637,6 @@ public class MainActivity extends Activity {
                 e.printStackTrace();
             }
         }
-    }
-    static boolean checkCustomServer = false;
-    public void editServerUrl() {
-            // get prompts.xml view
-            LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
-            View promptView = layoutInflater.inflate(R.layout.url_dialog, null);
-
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-            alertDialogBuilder.setView(promptView);
-
-            final EditText editText = (EditText)promptView.findViewById(R.id.edittext);
-            editText.setText(UpdatePackage.remoteUrl(), TextView.BufferType.EDITABLE);
-
-            final RadioButton rbOfficalServer =
-                (RadioButton)promptView.findViewById(R.id.rb_offical_server);
-
-            rbOfficalServer.setOnClickListener(new OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    editText.setText(UpdatePackage.OFFICAL_SERVER_URL,
-                        TextView.BufferType.NORMAL);
-                    checkCustomServer = false;
-                    editText.setEnabled(false);
-                }
-            });
-
-            final RadioButton rbMirrorServer =
-                (RadioButton)promptView.findViewById(R.id.rb_mirror_server);
-
-            rbMirrorServer.setOnClickListener(new OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    editText.setText(UpdatePackage.MIRROR_SERVER_URL,
-                        TextView.BufferType.NORMAL);
-                    checkCustomServer = false;
-                    editText.setEnabled(false);
-                }
-            });
-
-            final RadioButton rbCustomServer =
-                    (RadioButton) promptView.findViewById(R.id.rb_custom_server);
-
-            rbCustomServer.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    SharedPreferences pref = getSharedPreferences("utility", MODE_PRIVATE);
-                    editText.setText(pref.getString("custom_server",
-                            UpdatePackage.MIRROR_SERVER_URL),
-                            TextView.BufferType.EDITABLE);
-
-                    checkCustomServer = true;
-                    editText.setEnabled(true);
-                }
-            });
-
-            if (checkCustomServer) {
-                rbCustomServer.setChecked(true);
-            } else {
-                rbMirrorServer.setChecked(true);
-                editText.setEnabled(false);
-            }
-
-            alertDialogBuilder.setCancelable(false)
-                .setPositiveButton("OK",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            String url = editText.getText().toString();
-                            ServerInfo.write(url);
-                            UpdatePackage.setRemoteUrl(url);
-
-                            if (checkCustomServer) {
-                                SharedPreferences pref = getSharedPreferences("utility", MODE_PRIVATE);
-                                SharedPreferences.Editor editor = pref.edit();
-                                editor.putString("custom_server", url);
-                                editor.commit();
-                            }
-                        }
-                    })
-                .setNegativeButton("Cancel",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
-
-            AlertDialog alert = alertDialogBuilder.create();
-            alert.show();
     }
 
     /*

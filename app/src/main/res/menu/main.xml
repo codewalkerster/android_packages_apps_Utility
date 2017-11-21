@@ -1,8 +1,2 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/server_setting"
-        android:title="Update server setting" />
-    <item android:id="@+id/check_online_update"
-        android:title="Check online update" />
-    <item android:id="@+id/update_from_file"
-        android:title="Package install from storage" />
 </menu>
