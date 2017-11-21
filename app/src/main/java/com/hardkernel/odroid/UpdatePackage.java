@@ -13,16 +13,16 @@ class UpdatePackage {
     private static final String TAG = "UpdatePackage";
 
     private static final String HEADER = "updatepackage";
-    private static final String MODEL = "odroidc2";
+    private static final String MODEL = "odroidn1";
     private static final String VARIANT = "eng";
-    private static final String BRANCH = "s905_6.0.1_master";
+    private static final String BRANCH = "rk3399_7.1.2_master";
 
-    public static final long PACKAGE_MAXSIZE = 400 * 1024 * 1024;   /* 400MB */
+    public static final long PACKAGE_MAXSIZE = 500 * 1024 * 1024;   /* 500MB */
 
     public final static String OFFICAL_SERVER_URL =
-        "https://dn.odroid.com/S905/Android/ODROID-C2/";
+        "https://dn.odroid.com/RK3399/Android/ODROID-N1/";
     public final static String MIRROR_SERVER_URL =
-        "https://www.odroid.in/mirror/dn.odroid.com/S905/Android/ODROID-C2/";
+        "https://www.odroid.in/mirror/dn.odroid.com/RK3399/Android/ODROID-N1/";
 
     private static String mRemoteUrl = MIRROR_SERVER_URL;
     private int m_buildNumber = -1;
