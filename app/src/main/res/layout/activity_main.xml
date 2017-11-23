@@ -312,6 +312,7 @@
 
                 </LinearLayout>
 
+                <!--
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
@@ -461,6 +462,7 @@
                         android:id="@+id/cb_one_key_shutdown" />
 
                 </LinearLayout>
+                -->
 
                 <LinearLayout
                     android:orientation="horizontal"

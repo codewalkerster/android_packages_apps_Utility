@@ -323,6 +323,7 @@ public class MainActivity extends Activity {
         mCBBlueLed.setChecked(blueLed.equals("on"));
         mCBBlueLed.setText(blueLed.equals("on")? R.string.on: R.string.off);
 
+        /*
         mCBSelfAdaption = (CheckBox)findViewById(R.id.cb_selfadaption);
         mCBSelfAdaption.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
@@ -381,6 +382,7 @@ public class MainActivity extends Activity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             }
         });
+        */
 
         Button btn;
 
@@ -585,7 +587,7 @@ public class MainActivity extends Activity {
         else
             mRG_degree.setVisibility(View.GONE);
 
-        updateHDMISelfAdaption();
+        //updateHDMISelfAdaption();
     }
 
     private void updateHDMISelfAdaption() {
