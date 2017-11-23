@@ -72,7 +72,7 @@
     <string name="shortcut_f10">F10</string>
     <string name="custom_server">Custom Server</string>
     <string name="check_online_update">Check online update</string>
-    <string name="package_install">Package install from storage</string>
+    <string name="package_install">Install with downloaded package</string>
     <string name="update">Update</string>
     <string name="update_url">Update URL</string>
 </resources>
