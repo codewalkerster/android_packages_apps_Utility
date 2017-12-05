@@ -4,5 +4,5 @@
     <item android:id="@+id/check_online_update"
         android:title="Check online update" />
     <item android:id="@+id/update_from_file"
-        android:title="Package install from storage" />
+        android:title="Install with downloaded package" />
 </menu>
