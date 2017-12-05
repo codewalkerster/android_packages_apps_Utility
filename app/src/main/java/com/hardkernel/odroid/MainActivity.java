@@ -894,6 +894,8 @@ public class MainActivity extends Activity {
         String vout_mode = "setenv vout_mode \"hdmi\"";
         String resolution = "setenv hdmimode \"720p\"           # 720p 1280x720";
         String backlight_pwm = "setenv backlight_pwm \"no\"";
+        if (mResolution.equals("480x320p60hz"))
+            resolution = "setenv hdmimode \"480x320p60hz\"     # 480x320";
         if (mResolution.equals("vga"))
             resolution = "setenv hdmimode \"vga\"            # 640x480";
         else if (mResolution.equals("480i"))
