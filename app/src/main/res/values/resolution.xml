@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="resolution_array">
+        <item >480x320p60hz</item>
         <item >480p60hz</item>
         <item >480p59.94hz</item>
         <item >576p50hz</item>

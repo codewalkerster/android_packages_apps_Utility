@@ -697,7 +697,10 @@ public class MainActivity extends Activity {
     public void saveBootIni() {
         String x_res = "1280";
         String y_res = "720";
-        if ("480p60hz".equals(mResolution)) {
+        if ("480x320p60hz".equals(mResolution)) {
+            x_res = "480";
+            y_res = "320";
+        } else if ("480p60hz".equals(mResolution)) {
             x_res = "640";
             y_res = "480";
         } else if ("480p59.94hz".equals(mResolution)) {
