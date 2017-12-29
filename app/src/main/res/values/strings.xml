@@ -32,7 +32,9 @@
     <string name="fb_false">False</string>
     <string name="portrait">HDMI Portrait</string>
     <string name="landscape">HDMI Landscape</string>
+    <string name="degree_0">0°</string>
     <string name="degree_90">90°</string>
+    <string name="degree_180">180°</string>
     <string name="degree_270">270°</string>
     <string name="auto">Auto</string>
     <string name="manual">Manual</string>
