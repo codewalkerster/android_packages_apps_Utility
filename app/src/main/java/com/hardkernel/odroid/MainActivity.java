@@ -511,7 +511,6 @@ public class MainActivity extends Activity {
 
     public void modifyBootIni() {
         String vout_mode = "setenv vout_mode \"hdmi\"";
-        String backlight_pwm = "setenv backlight_pwm \"no\"";
 
         String Blueled = "setenv led_onoff \"" + blueLed +"\"";
 
@@ -529,10 +528,6 @@ public class MainActivity extends Activity {
 
                 if (line.startsWith("setenv led_onoff")) {
                     line = Blueled;
-                }
-
-                if (line.startsWith("setenv backlight_pwm")) {
-                    line = backlight_pwm;
                 }
 
                 Log.e(TAG, line);
