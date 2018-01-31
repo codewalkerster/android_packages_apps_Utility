@@ -19,13 +19,15 @@ public class BootReceiver extends BroadcastReceiver {
     private final static String TAG = "ODROIDUtility";
     private final static String autoStart = "org.xbmc.kodi";
     private final CPU cpu_big = CPU.getCPU(TAG, CPU.Cluster.Big);
+    private final CPU cpu_little = CPU.getCPU(TAG, CPU.Cluster.Little);
     @Override
     public void onReceive(Context context, Intent intent) {
         // TODO Auto-generated method stub
         String action = intent.getAction();
         if (action.equals(Intent.ACTION_BOOT_COMPLETED)) {
             SharedPreferences pref = context.getSharedPreferences("utility", Context.MODE_PRIVATE);
-            //cpu_big.governor.set(pref.getString("governor", "performance"));
+            cpu_big.governor.set(pref.getString("big_governor", "performance"));
+            cpu_little.governor.set(pref.getString("little_governor", "performance"));
 
             setMouse(pref.getString("mouse", "right"));
 

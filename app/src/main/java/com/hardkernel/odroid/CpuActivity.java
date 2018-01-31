@@ -122,19 +122,19 @@ public class CpuActivity implements AdapterView.OnItemSelectedListener{
         switch (parent.getId()) {
             case R.id.spinner_big_governors:
                 governor = parent.getItemAtPosition(position).toString();
-                Log.e(TAG, "governor = " + governor);
+                Log.e(TAG, "big core governor = " + governor);
 
                 cpu = CPU.getCPU(TAG, CPU.Cluster.Big);
                 cpu.governor.set(governor);
-                editor.putString("governor", governor);
+                editor.putString("big_governor", governor);
                 break;
             case R.id.spinner_little_governors:
                 governor = parent.getItemAtPosition(position).toString();
-                Log.e(TAG, "governor = " + governor);
+                Log.e(TAG, "little core governor = " + governor);
 
                 cpu = CPU.getCPU(TAG, CPU.Cluster.Little);
                 cpu.governor.set(governor);
-                editor.putString("governor", governor);
+                editor.putString("little_governor", governor);
                 break;
             case R.id.spinner_big_freq:
                 freq = parent.getItemAtPosition(position).toString();
