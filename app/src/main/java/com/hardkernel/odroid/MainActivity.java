@@ -25,6 +25,7 @@ import android.app.Application;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -1786,7 +1787,7 @@ public class MainActivity extends Activity {
                 if (resultCode == RESULT_OK) {
                     // Get the Uri of the selected file
                     Uri uri = data.getData();
-                    String path = getRealPathFromURI(uri);
+                    String path = getPath(context, uri);
                     if (path == null)
                         return;
                     installPackage(new File(path));
@@ -1796,33 +1797,45 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private String getRealPathFromURI(Uri uri) {
-        String filePath = "";
-        filePath = uri.getPath();
-        Log.e(TAG, "uri.getPath() = " + filePath);
-        if (filePath.startsWith("/storage"))
-            return filePath;
+    public static String getPath(Context context, Uri uri) {
+        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
-        // Split at colon, use second item in the array
-        String id = filePath.substring("/document/".length(), filePath.length());
-
-        Log.e(TAG, "id = " + id);
-
-        String[] column = { MediaStore.Files.FileColumns.DATA };
-
-        // where id is equal to
-        String sel = MediaStore.Files.FileColumns.DATA + " LIKE '%" + id + "%'";
-
-        Cursor cursor = getContentResolver().query(MediaStore.Files.getContentUri("external"),
-                column, sel, null, null);
-
-        int columnIndex = cursor.getColumnIndex(column[0]);
-
-        if (cursor.moveToFirst()) {
-            filePath = cursor.getString(columnIndex);
+        // DocumentProvider
+        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+            if (isDownloadsDocument(uri)) {
+                final String id = DocumentsContract.getDocumentId(uri);
+                final Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+                return getDataColumn(context, contentUri, null, null);
+            }
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            return uri.getPath();
         }
-        cursor.close();
-        return filePath;
+        return null;
+    }
+
+    public static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
+        Cursor cursor = null;
+        final String column = "_data";
+        final String[] projection = { column };
+        try {
+            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                final int index = cursor.getColumnIndexOrThrow(column);
+                return cursor.getString(index);
+            }
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return null;
+    }
+
+    /**
+     * @param uri The Uri to check.
+     * @return Whether the Uri authority is DownloadsProvider.
+     */
+    public static boolean isDownloadsDocument(Uri uri) {
+        return "com.android.providers.downloads.documents".equals(uri.getAuthority());
     }
 
     private static List<ApplicationInfo> appList = null;
