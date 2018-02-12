@@ -56,6 +56,7 @@ public class UpdateActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        String url = new String();
         switch (v.getId()) {
             case R.id.rb_offical_server: {
                 checkCustomServer = false;
@@ -63,6 +64,11 @@ public class UpdateActivity implements View.OnClickListener {
                 editText.setText(UpdatePackage.OFFICAL_SERVER_URL,
                         TextView.BufferType.NORMAL);
                 editText.setEnabled(false);
+
+                Button btn = (Button) ((Activity)context).findViewById(R.id.button_update_url);
+                btn.setEnabled(false);
+
+                url = UpdatePackage.OFFICAL_SERVER_URL;
             }
                 break;
             case R.id.rb_mirror_server: {
@@ -71,6 +77,11 @@ public class UpdateActivity implements View.OnClickListener {
                 editText.setText(UpdatePackage.MIRROR_SERVER_URL,
                         TextView.BufferType.NORMAL);
                 editText.setEnabled(false);
+
+                Button btn = (Button) ((Activity)context).findViewById(R.id.button_update_url);
+                btn.setEnabled(false);
+
+                url = UpdatePackage.MIRROR_SERVER_URL;
             }
                 break;
             case R.id.rb_custom_server: {
@@ -81,12 +92,15 @@ public class UpdateActivity implements View.OnClickListener {
                         UpdatePackage.MIRROR_SERVER_URL),
                         TextView.BufferType.EDITABLE);
                 editText.setEnabled(true);
+
+                Button btn = (Button) ((Activity)context).findViewById(R.id.button_update_url);
+                btn.setEnabled(true);
+
+                url = editText.getText().toString();
             }
                 break;
             case R.id.button_update_url: {
-                String url = editText.getText().toString();
-                MainActivity.ServerInfo.write(url);
-                UpdatePackage.setRemoteUrl(url);
+                url = editText.getText().toString();
 
                 SharedPreferences pref = context.getSharedPreferences("utility", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = pref.edit();
@@ -103,5 +117,8 @@ public class UpdateActivity implements View.OnClickListener {
             default:
                 break;
         }
+
+        MainActivity.ServerInfo.write(url);
+        UpdatePackage.setRemoteUrl(url);
     }
 }
