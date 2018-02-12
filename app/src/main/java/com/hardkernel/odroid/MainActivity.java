@@ -647,15 +647,21 @@ public class MainActivity extends Activity {
         new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
                 LATEST_VERSION).delete();
 
-        DownloadManager.Request request = new DownloadManager.Request(
-                Uri.parse(remote + LATEST_VERSION));
-        request.setVisibleInDownloadsUi(false);
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN);
-        request.setDestinationInExternalFilesDir(context,
-                Environment.DIRECTORY_DOWNLOADS,
-                LATEST_VERSION);
+        try {
+            DownloadManager.Request request = new DownloadManager.Request(
+                    Uri.parse(remote + LATEST_VERSION));
+            request.setVisibleInDownloadsUi(false);
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN);
+            request.setDestinationInExternalFilesDir(context,
+                    Environment.DIRECTORY_DOWNLOADS,
+                    LATEST_VERSION);
 
-        enqueue = downloadManager.enqueue(request);
+            enqueue = downloadManager.enqueue(request);
+        } catch (IllegalArgumentException e) {
+            Toast.makeText(context,
+                    "URL must be HTTP/HTTPS forms.",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void updatePckageFromOnline() {
