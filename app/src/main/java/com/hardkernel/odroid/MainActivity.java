@@ -497,29 +497,10 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-
-                if (mDegree == 90)
-                    SystemProperties.set("ctl.start", "rotation:portrait 90");
-                else if (mDegree == 270)
-                    SystemProperties.set("ctl.start", "rotation:portrait 270");
-                else if (mDegree == 0)
-                    SystemProperties.set("ctl.start", "rotation:landscape 0");
-                else
-                    SystemProperties.set("ctl.start", "rotation:landscape 180");
-
-                if (mDegree == 0) {
-                    android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
-                    android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 0);
-                } else if (mDegree == 90) {
-                    android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
-                    android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 1);
-                } else if (mDegree == 180) {
-                    android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
-                    android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 2);
-                } else if (mDegree == 270) {
-                    android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
-                    android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 3);
-                }
+                Log.e(TAG, "mDegree = " + mDegree);
+                SystemProperties.set("ctl.start", "rotation:" + mDegree);
+                android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
+                android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, mDegree / 90);
             }
 
         });
