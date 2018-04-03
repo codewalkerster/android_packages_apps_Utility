@@ -69,7 +69,7 @@ public class MainActivity extends Activity {
     public final static String DRAM_SCALING_AVAILABLE_FREQUENCY = "/sys/class/devfreq/exynos5-devfreq-mif/available_frequencies";
     public final static String DRAM_GOVERNOR_NODE = "/sys/class/devfreq/exynos5-devfreq-mif/governor";
     public final static String DRAM_FREQUENCY_NODE = "/sys/class/devfreq/exynos5-devfreq-mif/max_freq";
-    private final static String BOOT_INI = "/storage/internal/boot.ini";
+    private final static String BOOT_INI = "/internal/boot.ini";
 
     private Spinner mSpinnerGovernor;
     private String mGovernorString;
