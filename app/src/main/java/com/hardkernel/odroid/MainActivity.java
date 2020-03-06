@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,6 +16,7 @@ import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -94,6 +97,7 @@ public class MainActivity extends Activity {
 
     //private final static String BOOT_INI = Environment.getExternalStorageDirectory() + "/boot.ini";
     private final static String BOOT_INI = "/internal/boot.ini";
+    private final static String DEFAULT_PROP = "/internal/default.prop";
     private Spinner mSpinnerGovernor;
     private String mGovernorString;
 
@@ -121,6 +125,9 @@ public class MainActivity extends Activity {
 
     private String blueLed = "on";
     private CheckBox mCBBlueLed;
+
+    private CheckBox mCBKIOSK;
+    private String kiosk_key = "kiosk_mode";
 
     private int mTopValue;
     private int mTopDelta = 0;
@@ -497,6 +504,32 @@ public class MainActivity extends Activity {
 
         mCBBlueLed.setChecked(blueLed.equals("on"));
         mCBBlueLed.setText(blueLed.equals("on")? R.string.on: R.string.off);
+
+        boolean kiosk = SystemProperties.getBoolean(kiosk_key, false);
+        mCBKIOSK = (CheckBox)findViewById(R.id.kiosk);
+        mCBKIOSK.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mCBKIOSK.setText(isChecked? R.string.on: R.string.off);
+
+                Properties properties = new Properties();
+                File propertyFile = new File(DEFAULT_PROP);
+                try {
+                    FileInputStream inStream = new FileInputStream(propertyFile);
+                    properties.load(inStream);
+                    String value = isChecked ? "true" : "false";
+                    properties.setProperty(kiosk_key, value);
+                    FileOutputStream outStream = new FileOutputStream(propertyFile);
+                    properties.store(outStream, "Kiosk Mode");
+                    outStream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        mCBKIOSK.setChecked(kiosk);
+        mCBKIOSK.setText(kiosk ? R.string.on: R.string.off);
 
 
         mTextViewTopValue = (TextView)findViewById(R.id.tv_top);

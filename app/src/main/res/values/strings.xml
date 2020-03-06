@@ -9,6 +9,7 @@
     <string name="rotation_title">ROTATION</string>
     <string name="hdmi_cec_title">HDMI-CEC</string>
     <string name="board_title">BOARD</string>
+    <string name="kiosk_title">KIOSK</string>
     <string name="shortcut_title">SHORTCUT</string>
 
     <string name="ddr_info">Please update boot.ini to display DDR clock.</string>
@@ -77,6 +78,8 @@
     <string name="mirror_server">Mirror Server</string>
     <string name="auto_power_on">Auto power on</string>
     <string name="blue_led">Blue LED</string>
+
+    <string name="kiosk_mode">KIOSK mode</string>
 
     <string name="shortcut_f7">F7</string>
     <string name="shortcut_f8">F8</string>
