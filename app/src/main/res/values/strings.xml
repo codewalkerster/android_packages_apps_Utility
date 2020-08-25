@@ -52,6 +52,8 @@
     <string name="p1080p60">1080P 60Hz</string>
     <string name="r1080x1920">1080 x 1920</string>
     <string name="r720x1080">720 x 1280</string>
+    <string name="degree_0">0°</string>
+    <string name="degree_180">180°</string>
     <string name="degree_90">90°</string>
     <string name="degree_270">270°</string>
     <string name="top">Top</string>

@@ -320,43 +320,38 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical">
 
+
                     <RadioGroup
-                        android:id="@+id/radioGroup2"
+                        android:id="@+id/radioGroup_degree"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" >
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp" >
 
                         <RadioButton
-                            android:id="@+id/radio_portrait"
+                            android:id="@+id/radio_0"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:checked="true"
-                            android:text="@string/portrait" />
-
-                        <RadioGroup
-                            android:id="@+id/radioGroup_degree"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="20dp" >
-
-                            <RadioButton
-                                android:id="@+id/radio_90"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:checked="true"
-                                android:text="@string/degree_90" />
-
-                            <RadioButton
-                                android:id="@+id/radio_270"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/degree_270" />
-                        </RadioGroup>
+                            android:text="@string/degree_0" />
 
                         <RadioButton
-                            android:id="@+id/radio_landscape"
+                            android:id="@+id/radio_90"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/landscape" />
+                            android:text="@string/degree_90" />
+
+                        <RadioButton
+                            android:id="@+id/radio_180"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="@string/degree_180" />
+
+                        <RadioButton
+                            android:id="@+id/radio_270"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/degree_270" />
 
                     </RadioGroup>
 

@@ -35,6 +35,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -167,13 +168,10 @@ public class MainActivity extends Activity {
     private LinearLayout mLLAutoPowerOn;
     private LinearLayout mLLOneKeyShutdown;
 
-    private RadioButton mRadio_portrait;
-    private RadioButton mRadio_landscape;
-
+    private RadioButton mRadio_0;
     private RadioButton mRadio_90;
+    private RadioButton mRadio_180;
     private RadioButton mRadio_270;
-
-    private RadioGroup mRG_degree;
 
     private Spinner shortcut_f7;
     private Spinner shortcut_f8;
@@ -863,51 +861,30 @@ public class MainActivity extends Activity {
 
         });
 
-        mRadio_portrait = (RadioButton)findViewById(R.id.radio_portrait);
-        mRadio_landscape = (RadioButton)findViewById(R.id.radio_landscape);
+        mRadio_0 = (RadioButton)findViewById(R.id.radio_0);
         mRadio_90 = (RadioButton)findViewById(R.id.radio_90);
+        mRadio_180 = (RadioButton)findViewById(R.id.radio_180);
         mRadio_270 = (RadioButton)findViewById(R.id.radio_270);
-        mRG_degree = (RadioGroup)findViewById(R.id.radioGroup_degree);
-        if (mOrientation.equals("landscape")) {
-           mRadio_landscape.setChecked(true);
-           mRG_degree.setVisibility(View.GONE);
-           mDegree = 0;
-        } else {
-           mRadio_portrait.setChecked(true);
-           mRG_degree.setVisibility(View.VISIBLE);
-        }
 
-        if (mDegree == 90) {
+        if (mDegree == 0)
+            mRadio_0.setChecked(true);
+        else if (mDegree == 90)
             mRadio_90.setChecked(true);
-            mRadio_270.setChecked(false);
-        } else {
-            mRadio_90.setChecked(false);
+        else if (mDegree == 180)
+            mRadio_180.setChecked(true);
+        else if (mDegree == 270)
             mRadio_270.setChecked(true);
-        }
 
-        mRadio_portrait.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                mRG_degree.setVisibility(View.VISIBLE);
-                mDegree = 270;
-                mRadio_90.setChecked(false);
-                mRadio_270.setChecked(true);
-            }
-
-        });
-
-        mRadio_landscape.setOnClickListener(new OnClickListener() {
+        mRadio_0.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                mRG_degree.setVisibility(View.GONE);
                 mDegree = 0;
             }
 
         });
+
 
         mRadio_90.setOnClickListener(new OnClickListener() {
 
@@ -915,6 +892,17 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 mDegree = 90;
+            }
+
+        });
+
+
+        mRadio_180.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                mDegree = 180;
             }
 
         });
@@ -928,20 +916,25 @@ public class MainActivity extends Activity {
             }
 
         });
+
         btn = (Button)findViewById(R.id.button_rotation_apply);
         btn.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
+                    android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
                 if (mDegree == 0) {
-                    android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
                     android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 0);
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 } else if (mDegree == 90) {
-                    android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
                     android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 1);
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
+                } else if (mDegree == 180) {
+                    android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 2);
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
                 } else if (mDegree == 270) {
-                    android.provider.Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0);
                     android.provider.Settings.System.putInt(getContentResolver(), Settings.System.USER_ROTATION, 3);
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 }
             }
         });
@@ -1462,11 +1455,6 @@ public class MainActivity extends Activity {
         enableOverScanButtons(mOrientation.equals("landscape"));
         SharedPreferences pref = getSharedPreferences("utility", Context.MODE_PRIVATE);
         mCBKodi.setChecked(pref.getBoolean("kodi", false));
-
-        if (mRadio_portrait.isChecked())
-            mRG_degree.setVisibility(View.VISIBLE);
-        else
-            mRG_degree.setVisibility(View.GONE);
 
         updateHDMISelfAdaption();
     }
